@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Pulga — Admin Propostas</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4EADD;--br:#6E2C14;--border:rgba(110,44,20,0.15);--gray:rgba(110,44,20,0.55);--gray2:rgba(110,44,20,0.35);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--br);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+
+/* LOGIN */
+.login-card{background:rgba(255,255,255,0.8);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:380px;text-align:center;}
+.login-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.02em;margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--gray);margin-bottom:28px;}
+.login-input{width:100%;height:44px;padding:0 14px;border:1.5px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.7);font-family:'Inter',sans-serif;font-size:14px;color:var(--br);outline:none;margin-bottom:12px;}
+.login-input:focus{border-color:var(--br);}
+.login-btn{width:100%;height:44px;border:none;border-radius:11px;background:var(--br);color:#F4EADD;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.login-btn:hover{background:#5A2210;}
+.login-err{font-size:12px;color:#c0392b;margin-top:8px;display:none;}
+
+/* ADMIN */
+.admin-wrap{width:100%;max-width:560px;display:none;}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.admin-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;}
+.admin-logout{font-size:12px;color:var(--gray);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;}
+
+.admin-card{background:rgba(255,255,255,0.8);border:1px solid var(--border);border-radius:20px;padding:32px 28px;}
+.admin-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:22px;margin-bottom:6px;}
+.admin-desc{font-size:13px;color:var(--gray);margin-bottom:28px;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:7px;}
+.field input{width:100%;height:44px;padding:0 14px;border:1.5px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.7);font-family:'Inter',sans-serif;font-size:14px;color:var(--br);outline:none;transition:all 0.2s;}
+.field input:focus{border-color:var(--br);background:#fff;}
+.field input::placeholder{color:rgba(110,44,20,0.28);}
+
+.validade-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.val-btn{flex:1;min-width:60px;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:all 0.2s;text-align:center;}
+.val-btn.on{background:var(--br);color:#F4EADD;border-color:var(--br);}
+
+.gerar-btn{width:100%;height:48px;border:none;border-radius:12px;background:var(--br);color:#F4EADD;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-bottom:20px;}
+.gerar-btn:hover{background:#5A2210;transform:translateY(-1px);}
+
+.link-result{display:none;background:rgba(110,44,20,0.06);border:1.5px solid var(--border);border-radius:12px;padding:16px;}
+.link-result.show{display:block;}
+.link-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;}
+.link-url{font-size:12px;color:var(--br);word-break:break-all;line-height:1.6;margin-bottom:12px;font-family:'Inter',sans-serif;}
+.copy-btn{padding:9px 20px;border-radius:9px;border:1.5px solid var(--br);background:transparent;color:var(--br);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.copy-btn:hover{background:var(--br);color:#F4EADD;}
+.copy-btn.copied{background:var(--br);color:#F4EADD;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-card" id="loginCard">
+  <div class="login-logo">STUDIO PULGA</div>
+  <div class="login-sub">Painel de propostas</div>
+  <input class="login-input" type="password" id="loginSenha" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()">
+  <button class="login-btn" onclick="doLogin()">Entrar</button>
+  <div class="login-err" id="loginErr">Senha incorreta.</div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-wrap" id="adminWrap">
+  <div class="admin-header">
+    <div class="admin-logo">STUDIO PULGA</div>
+    <button class="admin-logout" onclick="logout()">Sair</button>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-title">Nova proposta</div>
+    <div class="admin-desc">Preencha os dados e gere o link exclusivo para o cliente.</div>
+
+    <div class="field">
+      <label>Nome do cliente</label>
+      <input type="text" id="fNome" placeholder="Ex: Ana Silva">
+    </div>
+
+    <div class="field">
+      <label>Valor — 1º Pacote (R$)</label>
+      <input type="text" id="fV1" placeholder="Ex: 2.690">
+    </div>
+    <div class="field">
+      <label>Valor — 2º Pacote (R$)</label>
+      <input type="text" id="fV2" placeholder="Ex: 3.690">
+    </div>
+    <div class="field">
+      <label>Valor — 3º Pacote (R$)</label>
+      <input type="text" id="fV3" placeholder="Ex: 3.990">
+    </div>
+
+    <div class="field">
+      <label>Validade do link</label>
+      <div class="validade-row">
+        <button class="val-btn" onclick="selDias(1,this)">1 dia</button>
+        <button class="val-btn on" onclick="selDias(2,this)">2 dias</button>
+        <button class="val-btn" onclick="selDias(3,this)">3 dias</button>
+        <button class="val-btn" onclick="selDias(5,this)">5 dias</button>
+      </div>
+    </div>
+
+    <button class="gerar-btn" onclick="gerarLink()">Gerar link →</button>
+
+    <div class="link-result" id="linkResult">
+      <div class="link-label">Link gerado</div>
+      <div class="link-url" id="linkUrl"></div>
+      <button class="copy-btn" id="copyBtn" onclick="copiarLink()">Copiar link</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SENHA = 'Studio2801';
+var diasSel = 2;
+
+function doLogin(){
+  var s = document.getElementById('loginSenha').value;
+  if(s === SENHA){
+    document.getElementById('loginCard').style.display='none';
+    document.getElementById('adminWrap').style.display='block';
+    document.getElementById('loginErr').style.display='none';
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('loginSenha').value='';
+  }
+}
+
+function logout(){
+  document.getElementById('adminWrap').style.display='none';
+  document.getElementById('loginCard').style.display='block';
+}
+
+function selDias(d, btn){
+  diasSel = d;
+  document.querySelectorAll('.val-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+}
+
+function gerarLink(){
+  var nome = document.getElementById('fNome').value.trim();
+  var v1 = document.getElementById('fV1').value.trim();
+  var v2 = document.getElementById('fV2').value.trim();
+  var v3 = document.getElementById('fV3').value.trim();
+
+  if(!nome||!v1||!v2||!v3){alert('Preencha todos os campos.');return;}
+
+  var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
+  var data = {nome:nome, v1:v1, v2:v2, v3:v3, expira:expira};
+  var encoded = encodeURIComponent(btoa(JSON.stringify(data)));
+
+  // Base URL da proposta — ajuste para seu domínio quando publicar
+  var base = window.location.origin + '/proposta.html';
+  var link = base + '?d=' + encoded;
+
+  document.getElementById('linkUrl').textContent = link;
+  document.getElementById('linkResult').classList.add('show');
+  document.getElementById('copyBtn').textContent = 'Copiar link';
+  document.getElementById('copyBtn').classList.remove('copied');
+}
+
+function copiarLink(){
+  var url = document.getElementById('linkUrl').textContent;
+  navigator.clipboard.writeText(url).then(function(){
+    var btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copiar link';btn.classList.remove('copied');},2000);
+  });
+}
+</script>
+</body>
+</html>

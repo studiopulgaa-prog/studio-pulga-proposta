@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Pulga — Proposta</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4EADD; --bg2: #EAD8C5; --bg3: #D9C4AC;
+  --br: #6E2C14; --br2: #5A2210;
+  --border: rgba(110,44,20,0.15);
+  --gray: rgba(110,44,20,0.55); --gray2: rgba(110,44,20,0.35);
+  --faint: rgba(110,44,20,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--br);overflow-x:hidden;}
+
+/* EXPIRED */
+.expired-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:24px;}
+.expired-screen.show{display:flex;}
+.expired-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(32px,8vw,64px);color:var(--br);letter-spacing:-0.03em;}
+.expired-sub{font-size:15px;color:var(--gray);max-width:380px;line-height:1.7;}
+.expired-btn{margin-top:8px;padding:14px 36px;background:var(--br);color:#F4EADD;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none;display:inline-block;}
+
+/* TIMER BAR */
+.timer-bar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--br);color:#F4EADD;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px clamp(16px,4vw,40px);
+}
+.timer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:15px;letter-spacing:-0.02em;}
+.timer-right{display:flex;align-items:center;gap:12px;}
+.timer-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.6);}
+.timer-count{font-family:'League Spartan',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;}
+.timer-count.urgent{color:#FFB347;}
+
+/* HERO */
+.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding-top:48px;}
+.hero-photo{position:absolute;inset:0;background:url('https://studio-pulga.vercel.app/preview__2_.webp') center/cover no-repeat;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(110,44,20,0.85) 0%,rgba(30,8,2,0.4) 50%,transparent 100%);}
+.hero-content{position:relative;z-index:10;padding:clamp(40px,8vw,80px) clamp(24px,6vw,80px);width:100%;}
+.hero-tag{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(244,234,221,0.6);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.hero-tag::before{content:'';width:20px;height:1px;background:rgba(244,234,221,0.4);}
+.hero-name{font-family:'League Spartan',sans-serif;font-weight:300;font-size:clamp(14px,3vw,20px);color:rgba(244,234,221,0.7);letter-spacing:0.04em;margin-bottom:4px;}
+.hero-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(48px,10vw,110px);color:#F4EADD;line-height:0.88;letter-spacing:-0.03em;margin-bottom:20px;}
+.hero-title em{font-style:italic;font-weight:300;color:rgba(244,234,221,0.6);}
+.hero-sub{font-size:clamp(14px,2vw,17px);font-weight:300;color:rgba(244,234,221,0.7);max-width:500px;line-height:1.7;}
+
+/* QUOTE SECTION */
+.quote-section{padding:clamp(60px,10vw,120px) clamp(24px,6vw,80px);text-align:center;background:var(--bg2);}
+.quote-text{font-family:'League Spartan',sans-serif;font-style:italic;font-weight:300;font-size:clamp(28px,6vw,64px);color:var(--br);letter-spacing:-0.02em;line-height:1.1;}
+.quote-text span{font-weight:900;font-style:normal;}
+
+/* EQUIPE SECTION */
+.equipe-section{padding:clamp(60px,8vw,100px) clamp(24px,6vw,80px);max-width:1100px;margin:0 auto;}
+.section-tag{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gray2);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-tag::before{content:'';width:20px;height:1.5px;background:var(--gray2);}
+.section-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(28px,5vw,52px);line-height:0.95;letter-spacing:-0.02em;margin-bottom:40px;}
+.equipe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.equipe-card{background:rgba(255,255,255,0.6);border:1px solid var(--border);border-radius:16px;padding:24px 20px;}
+.equipe-num{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray2);margin-bottom:10px;}
+.equipe-role{font-family:'League Spartan',sans-serif;font-weight:700;font-size:17px;letter-spacing:-0.01em;margin-bottom:8px;}
+.equipe-desc{font-size:13px;color:var(--gray);line-height:1.7;font-weight:300;}
+
+/* PLANOS */
+.planos-section{padding:clamp(60px,8vw,100px) clamp(24px,6vw,80px);background:var(--bg2);}
+.planos-inner{max-width:1100px;margin:0 auto;}
+.planos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:0;}
+.plano{background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:22px;padding:32px 26px;position:relative;transition:all 0.3s ease;}
+.plano:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(110,44,20,0.12);}
+.plano.destaque{background:var(--br);border-color:var(--br);color:#F4EADD;}
+.badge-pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#F4EADD;color:var(--br);border:1.5px solid var(--br);padding:4px 16px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;}
+.plano-num{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray2);margin-bottom:12px;}
+.plano.destaque .plano-num{color:rgba(244,234,221,0.5);}
+.plano-nome{font-family:'League Spartan',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;margin-bottom:6px;}
+.plano-subtitle{font-size:12px;color:var(--gray);margin-bottom:22px;font-weight:300;}
+.plano.destaque .plano-subtitle{color:rgba(244,234,221,0.6);}
+.plano-valor{font-family:'League Spartan',sans-serif;font-weight:900;font-size:38px;letter-spacing:-0.03em;line-height:1;margin-bottom:4px;}
+.plano-valor sup{font-size:18px;font-weight:400;}
+.plano-periodo{font-size:11px;color:var(--gray2);margin-bottom:24px;}
+.plano.destaque .plano-periodo{color:rgba(244,234,221,0.45);}
+
+/* CTA BUTTON */
+.plano-cta{
+  display:block;width:100%;padding:14px;border-radius:12px;border:none;
+  background:var(--br);color:#F4EADD;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;text-align:center;text-decoration:none;
+  transition:all 0.25s ease;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.plano.destaque .plano-cta{background:#F4EADD;color:var(--br);}
+.plano-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(110,44,20,0.25);}
+.plano-cta .cta-default{transition:opacity 0.2s;}
+.plano-cta .cta-hover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;font-weight:800;}
+.plano-cta:hover .cta-default{opacity:0;}
+.plano-cta:hover .cta-hover{opacity:1;}
+
+.divider-line{height:1px;background:var(--border);margin-bottom:20px;}
+.plano.destaque .divider-line{background:rgba(244,234,221,0.15);}
+.items-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray2);margin-bottom:12px;}
+.plano.destaque .items-label{color:rgba(244,234,221,0.45);}
+.item-linha{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12.5px;color:var(--gray);line-height:1.4;}
+.plano.destaque .item-linha{color:rgba(244,234,221,0.8);}
+.item-check{width:14px;height:14px;border-radius:50%;background:rgba(110,44,20,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.plano.destaque .item-check{background:rgba(244,234,221,0.2);}
+.item-check svg{width:8px;height:8px;}
+.item-nao{color:var(--gray2);opacity:0.5;text-decoration:line-through;}
+.plano.destaque .item-nao{color:rgba(244,234,221,0.35);}
+
+/* FOOTER PROPOSTA */
+.footer-proposta{padding:48px clamp(24px,6vw,80px);text-align:center;border-top:1px solid var(--border);}
+.footer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;margin-bottom:6px;}
+.footer-sub{font-size:12px;color:var(--gray2);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .equipe-grid{grid-template-columns:1fr 1fr;}
+  .planos-grid{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .equipe-grid{grid-template-columns:1fr;}
+  .timer-label{display:none;}
+}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1),transform 0.7s cubic-bezier(0.16,1,0.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:0.1s;}.reveal-d2{transition-delay:0.2s;}.reveal-d3{transition-delay:0.3s;}
+</style>
+</head>
+<body>
+
+<!-- EXPIRED SCREEN -->
+<div class="expired-screen" id="expiredScreen">
+  <div style="font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(40px,10vw,80px);color:var(--br);letter-spacing:-0.03em;line-height:0.9;">Esta<br>proposta<br><em style="font-weight:300;font-style:italic;color:var(--gray)">expirou.</em></div>
+  <p class="expired-sub">O prazo desta proposta foi encerrado. Entre em contato para renovar ou receber uma nova proposta personalizada.</p>
+  <a href="https://wa.me/5513996057099?text=Olá! Gostaria de renovar a proposta do Studio Pulga." class="expired-btn" target="_blank">Falar com a equipe →</a>
+</div>
+
+<!-- TIMER BAR -->
+<div class="timer-bar">
+  <div class="timer-logo">STUDIO PULGA</div>
+  <div class="timer-right">
+    <div class="timer-label">Proposta expira em</div>
+    <div class="timer-count" id="timerCount">--:--:--</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-photo"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content reveal">
+    <div class="hero-tag">Proposta exclusiva</div>
+    <div class="hero-name" id="heroName">Olá, cliente</div>
+    <h1 class="hero-title">feito<br><em>pra você.</em></h1>
+    <p class="hero-sub">Esta proposta foi preparada especialmente para você após nossa conversa. Ela é válida pelo período indicado acima.</p>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section reveal">
+  <div class="quote-text">// <span>can I put it</span> in a pan?</div>
+</div>
+
+<!-- EQUIPE -->
+<section>
+  <div class="equipe-section">
+    <div class="reveal">
+      <div class="section-tag">Com a gente</div>
+      <h2 class="section-title">Sua empresa contará com<br>uma equipe completa.</h2>
+    </div>
+    <div class="equipe-grid">
+      <div class="equipe-card reveal reveal-d1">
+        <div class="equipe-num">01</div>
+        <div class="equipe-role">Filmmaker Mobile</div>
+        <div class="equipe-desc">Registros rápidos e com qualidade gravados com celular — mais orgânicos e naturais para as redes sociais.</div>
+      </div>
+      <div class="equipe-card reveal reveal-d2">
+        <div class="equipe-num">02</div>
+        <div class="equipe-role">Editor de Vídeo e Foto</div>
+        <div class="equipe-desc">Edição e pós-produção profissional de todos os conteúdos captados com o olhar do Studio.</div>
+      </div>
+      <div class="equipe-card reveal reveal-d3">
+        <div class="equipe-num">03</div>
+        <div class="equipe-role">Social Media</div>
+        <div class="equipe-desc">Responsável pelo planejamento, criação e gestão completa das redes sociais da sua marca.</div>
+      </div>
+      <div class="equipe-card reveal reveal-d1">
+        <div class="equipe-num">04</div>
+        <div class="equipe-role">Gestor de Tráfego</div>
+        <div class="equipe-desc">Campanhas pagas no Meta e Google para atrair leads qualificados com foco em resultado real.</div>
+      </div>
+      <div class="equipe-card reveal reveal-d2">
+        <div class="equipe-num">05</div>
+        <div class="equipe-role">Drone</div>
+        <div class="equipe-desc">Vídeos e imagens aéreas para projetos e obras — perspectiva única que eleva a percepção da sua marca.</div>
+      </div>
+      <div class="equipe-card reveal reveal-d3">
+        <div class="equipe-num">06</div>
+        <div class="equipe-role">Designer Gráfico</div>
+        <div class="equipe-desc">Criação de materiais digitais e impressos com identidade visual alinhada à essência da sua marca.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="planos-section">
+  <div class="planos-inner">
+    <div class="reveal">
+      <div class="section-tag">Escolha seu pacote</div>
+      <h2 class="section-title" style="margin-bottom:40px">Planos mensais</h2>
+    </div>
+    <div class="planos-grid">
+
+      <!-- PLANO 1 -->
+      <div class="plano reveal">
+        <div class="plano-num">1º Pacote</div>
+        <div class="plano-nome">Pensado na sua marca</div>
+        <div class="plano-subtitle">Para quem quer construir presença consistente</div>
+        <div class="plano-valor" id="valor1"><sup>R$</sup><span id="v1">—</span></div>
+        <div class="plano-periodo">por mês</div>
+        <a class="plano-cta" id="cta1" href="#" onclick="fecharPlano(event,1)">
+          <span class="cta-default">Escolher Plano 1</span>
+          <span class="cta-hover">Fechar agora ↗</span>
+        </a>
+        <div class="divider-line"></div>
+        <div class="items-label">Incluso</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories diários (até 4 por dia)</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Acompanhamento de repost</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diálogo constante com o cliente</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Reunião mensal de resultados e alinhamento</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação pontual com o público</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de postagens</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Relatório mensal de métricas</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Gestor de marca para curadoria visual</div>
+        <div class="divider-line" style="margin-top:14px"></div>
+        <div class="items-label">Não incluso</div>
+        <div class="item-linha item-nao">Análise semanal de desempenho</div>
+        <div class="item-linha item-nao">Diária mensal de captação</div>
+        <div class="item-linha item-nao">Postagens semanais no feed</div>
+        <div class="item-linha item-nao">Stories ilimitados · Drone · Design gráfico</div>
+      </div>
+
+      <!-- PLANO 2 -->
+      <div class="plano destaque reveal reveal-d1">
+        <div class="badge-pop">Mais escolhido</div>
+        <div class="plano-num">2º Pacote</div>
+        <div class="plano-nome">Sua gestão</div>
+        <div class="plano-subtitle">Gestão completa com diária mensal inclusa</div>
+        <div class="plano-valor"><sup>R$</sup><span id="v2">—</span></div>
+        <div class="plano-periodo">por mês</div>
+        <a class="plano-cta" id="cta2" href="#" onclick="fecharPlano(event,2)">
+          <span class="cta-default">Escolher Plano 2</span>
+          <span class="cta-hover">Fechar agora ↗</span>
+        </a>
+        <div class="divider-line"></div>
+        <div class="items-label">Tudo do Plano 1, mais:</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Análise semanal de desempenho</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Postagens semanais no feed</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Uma diária mensal de captação</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação com o público + repost</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de conteúdos via app</div>
+        <div class="divider-line" style="margin-top:14px"></div>
+        <div class="items-label">Não incluso</div>
+        <div class="item-linha item-nao">Estudo de marca e rebranding</div>
+        <div class="item-linha item-nao">Stories ilimitados · Drone · Design gráfico</div>
+        <div class="item-linha item-nao">Diárias autônomas em escritório/obra</div>
+      </div>
+
+      <!-- PLANO 3 -->
+      <div class="plano reveal reveal-d2">
+        <div class="plano-num">3º Pacote</div>
+        <div class="plano-nome">O mais completo</div>
+        <div class="plano-subtitle">Ideal para quem quer presença total</div>
+        <div class="plano-valor"><sup>R$</sup><span id="v3">—</span></div>
+        <div class="plano-periodo">por mês</div>
+        <a class="plano-cta" id="cta3" href="#" onclick="fecharPlano(event,3)">
+          <span class="cta-default">Escolher Plano 3</span>
+          <span class="cta-hover">Fechar agora ↗</span>
+        </a>
+        <div class="divider-line"></div>
+        <div class="items-label">Tudo do Plano 2, mais:</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Estudo de marca e rebranding completo</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories ilimitados</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Cobertura com drone</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria e prova social</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Designer gráfico incluso</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Fotos oficiais de projetos entregues</div>
+        <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-proposta">
+  <div class="footer-logo">STUDIO PULGA</div>
+  <div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div>
+</footer>
+
+<script>
+// ── DADOS DA PROPOSTA (injetados pelo admin) ──
+var PROPOSTA = null;
+
+// Tenta carregar da URL
+function getParam(k){var u=new URLSearchParams(window.location.search);return u.get(k);}
+
+function loadProposta(){
+  try{
+    var data = getParam('d');
+    if(data){
+      PROPOSTA = JSON.parse(atob(decodeURIComponent(data)));
+    }
+  }catch(e){}
+  
+  if(!PROPOSTA){
+    // Modo demo
+    PROPOSTA = {
+      nome: 'cliente',
+      v1: '2.690',
+      v2: '3.690',
+      v3: '3.990',
+      expira: Date.now() + (5 * 24 * 60 * 60 * 1000)
+    };
+  }
+  
+  // Aplicar dados
+  document.getElementById('heroName').textContent = 'Olá, ' + PROPOSTA.nome + '.';
+  document.getElementById('v1').textContent = PROPOSTA.v1;
+  document.getElementById('v2').textContent = PROPOSTA.v2;
+  document.getElementById('v3').textContent = PROPOSTA.v3;
+  
+  // Verificar expiração
+  if(Date.now() > PROPOSTA.expira){
+    document.getElementById('expiredScreen').classList.add('show');
+    return;
+  }
+  
+  startTimer();
+}
+
+function startTimer(){
+  function tick(){
+    var diff = PROPOSTA.expira - Date.now();
+    if(diff <= 0){
+      document.getElementById('expiredScreen').classList.add('show');
+      return;
+    }
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    var txt = (d > 0 ? d+'d ' : '') + pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
+    var el = document.getElementById('timerCount');
+    el.textContent = txt;
+    el.classList.toggle('urgent', diff < 86400000);
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+function pad(n){return n.toString().padStart(2,'0');}
+
+function fecharPlano(e, num){
+  e.preventDefault();
+  var planos = {1:'1º Pacote — pensado na sua marca',2:'2º Pacote — sua gestão',3:'3º Pacote — o mais completo'};
+  var valores = {1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
+  var msg = 'Olá! Gostaria de fechar o '+planos[num]+' (R$'+valores[num]+'/mês). Podemos avançar?';
+  window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
+}
+
+// Scroll reveal
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
+
+// Init
+loadProposta();
+</script>
+</body>
+</html>
