@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,"script",
+"https://connect.facebook.net/en_US/fbevents.js");
+fbq("init", "1973272740000551");
+fbq("track", "PageView");
+fbq("track", "ViewContent", {content_name: "Proposta Studio Pulga"});
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1973272740000551&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studio Pulga — Proposta</title>
@@ -375,7 +393,8 @@ function fecharPlano(e, num){
   var planos = {1:'1º Pacote — pensado na sua marca',2:'2º Pacote — sua gestão',3:'3º Pacote — o mais completo'};
   var valores = {1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
   var msg = 'Olá! Gostaria de fechar o '+planos[num]+' (R$'+valores[num]+'/mês). Podemos avançar?';
-  window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
+  if(window.fbq){fbq("track", "Lead", {content_name: "Fechou Plano "+num});}
+window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
 }
 
 // Scroll reveal
