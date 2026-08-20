@@ -1,37 +1,33 @@
 # Studio Pulga — Sistema de Propostas
 
-## STATUS
-Arquivos prontos e no repositório. Falta conectar ao Vercel.
+**URL de Produção:** https://studio-pulga-proposta.vercel.app
 
-## COMO ACESSAR APÓS DEPLOY
-- **Admin:** `studio-pulga-proposta.vercel.app/admin.html`
-- **Senha admin:** Studio2801
-- **Proposta gerada:** URL com dados em base64 apontando para `proposta.html`
+## Como Funciona
 
-## PRÓXIMO PASSO NO VERCEL
-1. vercel.com → projeto `studio-pulga-proposta` → Settings → Git → GitHub
-2. Clicar em "Adjust GitHub App Permissions"
-3. Adicionar repositório `studio-pulga-proposta`
-4. Voltar e conectar
-5. O Vercel fará deploy automático
+Sistema de propostas personalizadas para clientes da Studio Pulga.
 
-## CONFIGURAÇÕES DO PROJETO VERCEL
-- Framework: Other
-- Build Command: (vazio)
-- Output Directory: . (ponto)
+### Admin
+- URL: `/admin.html`
+- Senha: `Studio2801`
+- Preenc he dados do cliente e gere um link único que expira após os dias configurados
 
-## PIXEL META
-- ID: 1973272740000551
-- Instalado: index.html e orcamento.html do site principal
-- Pendente: instalar na proposta.html após deploy
+### Proposta
+- Link único recebido pelo cliente
+- Timer regressivo mostrando quantos dias/horas/minutos faltam
+- Se expirar: tela bloqueada com opção de solicitar nova proposta via WhatsApp
+- Botões levam direto ao WhatsApp
 
-## SITE PRINCIPAL
-- URL: studio-pulga.vercel.app
-- Repo: studiopulgaa-prog/studio-pulga
-- Pendente: adicionar +10 fotos ao site home
-- Pendente: domínio studiopulga.com.br apontar para Vercel
-- Pendente: Brevo SMTP para envio @studiopulga.com.br pelo Gmail
+## Como Editar
 
-## TOKENS — REVOGAR IMEDIATAMENTE
-Todos os tokens gerados nessa sessão devem ser revogados em:
-github.com/settings/tokens
+1. Clone o repositório
+2. Edite os arquivos (admin.html, proposta.html, etc)
+3. Faça commit: `git add . && git commit -m "sua mensagem" && git push`
+4. Vercel detecta e faz deploy automaticamente em 2-3 minutos
+
+## Chave de Edição Rápida
+
+- **Mudar Senha:** Procure em admin.html: `var SENHA = 'Studio2801';`
+- **Mudar WhatsApp:** Procure `5513996057099` em ambos arquivos
+- **Mudar Valores Planos:** Procure em proposta.html: `v1: '2.490'`, `v2: '2.690'`, `v3: '2.990'`
+- **Mudar Cores:** Creme `#F4EADD` e Marrom `#6E2C14`
+

@@ -1,0 +1,10 @@
+{
+  "name": "studio-pulga-proposta",
+  "version": "1.0.0",
+  "description": "Sistema de propostas personalizadas para clientes Studio Pulga",
+  "scripts": {
+    "dev": "echo 'Open index.html in browser'"
+  },
+  "keywords": ["propostas", "studio", "pulga"],
+  "author": "Studio Pulga"
+}
