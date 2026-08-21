@@ -243,6 +243,22 @@
       border-color: var(--br);
       color: #F4EADD;
     }
+    .badge-destaque {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #F4EADD;
+      color: var(--br);
+      border: 1.5px solid var(--br);
+      padding: 4px 16px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
     .plano-num {
       font-size: 10px;
       font-weight: 700;
@@ -305,6 +321,7 @@
       transition: all 0.2s;
       text-decoration: none;
       text-align: center;
+      margin-bottom: 22px;
     }
     .plano.destaque .plano-cta {
       border-color: #F4EADD;
@@ -328,6 +345,53 @@
     }
     .plano-cta:hover .cta-hover {
       display: inline;
+    }
+    
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 22px 0;
+    }
+    .plano.destaque .divider {
+      background: rgba(244, 234, 221, 0.15);
+    }
+    
+    .items-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray2);
+      margin-bottom: 14px;
+    }
+    .plano.destaque .items-label {
+      color: rgba(244, 234, 221, 0.5);
+    }
+    
+    .item-linha {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .plano.destaque .item-linha {
+      color: rgba(244, 234, 221, 0.8);
+    }
+    .item-check {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .item-check svg {
+      width: 100%;
+      height: 100%;
     }
     
     .footer-proposta {
@@ -366,7 +430,7 @@
   <div class="timer-bar">
     <div class="timer-logo">STUDIO PULGA</div>
     <div class="timer-right">
-      <div class="timer-label">Validade</div>
+      <div class="timer-label">Proposta Expira em</div>
       <div class="timer-count" id="timerCount">—</div>
     </div>
   </div>
@@ -390,39 +454,77 @@
     <div class="planos-inner">
       <div class="planos-grid">
         <div class="plano">
-          <div class="plano-num">PACOTE 1</div>
-          <div class="plano-nome">Marca</div>
-          <div class="plano-subtitle">Presença focada no seu nicho</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v1">—</span></div>
+          <div class="plano-num">1º PACOTE</div>
+          <div class="plano-nome">Pensado na sua marca</div>
+          <div class="plano-subtitle">Para quem quer construir presença consistente</div>
+          <div class="plano-valor"><sup>R$</sup><span id="v1">2.690</span></div>
           <div class="plano-periodo">por mês</div>
           <a class="plano-cta" href="#" onclick="fecharPlano(event, 1)">
             <span class="cta-default">Escolher Plano 1</span>
             <span class="cta-hover">Fechar agora ↗</span>
           </a>
+          <div class="divider"></div>
+          <div class="items-label">Incluso</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories diários (até 4 por dia)</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Acompanhamento de repost</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diálogo constante com o cliente</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Reunião mensal de resultados e alinhamento</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação pontual com o público</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de postagens</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Relatório mensal de métricas</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Gestor de marca para curadoria visual</div>
+          <div class="items-label">Não incluso</div>
+          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Análise semanal de desempenho</div>
+          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Diário mensal de captação</div>
+          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Postagens semanais no feed</div>
         </div>
         
         <div class="plano destaque">
-          <div class="plano-num">PACOTE 2</div>
-          <div class="plano-nome">Gestor</div>
-          <div class="plano-subtitle">Sua gestão profissional</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v2">—</span></div>
+          <div class="badge-destaque">MAIS ESCOLHIDO</div>
+          <div class="plano-num">2º PACOTE</div>
+          <div class="plano-nome">Sua gestão</div>
+          <div class="plano-subtitle">Gestão completa com diária mensal inclusa</div>
+          <div class="plano-valor"><sup>R$</sup><span id="v2">3.690</span></div>
           <div class="plano-periodo">por mês</div>
           <a class="plano-cta" href="#" onclick="fecharPlano(event, 2)">
             <span class="cta-default">Escolher Plano 2</span>
             <span class="cta-hover">Fechar agora ↗</span>
           </a>
+          <div class="divider"></div>
+          <div class="items-label">TUDO DO PLANO 1, MAIS:</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Análise semanal de desempenho</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Postagens semanais no feed</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Uma diária mensal de captação</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação com o público + repost</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de conteúdos via app</div>
+          <div class="items-label">NÃO INCLUSO</div>
+          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Estudo de marca e rebranding</div>
+          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Stories ilimitados - Drone - Design gráfico</div>
+          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Diárias autônomas em escritório/obra</div>
         </div>
         
         <div class="plano">
-          <div class="plano-num">PACOTE 3</div>
-          <div class="plano-nome">Completo</div>
+          <div class="plano-num">3º PACOTE</div>
+          <div class="plano-nome">O mais completo</div>
           <div class="plano-subtitle">Ideal para quem quer presença total</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v3">—</span></div>
+          <div class="plano-valor"><sup>R$</sup><span id="v3">3.990</span></div>
           <div class="plano-periodo">por mês</div>
           <a class="plano-cta" href="#" onclick="fecharPlano(event, 3)">
             <span class="cta-default">Escolher Plano 3</span>
             <span class="cta-hover">Fechar agora ↗</span>
           </a>
+          <div class="divider"></div>
+          <div class="items-label">TUDO DO PLANO 2, MAIS:</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Estudo de marca e rebranding completo</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories ilimitados</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Cobertura com drone</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria e prova social</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Designer gráfico incluso</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Fotos oficiais de projetos entregues</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
         </div>
       </div>
     </div>
@@ -452,9 +554,9 @@
       if (!PROPOSTA) {
         PROPOSTA = {
           nome: 'cliente',
-          v1: '2.490',
-          v2: '2.690',
-          v3: '2.990',
+          v1: '2.690',
+          v2: '3.690',
+          v3: '3.990',
           expira: Date.now() + (5 * 24 * 60 * 60 * 1000)
         };
       }
@@ -499,9 +601,9 @@
     function fecharPlano(e, num) {
       e.preventDefault();
       var planos = {
-        1: '1º Pacote — Marca',
-        2: '2º Pacote — Gestor',
-        3: '3º Pacote — Completo'
+        1: '1º Pacote — Pensado na sua marca',
+        2: '2º Pacote — Sua gestão',
+        3: '3º Pacote — O mais completo'
       };
       var valores = {1: PROPOSTA.v1, 2: PROPOSTA.v2, 3: PROPOSTA.v3};
       var msg = 'Olá! Gostaria de fechar o ' + planos[num] + ' (R$' + valores[num] + '/mês). Podemos avançar?';
