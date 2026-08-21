@@ -205,59 +205,68 @@
     }
     
     .quote-section {
-      padding: clamp(60px, 10vw, 120px) clamp(24px, 6vw, 80px);
+      padding: clamp(80px, 12vw, 140px) clamp(24px, 6vw, 80px);
       text-align: center;
       background: var(--bg2);
     }
     .quote-wrapper {
       animation: fadeInUp 1s ease 0.3s backwards;
     }
-    .quote-symbol {
-      font-size: clamp(24px, 5vw, 56px);
-      font-weight: 900;
-      color: var(--br);
-      letter-spacing: -0.04em;
-      margin-bottom: 10px;
-    }
     .quote-text {
       font-family: 'League Spartan', sans-serif;
-      font-style: italic;
       font-weight: 300;
-      font-size: clamp(28px, 6vw, 64px);
+      font-size: clamp(40px, 8vw, 80px);
       color: var(--br);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
       line-height: 1.1;
     }
-    .quote-text span {
+    .quote-text strong {
       font-weight: 900;
       font-style: normal;
     }
+    .quote-text em {
+      font-weight: 300;
+      font-style: italic;
+    }
     
     .services-section {
-      padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px);
-      background: var(--bg2);
+      padding: clamp(80px, 10vw, 120px) clamp(24px, 6vw, 80px);
+      background: var(--bg);
     }
     .services-inner {
       max-width: 1200px;
       margin: 0 auto;
     }
+    .services-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      animation: fadeInUp 1s ease 0.4s backwards;
+    }
+    .services-divider::before {
+      content: '';
+      width: 30px;
+      height: 1px;
+      background: var(--gray2);
+    }
+    .services-divider-text {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gray2);
+    }
     .services-title {
       font-family: 'League Spartan', sans-serif;
       font-weight: 900;
-      font-size: clamp(28px, 5vw, 48px);
+      font-size: clamp(36px, 6vw, 56px);
       color: var(--br);
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
-      text-align: left;
-      animation: fadeInUp 1s ease 0.4s backwards;
-    }
-    .services-subtitle {
-      font-size: 15px;
-      color: var(--gray);
+      letter-spacing: -0.03em;
       margin-bottom: 48px;
-      max-width: 600px;
       text-align: left;
       animation: fadeInUp 1s ease 0.45s backwards;
+      line-height: 1.1;
     }
     .services-grid {
       display: grid;
@@ -312,6 +321,16 @@
     .planos-section {
       padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px);
       background: var(--bg2);
+    }
+    .planos-section .planos-title {
+      font-family: 'League Spartan', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 5vw, 42px);
+      color: var(--br);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-align: center;
+      animation: fadeInUp 1s ease 0.75s backwards;
     }
     .planos-inner {
       max-width: 1100px;
@@ -541,15 +560,16 @@
   
   <section class="quote-section">
     <div class="quote-wrapper">
-      <div class="quote-symbol">//</div>
-      <div class="quote-text">can I put it <em>in a pan?</em></div>
+      <div class="quote-text">// <strong>can I put it</strong> <em>in a pan?</em></div>
     </div>
   </section>
   
   <section class="services-section">
     <div class="services-inner">
-      <h2 class="services-title">Sua empresa contará com</h2>
-      <p class="services-subtitle">uma equipe completa.</p>
+      <div class="services-divider">
+        <span class="services-divider-text">COM A GENTE</span>
+      </div>
+      <h2 class="services-title">Sua empresa contará com<br>uma equipe completa.</h2>
       
       <div class="services-grid">
         <div class="service-card">
@@ -593,6 +613,7 @@
   
   <section class="planos-section">
     <div class="planos-inner">
+      <h2 class="planos-title">Planos mensais</h2>
       <div class="planos-grid">
         <div class="plano">
           <div class="plano-num">1º PACOTE</div>
