@@ -203,6 +203,14 @@
       max-width: 500px;
       line-height: 1.7;
     }
+    .hero-desc {
+      font-size: clamp(14px, 2vw, 17px);
+      font-weight: 300;
+      color: rgba(244, 234, 221, 0.7);
+      max-width: 600px;
+      line-height: 1.7;
+      margin-top: 24px;
+    }
     
     .quote-section {
       padding: clamp(50px, 8vw, 80px) clamp(24px, 6vw, 80px);
@@ -484,9 +492,21 @@
       text-transform: uppercase;
       color: var(--gray2);
       margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .items-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--gray2);
     }
     .plano.destaque .items-label {
       color: rgba(244, 234, 221, 0.5);
+    }
+    .plano.destaque .items-label::before {
+      background: rgba(244, 234, 221, 0.5);
     }
     
     .item-linha {
@@ -503,12 +523,12 @@
     }
     .item-check {
       flex-shrink: 0;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 2px;
+      margin-top: 1px;
     }
     .item-check svg {
       width: 100%;
@@ -567,6 +587,7 @@
       <div class="hero-name" id="heroName">Olá, cliente.</div>
       <h1 class="hero-title">Feito pra <em>você</em></h1>
       <p class="hero-sub">// can I put it in a pan?</p>
+      <p class="hero-desc">Esta proposta foi preparada especialmente para você após nossa conversa. Ela é válida pelo período indicado acima.</p>
     </div>
   </section>
   
@@ -639,15 +660,16 @@
           </a>
           <div class="divider"></div>
           <div class="items-label">Incluso</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories diários (até 4 por dia)</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Acompanhamento de repost</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diálogo constante com o cliente</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Reunião mensal de resultados e alinhamento</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação pontual com o público</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de postagens</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Relatório mensal de métricas</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Gestor de marca para curadoria visual</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories diários (até 4 por dia)</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Acompanhamento de repost</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diálogo constante com o cliente</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Reunião mensal de resultados e alinhamento</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Interação pontual com o público</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de postagens</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Relatório mensal de métricas</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Gestor de marca para curadoria visual</div>
+          <div class="divider"></div>
           <div class="items-label">Não incluso</div>
           <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Análise semanal de desempenho</div>
           <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Diário mensal de captação</div>
@@ -666,14 +688,15 @@
             <span class="cta-hover">Fechar agora ↗</span>
           </a>
           <div class="divider"></div>
-          <div class="items-label">TUDO DO PLANO 1, MAIS:</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Análise semanal de desempenho</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Postagens semanais no feed</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Uma diária mensal de captação</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Interação com o público + repost</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#F4EADD" stroke-width="1.5" stroke-linecap="round"/></svg></div>Calendário mensal de conteúdos via app</div>
-          <div class="items-label">NÃO INCLUSO</div>
+          <div class="items-label">Tudo do plano 1, mais:</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Análise semanal de desempenho</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Postagens semanais no feed</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Uma diária mensal de captação</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Interação com o público + repost</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de conteúdos via app</div>
+          <div class="divider"></div>
+          <div class="items-label">Não incluso</div>
           <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Estudo de marca e rebranding</div>
           <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Stories ilimitados - Drone - Design gráfico</div>
           <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Diárias autônomas em escritório/obra</div>
@@ -690,15 +713,15 @@
             <span class="cta-hover">Fechar agora ↗</span>
           </a>
           <div class="divider"></div>
-          <div class="items-label">TUDO DO PLANO 2, MAIS:</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Estudo de marca e rebranding completo</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Stories ilimitados</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Cobertura com drone</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Curadoria e prova social</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Designer gráfico incluso</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Fotos oficiais de projetos entregues</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="#6E2C14" stroke-width="1.5" stroke-linecap="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
+          <div class="items-label">Tudo do plano 2, mais:</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Estudo de marca e rebranding completo</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories ilimitados</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cobertura com drone</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria e prova social</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Designer gráfico incluso</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Fotos oficiais de projetos entregues</div>
+          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
         </div>
       </div>
     </div>
