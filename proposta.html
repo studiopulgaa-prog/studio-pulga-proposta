@@ -8,7 +8,6 @@
     fbq("track", "ViewContent", {content_name: "Proposta Studio Pulga"});
   </script>
   <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1973272740000551&ev=PageView&noscript=1"/></noscript>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studio Pulga — Proposta</title>
@@ -22,544 +21,149 @@
       --gray: rgba(110, 44, 20, 0.55);
       --gray2: rgba(110, 44, 20, 0.35);
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      background: var(--bg);
-      font-family: 'Inter', sans-serif;
-      color: var(--br);
-      overflow-x: hidden;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--br); overflow-x: hidden; }
+
     .expired-screen {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 16px;
-      text-align: center;
-      padding: 24px;
+      display: none; position: fixed; inset: 0; background: var(--bg);
+      z-index: 9999; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px; text-align: center; padding: 24px;
     }
-    .expired-screen.show {
-      display: flex;
-    }
-    .expired-title {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: clamp(32px, 8vw, 64px);
-      color: var(--br);
-      letter-spacing: -0.03em;
-    }
-    .expired-sub {
-      font-size: 15px;
-      color: var(--gray);
-      max-width: 380px;
-      line-height: 1.7;
-    }
-    .expired-btn {
-      margin-top: 8px;
-      padding: 14px 36px;
-      background: var(--br);
-      color: #F4EADD;
-      border: none;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      text-decoration: none;
-      display: inline-block;
-    }
-    
+    .expired-screen.show { display: flex; }
+    .expired-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(32px, 8vw, 64px); color: var(--br); letter-spacing: -0.03em; }
+    .expired-sub { font-size: 15px; color: var(--gray); max-width: 380px; line-height: 1.7; }
+    .expired-btn { margin-top: 8px; padding: 14px 36px; background: var(--br); color: #F4EADD; border: none; border-radius: 50px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; display: inline-block; }
+
     .timer-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-      background: var(--br);
-      color: #F4EADD;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: var(--br); color: #F4EADD;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 10px clamp(16px, 4vw, 40px);
     }
-    .timer-logo {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: -0.02em;
-    }
-    .timer-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .timer-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(244, 234, 221, 0.6);
-    }
-    .timer-count {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-    }
-    .timer-count.urgent {
-      color: #FFB347;
-    }
-    
+    .timer-logo { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 15px; letter-spacing: -0.02em; }
+    .timer-right { display: flex; align-items: center; gap: 12px; }
+    .timer-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(244,234,221,0.6); }
+    .timer-count { font-family: 'League Spartan', sans-serif; font-weight: 700; font-size: 18px; }
+    .timer-count.urgent { color: #FFB347; }
+
     .hero {
-      min-height: 100vh;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-end;
-      padding-top: 48px;
+      min-height: 100vh; position: relative; overflow: hidden;
+      display: flex; align-items: flex-end; padding-top: 48px;
     }
-    .hero-photo {
-      position: absolute;
-      inset: 0;
-      background: url('https://studio-pulga.vercel.app/preview__2_.webp') center/cover no-repeat;
-    }
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(110, 44, 20, 0.85) 0%, rgba(30, 8, 2, 0.4) 50%, transparent 100%);
-    }
-    .hero-content {
-      position: relative;
-      z-index: 10;
-      padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 80px);
-      width: 100%;
-      animation: fadeInUp 1s ease 0.2s backwards;
-    }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .hero-tag {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(244, 234, 221, 0.6);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .hero-tag::before {
-      content: '';
-      width: 20px;
-      height: 1px;
-      background: rgba(244, 234, 221, 0.4);
-    }
-    .hero-name {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 300;
-      font-size: clamp(14px, 3vw, 20px);
-      color: rgba(244, 234, 221, 0.7);
-      letter-spacing: 0.04em;
-      margin-bottom: 4px;
-    }
-    .hero-title {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: clamp(48px, 10vw, 110px);
-      color: #F4EADD;
-      line-height: 0.88;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-    }
-    .hero-title em {
-      font-style: italic;
-      font-weight: 300;
-      color: rgba(244, 234, 221, 0.6);
-    }
-    .hero-sub {
-      font-size: clamp(14px, 2vw, 17px);
-      font-weight: 300;
-      color: rgba(244, 234, 221, 0.7);
-      max-width: 500px;
-      line-height: 1.7;
-    }
-    .hero-desc {
-      font-size: clamp(14px, 2vw, 17px);
-      font-weight: 300;
-      color: rgba(244, 234, 221, 0.7);
-      max-width: 600px;
-      line-height: 1.7;
-      margin-top: 24px;
-    }
-    
-    .quote-section {
-      padding: clamp(50px, 8vw, 80px) clamp(24px, 6vw, 80px);
-      text-align: center;
-      background: var(--bg2);
-    }
-    .quote-wrapper {
-      animation: fadeInUp 1s ease 0.3s backwards;
-    }
-    .quote-text {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 300;
-      font-size: clamp(36px, 7vw, 72px);
-      color: var(--br);
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-    }
-    .quote-text strong {
-      font-weight: 900;
-      font-style: normal;
-    }
-    .quote-text em {
-      font-weight: 300;
-      font-style: italic;
-    }
-    
-    .services-section {
-      padding: clamp(80px, 10vw, 120px) clamp(24px, 6vw, 80px);
-      background: var(--bg);
-    }
-    .services-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .services-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      animation: fadeInUp 1s ease 0.4s backwards;
-    }
-    .services-divider::before {
-      content: '';
-      width: 30px;
-      height: 1px;
-      background: var(--gray2);
-    }
-    .services-divider-text {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gray2);
-    }
-    .services-title {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: clamp(32px, 5.5vw, 48px);
-      color: var(--br);
-      letter-spacing: -0.03em;
-      margin-bottom: 48px;
-      text-align: left;
-      animation: fadeInUp 1s ease 0.45s backwards;
-      line-height: 1.1;
-    }
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .service-card {
-      background: rgba(255, 255, 255, 0.8);
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 28px 24px;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-      cursor: pointer;
-      animation: fadeInUp 1s ease backwards;
-    }
+    .hero-photo { position: absolute; inset: 0; background: url('https://studio-pulga.vercel.app/preview__2_.webp') center/cover no-repeat; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(110,44,20,0.85) 0%, rgba(30,8,2,0.4) 50%, transparent 100%); }
+    .hero-content { position: relative; z-index: 10; padding: clamp(40px,8vw,80px) clamp(24px,6vw,80px); width: 100%; animation: fadeInUp 1s ease 0.2s backwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(244,234,221,0.6); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .hero-tag::before { content: ''; width: 20px; height: 1px; background: rgba(244,234,221,0.4); }
+    .hero-name { font-family: 'League Spartan', sans-serif; font-weight: 300; font-size: clamp(14px,3vw,20px); color: rgba(244,234,221,0.7); letter-spacing: 0.04em; margin-bottom: 4px; }
+    .hero-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(48px,10vw,110px); color: #F4EADD; line-height: 0.88; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .hero-title em { font-style: italic; font-weight: 300; color: rgba(244,234,221,0.6); }
+    .hero-desc { font-size: clamp(14px,2vw,17px); font-weight: 300; color: rgba(244,234,221,0.7); max-width: 600px; line-height: 1.7; margin-top: 24px; }
+
+    .quote-section { padding: clamp(50px,8vw,80px) clamp(24px,6vw,80px); text-align: center; background: var(--bg2); }
+    .quote-wrapper { animation: fadeInUp 1s ease 0.3s backwards; }
+    .quote-text { font-family: 'League Spartan', sans-serif; font-weight: 300; font-size: clamp(36px,7vw,72px); color: var(--br); letter-spacing: -0.03em; line-height: 1.1; }
+    .quote-text strong { font-weight: 900; font-style: normal; }
+    .quote-text em { font-weight: 300; font-style: italic; }
+
+    .services-section { padding: clamp(80px,10vw,120px) clamp(24px,6vw,80px); background: var(--bg); }
+    .services-inner { max-width: 1200px; margin: 0 auto; }
+    .services-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; animation: fadeInUp 1s ease 0.4s backwards; }
+    .services-divider::before { content: ''; width: 30px; height: 1px; background: var(--gray2); }
+    .services-divider-text { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray2); }
+    .services-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(32px,5.5vw,48px); color: var(--br); letter-spacing: -0.03em; margin-bottom: 48px; animation: fadeInUp 1s ease 0.45s backwards; line-height: 1.1; }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .service-card { background: rgba(255,255,255,0.8); border: 1.5px solid var(--border); border-radius: 20px; padding: 28px 24px; transition: all 0.3s cubic-bezier(0.23,1,0.320,1); cursor: pointer; animation: fadeInUp 1s ease backwards; }
     .service-card:nth-child(1) { animation-delay: 0.5s; }
     .service-card:nth-child(2) { animation-delay: 0.55s; }
     .service-card:nth-child(3) { animation-delay: 0.6s; }
     .service-card:nth-child(4) { animation-delay: 0.65s; }
     .service-card:nth-child(5) { animation-delay: 0.7s; }
     .service-card:nth-child(6) { animation-delay: 0.75s; }
-    
-    .service-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(110, 44, 20, 0.15);
-      border-color: var(--br);
-      background: rgba(255, 255, 255, 0.95);
-    }
-    .service-num {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gray2);
-      margin-bottom: 12px;
-    }
-    .service-name {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: -0.01em;
-      color: var(--br);
-      margin-bottom: 10px;
-    }
-    .service-desc {
-      font-size: 13px;
-      color: var(--gray);
-      line-height: 1.7;
-      font-weight: 300;
-    }
-    
-    .planos-section {
-      padding: clamp(60px, 8vw, 100px) clamp(24px, 6vw, 80px);
-      background: var(--bg2);
-    }
-    .planos-section .planos-title {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 700;
-      font-size: clamp(28px, 4.5vw, 36px);
-      color: var(--br);
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
-      text-align: center;
-      animation: fadeInUp 1s ease 0.75s backwards;
-    }
-    .planos-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .planos-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 0;
-    }
-    .plano {
-      background: rgba(255, 255, 255, 0.7);
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 32px 26px;
-      position: relative;
-      transition: all 0.3s ease;
-      animation: fadeInUp 1s ease backwards;
-    }
+    .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(110,44,20,0.15); border-color: var(--br); background: rgba(255,255,255,0.95); }
+    .service-num { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray2); margin-bottom: 12px; }
+    .service-name { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 18px; color: var(--br); margin-bottom: 10px; }
+    .service-desc { font-size: 13px; color: var(--gray); line-height: 1.7; font-weight: 300; }
+
+    .planos-section { padding: clamp(60px,8vw,100px) clamp(24px,6vw,80px); background: var(--bg2); }
+    .planos-inner { max-width: 1100px; margin: 0 auto; }
+    .planos-header { margin-bottom: 40px; animation: fadeInUp 1s ease 0.75s backwards; }
+    .planos-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .planos-divider::before { content: ''; width: 30px; height: 1px; background: var(--gray2); }
+    .planos-divider-text { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray2); }
+    .planos-title { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: clamp(36px,6vw,56px); color: var(--br); letter-spacing: -0.03em; line-height: 1.0; }
+    .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .plano { background: rgba(255,255,255,0.7); border: 1.5px solid var(--border); border-radius: 22px; padding: 32px 26px; position: relative; transition: all 0.3s ease; animation: fadeInUp 1s ease backwards; }
     .plano:nth-child(1) { animation-delay: 0.8s; }
     .plano:nth-child(2) { animation-delay: 0.85s; }
     .plano:nth-child(3) { animation-delay: 0.9s; }
-    
-    .plano:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(110, 44, 20, 0.12);
-    }
-    .plano.destaque {
-      background: var(--br);
-      border-color: var(--br);
-      color: #F4EADD;
-    }
-    .badge-destaque {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #F4EADD;
-      color: var(--br);
-      border: 1.5px solid var(--br);
-      padding: 4px 16px;
-      border-radius: 50px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .plano-num {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gray2);
-      margin-bottom: 12px;
-    }
-    .plano.destaque .plano-num {
-      color: rgba(244, 234, 221, 0.5);
-    }
-    .plano-nome {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-    .plano-subtitle {
-      font-size: 12px;
-      color: var(--gray);
-      margin-bottom: 22px;
-      font-weight: 300;
-    }
-    .plano.destaque .plano-subtitle {
-      color: rgba(244, 234, 221, 0.6);
-    }
-    .plano-valor {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: 34px;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .plano-valor sup {
-      font-size: 18px;
-      font-weight: 400;
-    }
-    .plano-periodo {
-      font-size: 12px;
-      color: var(--gray);
-      margin-bottom: 22px;
-      font-weight: 300;
-    }
-    .plano.destaque .plano-periodo {
-      color: rgba(244, 234, 221, 0.6);
-    }
+    .plano:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(110,44,20,0.12); }
+    .plano.destaque { background: var(--br); border-color: var(--br); color: #F4EADD; }
+
+    .badge-destaque { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #F4EADD; color: var(--br); border: 1.5px solid var(--br); padding: 5px 18px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+
+    .plano-num { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray2); margin-bottom: 12px; }
+    .plano.destaque .plano-num { color: rgba(244,234,221,0.5); }
+    .plano-nome { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .plano-subtitle { font-size: 12px; color: var(--gray); margin-bottom: 22px; font-weight: 300; }
+    .plano.destaque .plano-subtitle { color: rgba(244,234,221,0.6); }
+    .plano-valor { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 34px; letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+    .plano-valor sup { font-size: 18px; font-weight: 400; }
+    .plano-periodo { font-size: 12px; color: var(--gray); margin-bottom: 22px; font-weight: 300; }
+    .plano.destaque .plano-periodo { color: rgba(244,234,221,0.6); }
+
+    /* BOTÕES: P1 e P3 = marrom cheio, P2 = creme cheio */
     .plano-cta {
-      display: block;
-      padding: 14px 20px;
-      border-radius: 11px;
-      border: 1.5px solid var(--br);
-      background: transparent;
-      color: var(--br);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      text-align: center;
-      margin-bottom: 22px;
+      display: block; padding: 14px 20px; border-radius: 11px;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      text-align: center; margin-bottom: 22px;
+      background: var(--br); color: #F4EADD; border: none;
     }
-    .plano.destaque .plano-cta {
-      border-color: #F4EADD;
-      color: #F4EADD;
-    }
-    .plano-cta:hover {
-      background: var(--br);
-      color: #F4EADD;
-    }
-    .plano.destaque .plano-cta:hover {
-      background: rgba(244, 234, 221, 0.15);
-    }
-    .cta-default {
-      display: inline;
-    }
-    .cta-hover {
-      display: none;
-    }
-    .plano-cta:hover .cta-default {
-      display: none;
-    }
-    .plano-cta:hover .cta-hover {
-      display: inline;
-    }
-    
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 22px 0;
-    }
-    .plano.destaque .divider {
-      background: rgba(244, 234, 221, 0.15);
-    }
-    
+    .plano-cta:hover { background: #5A2210; }
+    .plano.destaque .plano-cta { background: #F4EADD; color: var(--br); border: none; }
+    .plano.destaque .plano-cta:hover { background: rgba(244,234,221,0.85); }
+    .cta-default { display: inline; }
+    .cta-hover { display: none; }
+    .plano-cta:hover .cta-default { display: none; }
+    .plano-cta:hover .cta-hover { display: inline; }
+
+    .divider { height: 1px; background: var(--border); margin: 22px 0; }
+    .plano.destaque .divider { background: rgba(244,234,221,0.15); }
+
     .items-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray2);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--gray2); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .items-label::before {
-      content: '';
-      width: 20px;
-      height: 1px;
-      background: var(--gray2);
-    }
-    .plano.destaque .items-label {
-      color: rgba(244, 234, 221, 0.5);
-    }
-    .plano.destaque .items-label::before {
-      background: rgba(244, 234, 221, 0.5);
-    }
-    
-    .item-linha {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--gray);
-      margin-bottom: 10px;
-      line-height: 1.5;
-    }
-    .plano.destaque .item-linha {
-      color: rgba(244, 234, 221, 0.8);
-    }
+    .items-label::before { content: ''; width: 20px; height: 1px; background: var(--gray2); }
+    .plano.destaque .items-label { color: rgba(244,234,221,0.5); }
+    .plano.destaque .items-label::before { background: rgba(244,234,221,0.5); }
+
+    .item-linha { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--gray); margin-bottom: 10px; line-height: 1.5; }
+    .plano.destaque .item-linha { color: rgba(244,234,221,0.8); }
+
+    /* BOLINHA COM CHECK */
     .item-check {
       flex-shrink: 0;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(110,44,20,0.12);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 0px;
     }
-    .item-check svg {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .footer-proposta {
-      background: var(--br);
-      color: #F4EADD;
-      padding: clamp(40px, 6vw, 60px) clamp(24px, 6vw, 80px);
-      text-align: center;
-    }
-    .footer-logo {
-      font-family: 'League Spartan', sans-serif;
-      font-weight: 900;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-    .footer-sub {
-      font-size: 12px;
-      color: rgba(244, 234, 221, 0.6);
-      font-weight: 300;
-    }
-    
+    .plano.destaque .item-check { background: rgba(244,234,221,0.15); }
+    .item-check svg { width: 11px; height: 11px; }
+
+    .footer-proposta { background: var(--br); color: #F4EADD; padding: clamp(40px,6vw,60px) clamp(24px,6vw,80px); text-align: center; }
+    .footer-logo { font-family: 'League Spartan', sans-serif; font-weight: 900; font-size: 16px; margin-bottom: 10px; }
+    .footer-sub { font-size: 12px; color: rgba(244,234,221,0.6); font-weight: 300; }
+
     @media (max-width: 768px) {
-      .planos-grid {
-        grid-template-columns: 1fr;
-      }
-      .services-grid {
-        grid-template-columns: 1fr;
-      }
+      .planos-grid { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -586,7 +190,6 @@
       <div class="hero-tag">Proposta exclusiva</div>
       <div class="hero-name" id="heroName">Olá, cliente.</div>
       <h1 class="hero-title">Feito pra <em>você</em></h1>
-      <p class="hero-sub">// can I put it in a pan?</p>
       <p class="hero-desc">Esta proposta foi preparada especialmente para você após nossa conversa. Ela é válida pelo período indicado acima.</p>
     </div>
   </section>
@@ -603,38 +206,32 @@
         <span class="services-divider-text">COM A GENTE</span>
       </div>
       <h2 class="services-title">Sua empresa contará com<br>uma equipe completa.</h2>
-      
       <div class="services-grid">
         <div class="service-card">
           <div class="service-num">01</div>
           <div class="service-name">Filmmaker Mobile</div>
           <div class="service-desc">Registros rápidos e com qualidade gravados com celular — mais orgânicos e naturais para as redes sociais.</div>
         </div>
-        
         <div class="service-card">
           <div class="service-num">02</div>
           <div class="service-name">Editor de Vídeo e Foto</div>
           <div class="service-desc">Edição e pós-produção profissional de todos os conteúdos captados com o olhar do Studio.</div>
         </div>
-        
         <div class="service-card">
           <div class="service-num">03</div>
           <div class="service-name">Social Media</div>
           <div class="service-desc">Responsável pelo planejamento, criação e gestão completa das redes sociais da sua marca.</div>
         </div>
-        
         <div class="service-card">
           <div class="service-num">04</div>
           <div class="service-name">Gestor de Tráfego</div>
           <div class="service-desc">Campanhas pagas no Meta e Google para atrair leads qualificados com foco em resultado real.</div>
         </div>
-        
         <div class="service-card">
           <div class="service-num">05</div>
           <div class="service-name">Drone</div>
           <div class="service-desc">Vídeos e imagens aéreas para projetos e obras — perspectiva única que eleva a percepção da sua marca.</div>
         </div>
-        
         <div class="service-card">
           <div class="service-num">06</div>
           <div class="service-name">Designer Gráfico</div>
@@ -646,8 +243,14 @@
   
   <section class="planos-section">
     <div class="planos-inner">
-      <h2 class="planos-title">Planos mensais</h2>
+      <div class="planos-header">
+        <div class="planos-divider">
+          <span class="planos-divider-text">ESCOLHA SEU PACOTE</span>
+        </div>
+        <div class="planos-title">Planos mensais</div>
+      </div>
       <div class="planos-grid">
+
         <div class="plano">
           <div class="plano-num">1º PACOTE</div>
           <div class="plano-nome">Pensado na sua marca</div>
@@ -671,9 +274,9 @@
           <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Gestor de marca para curadoria visual</div>
           <div class="divider"></div>
           <div class="items-label">Não incluso</div>
-          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Análise semanal de desempenho</div>
-          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Diário mensal de captação</div>
-          <div class="item-linha" style="color: rgba(110, 44, 20, 0.25);"><div class="item-check"></div>Postagens semanais no feed</div>
+          <div class="item-linha" style="color:rgba(110,44,20,0.25)"><div class="item-check" style="background:rgba(110,44,20,0.05)"></div>Análise semanal de desempenho</div>
+          <div class="item-linha" style="color:rgba(110,44,20,0.25)"><div class="item-check" style="background:rgba(110,44,20,0.05)"></div>Diário mensal de captação</div>
+          <div class="item-linha" style="color:rgba(110,44,20,0.25)"><div class="item-check" style="background:rgba(110,44,20,0.05)"></div>Postagens semanais no feed</div>
         </div>
         
         <div class="plano destaque">
@@ -697,9 +300,9 @@
           <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de conteúdos via app</div>
           <div class="divider"></div>
           <div class="items-label">Não incluso</div>
-          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Estudo de marca e rebranding</div>
-          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Stories ilimitados - Drone - Design gráfico</div>
-          <div class="item-linha" style="color: rgba(244, 234, 221, 0.25);"><div class="item-check"></div>Diárias autônomas em escritório/obra</div>
+          <div class="item-linha" style="color:rgba(244,234,221,0.25)"><div class="item-check" style="background:rgba(244,234,221,0.08)"></div>Estudo de marca e rebranding</div>
+          <div class="item-linha" style="color:rgba(244,234,221,0.25)"><div class="item-check" style="background:rgba(244,234,221,0.08)"></div>Stories ilimitados - Drone - Design gráfico</div>
+          <div class="item-linha" style="color:rgba(244,234,221,0.25)"><div class="item-check" style="background:rgba(244,234,221,0.08)"></div>Diárias autônomas em escritório/obra</div>
         </div>
         
         <div class="plano">
@@ -723,6 +326,7 @@
           <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Fotos oficiais de projetos entregues</div>
           <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
         </div>
+
       </div>
     </div>
   </section>
@@ -734,84 +338,39 @@
   
   <script>
     var PROPOSTA = null;
-    
-    function getParam(k) {
-      var u = new URLSearchParams(window.location.search);
-      return u.get(k);
-    }
-    
+    function getParam(k) { return new URLSearchParams(window.location.search).get(k); }
     function loadProposta() {
-      try {
-        var data = getParam('d');
-        if (data) {
-          PROPOSTA = JSON.parse(atob(decodeURIComponent(data)));
-        }
-      } catch (e) {}
-      
-      if (!PROPOSTA) {
-        PROPOSTA = {
-          nome: 'cliente',
-          v1: '2.690',
-          v2: '3.690',
-          v3: '3.990',
-          expira: Date.now() + (5 * 24 * 60 * 60 * 1000)
-        };
-      }
-      
+      try { var d = getParam('d'); if (d) PROPOSTA = JSON.parse(atob(decodeURIComponent(d))); } catch(e) {}
+      if (!PROPOSTA) PROPOSTA = { nome: 'cliente', v1: '2.690', v2: '3.690', v3: '3.990', expira: Date.now() + (5*24*60*60*1000) };
       document.getElementById('heroName').textContent = 'Olá, ' + PROPOSTA.nome + '.';
       document.getElementById('v1').textContent = PROPOSTA.v1;
       document.getElementById('v2').textContent = PROPOSTA.v2;
       document.getElementById('v3').textContent = PROPOSTA.v3;
-      
-      if (Date.now() > PROPOSTA.expira) {
-        document.getElementById('expiredScreen').classList.add('show');
-        return;
-      }
-      
+      if (Date.now() > PROPOSTA.expira) { document.getElementById('expiredScreen').classList.add('show'); return; }
       startTimer();
     }
-    
     function startTimer() {
       function tick() {
         var diff = PROPOSTA.expira - Date.now();
-        if (diff <= 0) {
-          document.getElementById('expiredScreen').classList.add('show');
-          return;
-        }
-        var d = Math.floor(diff / 86400000);
-        var h = Math.floor((diff % 86400000) / 3600000);
-        var m = Math.floor((diff % 3600000) / 60000);
-        var s = Math.floor((diff % 60000) / 1000);
-        var txt = (d > 0 ? d + 'd ' : '') + pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+        if (diff <= 0) { document.getElementById('expiredScreen').classList.add('show'); return; }
+        var d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
         var el = document.getElementById('timerCount');
-        el.textContent = txt;
+        el.textContent = (d > 0 ? d+'d ' : '') + pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
         el.classList.toggle('urgent', diff < 86400000);
         setTimeout(tick, 1000);
       }
       tick();
     }
-    
-    function pad(n) {
-      return n.toString().padStart(2, '0');
-    }
-    
+    function pad(n) { return n.toString().padStart(2,'0'); }
     function fecharPlano(e, num) {
       e.preventDefault();
-      var planos = {
-        1: '1º Pacote — Pensado na sua marca',
-        2: '2º Pacote — Sua gestão',
-        3: '3º Pacote — O mais completo'
-      };
+      var planos = {1:'1º Pacote — Pensado na sua marca', 2:'2º Pacote — Sua gestão', 3:'3º Pacote — O mais completo'};
       var valores = {1: PROPOSTA.v1, 2: PROPOSTA.v2, 3: PROPOSTA.v3};
       var msg = 'Olá! Gostaria de fechar o ' + planos[num] + ' (R$' + valores[num] + '/mês). Podemos avançar?';
-      if (window.fbq) {
-        fbq("track", "Lead", {content_name: "Fechou Plano " + num});
-      }
+      if (window.fbq) fbq("track", "Lead", {content_name: "Fechou Plano " + num});
       window.open('https://wa.me/5513996057099?text=' + encodeURIComponent(msg), '_blank');
     }
-    
     loadProposta();
   </script>
-  
 </body>
 </html>
