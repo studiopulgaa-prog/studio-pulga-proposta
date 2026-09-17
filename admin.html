@@ -123,6 +123,14 @@
             <input class="item-add-input" type="text" id="iadd1" placeholder="Adicionar item...">
             <button class="item-add-btn" onclick="addItem(1)">+</button>
           </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">N\u00e3o incluso</div>
+            <div id="nilist1"></div>
+            <div class="item-add-row">
+              <input class="item-add-input" type="text" id="niadd1" placeholder="Adicionar item n\u00e3o incluso...">
+              <button class="item-add-btn" onclick="addNaoIncluso(1)">+</button>
+            </div>
+          </div>
         </div>
         <div class="plano-items-toggle" onclick="toggleItems(2)">
           <span class="plano-items-label">2º Pacote — Itens</span>
@@ -134,6 +142,14 @@
             <input class="item-add-input" type="text" id="iadd2" placeholder="Adicionar item...">
             <button class="item-add-btn" onclick="addItem(2)">+</button>
           </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">N\u00e3o incluso</div>
+            <div id="nilist2"></div>
+            <div class="item-add-row">
+              <input class="item-add-input" type="text" id="niadd2" placeholder="Adicionar item n\u00e3o incluso...">
+              <button class="item-add-btn" onclick="addNaoIncluso(2)">+</button>
+            </div>
+          </div>
         </div>
         <div class="plano-items-toggle" onclick="toggleItems(3)">
           <span class="plano-items-label">3º Pacote — Itens</span>
@@ -144,6 +160,14 @@
           <div class="item-add-row">
             <input class="item-add-input" type="text" id="iadd3" placeholder="Adicionar item...">
             <button class="item-add-btn" onclick="addItem(3)">+</button>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">N\u00e3o incluso</div>
+            <div id="nilist3"></div>
+            <div class="item-add-row">
+              <input class="item-add-input" type="text" id="niadd3" placeholder="Adicionar item n\u00e3o incluso...">
+              <button class="item-add-btn" onclick="addNaoIncluso(3)">+</button>
+            </div>
           </div>
         </div>
       </div>
@@ -173,6 +197,30 @@
 var SENHA='Studio2801',diasSel=2;
 var SUPA_URL='https://ixclkelqjpfkucejbzuq.supabase.co';
 var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
+var NAO_INCLUSO_DEFAULT=[
+  ['An\u00e1lise semanal de desempenho','Di\u00e1ria mensal de capta\u00e7\u00e3o','Postagens semanais no feed'],
+  ['Estudo de marca e rebranding','Stories ilimitados - Drone - Design gr\u00e1fico','Di\u00e1rias aut\u00f4nomas em escrit\u00f3rio/obra'],
+  []
+];
+var naoInclusoState;
+function initNaoIncluso(){naoInclusoState=NAO_INCLUSO_DEFAULT.map(function(p){return p.map(function(t){return{texto:t,ativo:true};});});}
+function renderNaoIncluso(p){
+  var list=document.getElementById('nilist'+(p+1));
+  if(!list)return;
+  var html='';
+  naoInclusoState[p].forEach(function(item,i){
+    html+='<div class="item-row">';
+    html+='<input type="checkbox" '+(item.ativo?'checked':'')+' onchange="toggleNaoIncluso('+p+','+i+',this)">';
+    html+='<span class="item-row-text'+(item.ativo?'':' disabled')+'">'+item.texto+'</span>';
+    html+='<button class="item-move" onclick="moveNaoIncluso('+p+','+i+',-1)">\u2191</button>';
+    html+='<button class="item-move" onclick="moveNaoIncluso('+p+','+i+',1)">\u2193</button>';
+    html+='</div>';
+  });
+  list.innerHTML=html;
+}
+function toggleNaoIncluso(p,i,cb){naoInclusoState[p][i].ativo=cb.checked;renderNaoIncluso(p);}
+function moveNaoIncluso(p,i,dir){var arr=naoInclusoState[p],ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderNaoIncluso(p);}
+function addNaoIncluso(p){var input=document.getElementById('niadd'+p);var txt=input.value.trim();if(!txt)return;naoInclusoState[p-1].push({texto:txt,ativo:true});input.value='';renderNaoIncluso(p-1);}
 var ITENS_DEFAULT=[
   ['Stories diários (até 4 por dia)','Acompanhamento de repost','Diálogo constante com o cliente','Curadoria de imagem e identidade visual','Reunião mensal de resultados e alinhamento','Interação pontual com o público','Calendário mensal de postagens','Relatório mensal de métricas','Gestor de marca para curadoria visual'],
   ['Análise semanal de desempenho','Postagens semanais no feed','Uma diária mensal de captação','Curadoria de imagem e identidade visual com gestor de marca','Interação com o público + repost','Calendário mensal de conteúdos via app'],
@@ -198,7 +246,7 @@ function toggleItems(p){
   var arrow=document.getElementById('iarrow'+p);
   var show=body.classList.toggle('show');
   arrow.classList.toggle('open',show);
-  if(show)renderItens(p-1);
+  if(show){renderItens(p-1);renderNaoIncluso(p-1);}
 }
 function toggleItem(p,i,cb){itensState[p][i].ativo=cb.checked;renderItens(p);}
 function moveItem(p,i,dir){
@@ -221,7 +269,7 @@ function doLogin(){
     document.getElementById('loginCard').style.display='none';
     document.getElementById('adminWrap').style.display='block';
     document.getElementById('loginErr').style.display='none';
-    initItens();
+    initItens();initNaoIncluso();
     carregarHistorico();
   }else{
     document.getElementById('loginErr').style.display='block';
@@ -261,7 +309,8 @@ function gerarLink(){
   if(!ck1&&!ck2&&!ck3){alert('Selecione ao menos 1 plano.');return;}
   var expira=Date.now()+(diasSel*24*60*60*1000);
   var itens=itensState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
-  var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens};
+  var naoIncluso=naoInclusoState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
+  var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
   var encoded=encodeURIComponent(btoa(encodeURIComponent(JSON.stringify(data)).replace(/%([0-9A-F]{2})/g,function(m,p){return String.fromCharCode(parseInt(p,16));})));
   var link=window.location.origin+'/proposta.html?d='+encoded;
   document.getElementById('linkUrl').textContent=link;
