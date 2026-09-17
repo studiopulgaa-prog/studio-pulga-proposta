@@ -319,7 +319,7 @@ function gerarLink(){
   var itens=itensState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
   var naoIncluso=naoInclusoState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
   var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
-  var encoded=encodeURIComponent(JSON.stringify(data));var link=window.location.origin+'/proposta.html?d='+encoded;
+  var s=JSON.stringify(data);var encoded=btoa(encodeURIComponent(s));var link=window.location.origin+'/proposta.html?d='+encoded;
   document.getElementById('linkUrl').textContent=link;
   document.getElementById('linkResult').classList.add('show');
   document.getElementById('copyBtn').textContent='Copiar link';
