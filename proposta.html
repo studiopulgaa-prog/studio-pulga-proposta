@@ -252,7 +252,7 @@
     var PROPOSTA=null;
     function getParam(k){return new URLSearchParams(window.location.search).get(k);}
     function loadProposta(){
-      try{var d=getParam('d');if(d)var bytes=atob(decodeURIComponent(d));var arr=new Uint8Array(bytes.length);for(var i=0;i<bytes.length;i++){arr[i]=bytes.charCodeAt(i);}PROPOSTA=JSON.parse(new TextDecoder().decode(arr));}catch(e){}
+      try{var d=getParam('d');if(d)PROPOSTA=JSON.parse(decodeURIComponent(d));}catch(e){}
       if(!PROPOSTA)PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};
       document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';if(PROPOSTA.itens){aplicarItens(PROPOSTA.itens,PROPOSTA.naoIncluso);}
       document.getElementById('v1').textContent=PROPOSTA.v1;
