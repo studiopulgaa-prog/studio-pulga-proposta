@@ -262,7 +262,7 @@ function gerarLink(){
   var expira=Date.now()+(diasSel*24*60*60*1000);
   var itens=itensState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
   var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens};
-  var encoded=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(data)))));
+  var encoded=encodeURIComponent(btoa(encodeURIComponent(JSON.stringify(data)).replace(/%([0-9A-F]{2})/g,function(m,p){return String.fromCharCode(parseInt(p,16));})));
   var link=window.location.origin+'/proposta.html?d='+encoded;
   document.getElementById('linkUrl').textContent=link;
   document.getElementById('linkResult').classList.add('show');
