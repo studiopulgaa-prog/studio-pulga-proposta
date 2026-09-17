@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecionando...</title>
+</head>
+<body>
+<script>
+var SUPA_URL='https://ixclkelqjpfkucejbzuq.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
+var slug=window.location.pathname.replace('/p/','').replace('/p','');
+if(!slug){window.location.href='/';} else {
+  fetch(SUPA_URL+'/rest/v1/links?slug=eq.'+slug,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d&&d[0]&&d[0].url){window.location.href=d[0].url;}
+    else{window.location.href='/';}
+  });
+}
+</script>
+<p>Redirecionando...</p>
+</body>
+</html>

@@ -1,3 +1,7 @@
 {
-  "version": 2
+  "version": 2,
+  "routes": [
+    { "src": "/p/(.*)", "dest": "/p.html" },
+    { "src": "/p", "dest": "/p.html" }
+  ]
 }
