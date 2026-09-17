@@ -184,7 +184,15 @@
       <div class="link-result" id="linkResult">
         <div class="link-label">Link gerado</div>
         <div class="link-url" id="linkUrl"></div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
         <button class="copy-btn" id="copyBtn" onclick="copiarLink()">Copiar link</button>
+        <button class="copy-btn" id="shortBtn" onclick="encurtarLink()">Encurtar link</button>
+      </div>
+      <div id="linkCurtoWrap" style="display:none;">
+        <div class="link-label" style="margin-top:8px;">Link encurtado</div>
+        <div class="link-url" id="linkCurto"></div>
+        <button class="copy-btn" id="copyShortBtn" onclick="copiarLinkCurto()">Copiar link curto</button>
+      </div>
       </div>
     </div>
     <div class="card">
@@ -342,6 +350,33 @@ function renderHistorico(lista){
   el.innerHTML=html;
 }
 function toggleHist(i){document.getElementById('hbody-'+i).classList.toggle('show');document.getElementById('harrow-'+i).classList.toggle('open');}
+function encurtarLink(){
+  var url=document.getElementById('linkUrl').textContent;
+  var btn=document.getElementById('shortBtn');
+  btn.textContent='Encurtando...';
+  fetch('https://api-ssl.bitly.com/v4/shorten',{
+    method:'POST',
+    headers:{'Authorization':'Bearer 643e0525db7453af0a7be2a8ca7d85c2248a5c90','Content-Type':'application/json'},
+    body:JSON.stringify({long_url:url})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.link){
+      document.getElementById('linkCurto').textContent=d.link;
+      document.getElementById('linkCurtoWrap').style.display='block';
+      btn.textContent='Encurtar link';
+    } else {
+      btn.textContent='Erro — tente novamente';
+      setTimeout(function(){btn.textContent='Encurtar link';},2000);
+    }
+  }).catch(function(){btn.textContent='Erro';setTimeout(function(){btn.textContent='Encurtar link';},2000);});
+}
+function copiarLinkCurto(){
+  var url=document.getElementById('linkCurto').textContent;
+  navigator.clipboard.writeText(url).then(function(){
+    var btn=document.getElementById('copyShortBtn');
+    btn.textContent='Copiado!';btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copiar link curto';btn.classList.remove('copied');},2000);
+  });
+}
 function copiarLink(){
   navigator.clipboard.writeText(document.getElementById('linkUrl').textContent).then(function(){
     var btn=document.getElementById('copyBtn');btn.textContent='Copiado!';btn.classList.add('copied');
