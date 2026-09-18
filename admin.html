@@ -229,6 +229,30 @@ function renderNaoIncluso(p){
 function toggleNaoIncluso(p,i,cb){naoInclusoState[p][i].ativo=cb.checked;renderNaoIncluso(p);}
 function moveNaoIncluso(p,i,dir){var arr=naoInclusoState[p],ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderNaoIncluso(p);}
 function addNaoIncluso(p){var input=document.getElementById('niadd'+p);var txt=input.value.trim();if(!txt)return;naoInclusoState[p-1].push({texto:txt,ativo:true});input.value='';renderNaoIncluso(p-1);}
+var NAO_INCLUSO_DEFAULT=[
+  ['An\u00e1lise semanal de desempenho','Di\u00e1ria mensal de capta\u00e7\u00e3o','Postagens semanais no feed'],
+  ['Estudo de marca e rebranding','Stories ilimitados - Drone - Design gr\u00e1fico','Di\u00e1rias aut\u00f4nomas em escrit\u00f3rio/obra'],
+  []
+];
+var naoInclusoState;
+function initNaoIncluso(){naoInclusoState=NAO_INCLUSO_DEFAULT.map(function(p){return p.map(function(t){return{texto:t,ativo:true};});});}
+function renderNaoIncluso(p){
+  var list=document.getElementById('nilist'+(p+1));
+  if(!list)return;
+  var html='';
+  naoInclusoState[p].forEach(function(item,i){
+    html+='<div class="item-row">';
+    html+='<input type="checkbox" '+(item.ativo?'checked':'')+' onchange="toggleNaoIncluso('+p+','+i+',this)">';
+    html+='<span class="item-row-text'+(item.ativo?'':' disabled')+'">'+item.texto+'</span>';
+    html+='<button class="item-move" onclick="moveNaoIncluso('+p+','+i+',-1)">\u2191</button>';
+    html+='<button class="item-move" onclick="moveNaoIncluso('+p+','+i+',1)">\u2193</button>';
+    html+='</div>';
+  });
+  list.innerHTML=html;
+}
+function toggleNaoIncluso(p,i,cb){naoInclusoState[p][i].ativo=cb.checked;renderNaoIncluso(p);}
+function moveNaoIncluso(p,i,dir){var arr=naoInclusoState[p],ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderNaoIncluso(p);}
+function addNaoIncluso(p){var input=document.getElementById('niadd'+p);var txt=input.value.trim();if(!txt)return;naoInclusoState[p-1].push({texto:txt,ativo:true});input.value='';renderNaoIncluso(p-1);}
 var ITENS_DEFAULT=[
   ['Stories diários (até 4 por dia)','Acompanhamento de repost','Diálogo constante com o cliente','Curadoria de imagem e identidade visual','Reunião mensal de resultados e alinhamento','Interação pontual com o público','Calendário mensal de postagens','Relatório mensal de métricas','Gestor de marca para curadoria visual'],
   ['Análise semanal de desempenho','Postagens semanais no feed','Uma diária mensal de captação','Curadoria de imagem e identidade visual com gestor de marca','Interação com o público + repost','Calendário mensal de conteúdos via app'],
@@ -317,6 +341,7 @@ function gerarLink(){
   if(!ck1&&!ck2&&!ck3){alert('Selecione ao menos 1 plano.');return;}
   var expira=Date.now()+(diasSel*24*60*60*1000);
   var itens=itensState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
+  var naoIncluso=naoInclusoState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
   var naoIncluso=naoInclusoState.map(function(p){return p.filter(function(i){return i.ativo;}).map(function(i){return i.texto;});});
   var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
   var s=JSON.stringify(data);var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));var link=window.location.origin+'/proposta.html?d='+encoded;
