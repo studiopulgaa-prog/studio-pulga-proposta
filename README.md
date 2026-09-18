@@ -31,3 +31,4 @@ Sistema de propostas personalizadas para clientes da Studio Pulga.
 - **Mudar Valores Planos:** Procure em proposta.html: `v1: '2.490'`, `v2: '2.690'`, `v3: '2.990'`
 - **Mudar Cores:** Creme `#F4EADD` e Marrom `#6E2C14`
 
+# deploy
