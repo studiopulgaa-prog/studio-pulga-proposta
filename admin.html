@@ -105,38 +105,38 @@
       <div class="field"><label>Nome do cliente</label><input type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
       <div class="field">
         <label>Planos a exibir</label>
-        <div class="plano-toggle ativo" onclick="togglePlano(1,this)"><input type="checkbox" id="ck1" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">1\u00ba Pacote</span></div>
-        <div class="plano-toggle ativo" onclick="togglePlano(2,this)"><input type="checkbox" id="ck2" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">2\u00ba Pacote</span></div>
-        <div class="plano-toggle ativo" onclick="togglePlano(3,this)"><input type="checkbox" id="ck3" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">3\u00ba Pacote</span></div>
+        <div class="plano-toggle ativo" onclick="togglePlano(1,this)"><input type="checkbox" id="ck1" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">1º Pacote</span></div>
+        <div class="plano-toggle ativo" onclick="togglePlano(2,this)"><input type="checkbox" id="ck2" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">2º Pacote</span></div>
+        <div class="plano-toggle ativo" onclick="togglePlano(3,this)"><input type="checkbox" id="ck3" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">3º Pacote</span></div>
       </div>
-      <div class="field" id="fieldV1"><label>Valor \u2014 1\u00ba Pacote (R$)</label><input type="text" id="fV1" placeholder="Ex: 2.690"></div>
-      <div class="field" id="fieldV2"><label>Valor \u2014 2\u00ba Pacote (R$)</label><input type="text" id="fV2" placeholder="Ex: 3.690"></div>
-      <div class="field" id="fieldV3"><label>Valor \u2014 3\u00ba Pacote (R$)</label><input type="text" id="fV3" placeholder="Ex: 3.990"></div>
+      <div class="field" id="fieldV1"><label>Valor — 1º Pacote (R$)</label><input type="text" id="fV1" placeholder="Ex: 2.690"></div>
+      <div class="field" id="fieldV2"><label>Valor — 2º Pacote (R$)</label><input type="text" id="fV2" placeholder="Ex: 3.690"></div>
+      <div class="field" id="fieldV3"><label>Valor — 3º Pacote (R$)</label><input type="text" id="fV3" placeholder="Ex: 3.990"></div>
       <div class="field">
         <label>Personalizar itens</label>
-        <div class="plano-items-toggle" onclick="toggleItems(1)"><span class="plano-items-label">1\u00ba Pacote \u2014 Itens</span><span class="plano-items-arrow" id="iarrow1">\u203a</span></div>
+        <div class="plano-items-toggle" onclick="toggleItems(1)"><span class="plano-items-label">1º Pacote — Itens</span><span class="plano-items-arrow" id="iarrow1">›</span></div>
         <div class="plano-items-body" id="ibody1">
           <div id="ilist1"></div>
           <div class="item-add-row"><input class="item-add-input" type="text" id="iadd1" placeholder="Adicionar item incluso..."><button class="item-add-btn" onclick="addItem(1)">+</button></div>
-          <div class="sec-label">N\u00e3o incluso</div>
+          <div class="sec-label">Não incluso</div>
           <div id="nilist1"></div>
-          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd1" placeholder="Adicionar item n\u00e3o incluso..."><button class="item-add-btn" onclick="addNI(1)">+</button></div>
+          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd1" placeholder="Adicionar item não incluso..."><button class="item-add-btn" onclick="addNI(1)">+</button></div>
         </div>
-        <div class="plano-items-toggle" onclick="toggleItems(2)"><span class="plano-items-label">2\u00ba Pacote \u2014 Itens</span><span class="plano-items-arrow" id="iarrow2">\u203a</span></div>
+        <div class="plano-items-toggle" onclick="toggleItems(2)"><span class="plano-items-label">2º Pacote — Itens</span><span class="plano-items-arrow" id="iarrow2">›</span></div>
         <div class="plano-items-body" id="ibody2">
           <div id="ilist2"></div>
           <div class="item-add-row"><input class="item-add-input" type="text" id="iadd2" placeholder="Adicionar item incluso..."><button class="item-add-btn" onclick="addItem(2)">+</button></div>
-          <div class="sec-label">N\u00e3o incluso</div>
+          <div class="sec-label">Não incluso</div>
           <div id="nilist2"></div>
-          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd2" placeholder="Adicionar item n\u00e3o incluso..."><button class="item-add-btn" onclick="addNI(2)">+</button></div>
+          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd2" placeholder="Adicionar item não incluso..."><button class="item-add-btn" onclick="addNI(2)">+</button></div>
         </div>
-        <div class="plano-items-toggle" onclick="toggleItems(3)"><span class="plano-items-label">3\u00ba Pacote \u2014 Itens</span><span class="plano-items-arrow" id="iarrow3">\u203a</span></div>
+        <div class="plano-items-toggle" onclick="toggleItems(3)"><span class="plano-items-label">3º Pacote — Itens</span><span class="plano-items-arrow" id="iarrow3">›</span></div>
         <div class="plano-items-body" id="ibody3">
           <div id="ilist3"></div>
           <div class="item-add-row"><input class="item-add-input" type="text" id="iadd3" placeholder="Adicionar item incluso..."><button class="item-add-btn" onclick="addItem(3)">+</button></div>
-          <div class="sec-label">N\u00e3o incluso</div>
+          <div class="sec-label">Não incluso</div>
           <div id="nilist3"></div>
-          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd3" placeholder="Adicionar item n\u00e3o incluso..."><button class="item-add-btn" onclick="addNI(3)">+</button></div>
+          <div class="item-add-row"><input class="item-add-input" type="text" id="niadd3" placeholder="Adicionar item não incluso..."><button class="item-add-btn" onclick="addNI(3)">+</button></div>
         </div>
       </div>
       <div class="field">
@@ -148,7 +148,7 @@
           <button class="val-btn" onclick="selDias(5,this)">5 dias</button>
         </div>
       </div>
-      <button class="gerar-btn" onclick="gerarLink()">Gerar link \u2192</button>
+      <button class="gerar-btn" onclick="gerarLink()">Gerar link →</button>
       <div class="link-result" id="linkResult">
         <div class="link-label">Link gerado</div>
         <div class="link-url" id="linkUrl"></div>
