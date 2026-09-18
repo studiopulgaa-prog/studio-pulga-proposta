@@ -109,9 +109,9 @@
         <div class="plano-toggle ativo" onclick="togglePlano(2,this)"><input type="checkbox" id="ck2" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">2º Pacote</span></div>
         <div class="plano-toggle ativo" onclick="togglePlano(3,this)"><input type="checkbox" id="ck3" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">3º Pacote</span></div>
       </div>
-      <div class="field" id="fieldV1"><label>Valor — 1º Pacote (R$)</label><input type="text" id="fV1" placeholder="Ex: 2.690"></div>
-      <div class="field" id="fieldV2"><label>Valor — 2º Pacote (R$)</label><input type="text" id="fV2" placeholder="Ex: 3.690"></div>
-      <div class="field" id="fieldV3"><label>Valor — 3º Pacote (R$)</label><input type="text" id="fV3" placeholder="Ex: 3.990"></div>
+      <div class="field" id="fieldV1"><label>Valor — 1º Pacote (R$)</label><input type="text" id="fV1" placeholder="Ex: 2.690"></div><div class="field" id="fieldVO1" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO1" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
+      <div class="field" id="fieldV2"><label>Valor — 2º Pacote (R$)</label><input type="text" id="fV2" placeholder="Ex: 3.690"></div><div class="field" id="fieldVO2" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO2" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
+      <div class="field" id="fieldV3"><label>Valor — 3º Pacote (R$)</label><input type="text" id="fV3" placeholder="Ex: 3.990"></div><div class="field" id="fieldVO3" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO3" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
       <div class="field">
         <label>Personalizar itens</label>
         <div class="plano-items-toggle" onclick="toggleItems(1)"><span class="plano-items-label">1º Pacote — Itens</span><span class="plano-items-arrow" id="iarrow1">›</span></div>
@@ -249,6 +249,9 @@ function gerarLink(){
   var v1=ck1?document.getElementById('fV1').value.trim():'';
   var v2=ck2?document.getElementById('fV2').value.trim():'';
   var v3=ck3?document.getElementById('fV3').value.trim():'';
+  var vo1=document.getElementById('fVO1').value.trim();
+  var vo2=document.getElementById('fVO2').value.trim();
+  var vo3=document.getElementById('fVO3').value.trim();
   if(!nome){alert('Preencha o nome do cliente.');return;}
   if(ck1&&!v1){alert('Preencha o valor do 1\u00ba Pacote.');return;}
   if(ck2&&!v2){alert('Preencha o valor do 2\u00ba Pacote.');return;}
@@ -257,7 +260,7 @@ function gerarLink(){
   var expira=Date.now()+(diasSel*24*60*60*1000);
   var itens=iState.map(function(p){return p.filter(function(x){return x.a;}).map(function(x){return x.t;});});
   var naoIncluso=niState.map(function(p){return p.filter(function(x){return x.a;}).map(function(x){return x.t;});});
-  var data={nome:nome,v1:v1,v2:v2,v3:v3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
+  var data={nome:nome,v1:v1,v2:v2,v3:v3,vo1:vo1,vo2:vo2,vo3:vo3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
   var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
   var link=window.location.origin+'/proposta.html?d='+encoded;
   document.getElementById('linkUrl').textContent=link;
@@ -282,7 +285,16 @@ function encurtarLink(){
 function copiarLink(){navigator.clipboard.writeText(document.getElementById('linkUrl').textContent).then(function(){var b=document.getElementById('copyBtn');b.textContent='Copiado!';b.classList.add('copied');setTimeout(function(){b.textContent='Copiar link';b.classList.remove('copied');},2000);});}
 function copiarLinkCurto(){navigator.clipboard.writeText(document.getElementById('linkCurto').textContent).then(function(){var b=document.getElementById('copyShortBtn');b.textContent='Copiado!';b.classList.add('copied');setTimeout(function(){b.textContent='Copiar link curto';b.classList.remove('copied');},2000);});}
 function carregarHistorico(){
-  fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();}).then(function(d){renderHistorico(d);}).catch(function(){renderHistorico([]);});
+  fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();}).then(function(lista){
+    if(!lista||!lista.length){renderHistorico([]);return;}
+    var ids=lista.map(function(p){return p.id;});
+    fetch(SUPA_URL+'/rest/v1/acessos?proposta_id=in.('+ids.join(',')+')',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
+      var contagem={};
+      (acessos||[]).forEach(function(a){contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;});
+      lista.forEach(function(p){p.acessos=contagem[p.id]||0;});
+      renderHistorico(lista);
+    }).catch(function(){renderHistorico(lista);});
+  }).catch(function(){renderHistorico([]);});
 }
 function excluirProposta(id,el){
   if(!confirm('Excluir esta proposta?'))return;
@@ -297,8 +309,10 @@ function renderHistorico(lista){
     var ds=dt.toLocaleDateString('pt-BR')+' \u00e0s '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     var pl=p.planos||[true,true,true];
     h+='<div class="proposta-item">';
+    var statusEl='<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(110,44,20,0.08);color:rgba(110,44,20,0.4);">Aguardando</span>';
+    if(p.acessos&&p.acessos>0){statusEl='<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(25,140,60,0.12);color:#1a7a3c;">Aberto • '+p.acessos+' disp.</span>';}
     h+='<div class="proposta-header" onclick="toggleHist('+i+')">';
-    h+='<div><div class="proposta-nome">'+p.cliente+'</div><div class="proposta-data">'+ds+'</div></div>';
+    h+='<div><div style="display:flex;align-items:center;gap:8px;"><div class="proposta-nome">'+p.cliente+'</div>'+statusEl+'</div><div class="proposta-data">'+ds+'</div></div>';
     h+='<div style="display:flex;align-items:center;">';
     h+='<span class="proposta-arrow" id="ha'+i+'">\u203a</span>';
     h+='<button class="proposta-del" onclick="event.stopPropagation();excluirProposta(\''+p.id+'\')" title="Excluir">\u00d7</button>';
