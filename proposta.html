@@ -262,12 +262,15 @@
       startTimer();
     }
     function aplicarItens(){
-      if(!PROPOSTA.itens&&!PROPOSTA.ni)return;
+      var temItens=PROPOSTA.itens;
+      var temNI=PROPOSTA.naoIncluso||PROPOSTA.ni;
+      if(!temItens&&!temNI)return;
       var planos=document.querySelectorAll('.plano');
       planos.forEach(function(plano,pi){
-        var itens=PROPOSTA.itens&&PROPOSTA.itens[pi];
-        var ni=PROPOSTA.ni&&PROPOSTA.ni[pi];
-        if(!itens&&!ni)return;
+        var itens=temItens&&PROPOSTA.itens[pi];
+        var ni=(PROPOSTA.naoIncluso&&PROPOSTA.naoIncluso[pi])||(PROPOSTA.ni&&PROPOSTA.ni[pi]);
+        var doNotSkip=true;
+        if(doNotSkip){
         var stroke=plano.classList.contains('destaque')?'#F4EADD':'#6E2C14';
         var firstDiv=plano.querySelector('.divider');
         if(!firstDiv)return;
@@ -287,6 +290,7 @@
           var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
           var lN=document.createElement('div');lN.className='items-label';lN.textContent='N\u00e3o incluso';parent.appendChild(lN);
           ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
+        }
         }
       });
     }
