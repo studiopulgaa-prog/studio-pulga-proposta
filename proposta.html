@@ -1,50 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
-    fbq("init","1973272740000551");fbq("track","PageView");fbq("track","ViewContent",{content_name:"Proposta Studio Pulga"});
-  </script>
+  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1973272740000551');fbq('track','PageView');fbq('track','ViewContent',{content_name:'Proposta Studio Pulga'});</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio Pulga — Proposta</title>
+  <title>Studio Pulga \u2014 Proposta</title>
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root{--bg:#F4EADD;--bg2:#EAD8C5;--br:#6E2C14;--border:rgba(110,44,20,0.15);--gray:rgba(110,44,20,0.55);--gray2:rgba(110,44,20,0.35);}
-    *{margin:0;padding:0;box-sizing:border-box;}
-    html{scroll-behavior:smooth;}
-    body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--br);overflow-x:hidden;}
-
+    *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--br);overflow-x:hidden;}
     .expired-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:24px;}
     .expired-screen.show{display:flex;}
     .expired-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(32px,8vw,64px);letter-spacing:-0.03em;}
     .expired-sub{font-size:15px;color:var(--gray);max-width:380px;line-height:1.7;}
-    .expired-btn{margin-top:8px;padding:14px 36px;background:var(--br);color:#F4EADD;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;text-decoration:none;display:inline-block;}
-
+    .expired-btn{margin-top:8px;padding:14px 36px;background:var(--br);color:#F4EADD;border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
     .timer-bar{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--br);color:#F4EADD;display:flex;align-items:center;justify-content:space-between;padding:10px clamp(16px,4vw,40px);}
     .timer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:15px;letter-spacing:-0.02em;}
     .timer-right{display:flex;align-items:center;gap:12px;}
     .timer-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.6);}
     .timer-count{font-family:'League Spartan',sans-serif;font-weight:700;font-size:18px;}
     .timer-count.urgent{color:#FFB347;}
-
     .hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding-top:48px;}
     .hero-photo{position:absolute;inset:0;background:url('https://studio-pulga.vercel.app/preview__2_.webp') center/cover no-repeat;}
     .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(110,44,20,0.85) 0%,rgba(30,8,2,0.4) 50%,transparent 100%);}
-    .hero-content{position:relative;z-index:10;padding:clamp(40px,8vw,80px) clamp(24px,6vw,80px);width:100%;animation:fadeInUp 1s ease 0.2s backwards;}
-    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+    .hero-content{position:relative;z-index:10;padding:clamp(40px,8vw,80px) clamp(24px,6vw,80px);width:100%;}
     .hero-tag{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(244,234,221,0.6);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
     .hero-tag::before{content:'';width:20px;height:1px;background:rgba(244,234,221,0.4);}
     .hero-name{font-family:'League Spartan',sans-serif;font-weight:300;font-size:clamp(14px,3vw,20px);color:rgba(244,234,221,0.7);letter-spacing:0.04em;margin-bottom:4px;}
     .hero-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(48px,10vw,110px);color:#F4EADD;line-height:0.88;letter-spacing:-0.03em;margin-bottom:20px;}
     .hero-title em{font-style:italic;font-weight:300;color:rgba(244,234,221,0.6);}
     .hero-desc{font-size:clamp(14px,2vw,17px);font-weight:300;color:rgba(244,234,221,0.7);max-width:600px;line-height:1.7;margin-top:24px;}
-
     .quote-section{padding:clamp(50px,8vw,80px) clamp(24px,6vw,80px);text-align:center;background:var(--bg2);}
     .quote-text{font-family:'League Spartan',sans-serif;font-weight:300;font-size:clamp(36px,7vw,72px);color:var(--br);letter-spacing:-0.03em;line-height:1.1;}
-    .quote-text strong{font-weight:900;}
-    .quote-text em{font-weight:300;font-style:italic;}
-
+    .quote-text strong{font-weight:900;}.quote-text em{font-weight:300;font-style:italic;}
     .services-section{padding:clamp(80px,10vw,120px) clamp(24px,6vw,80px);background:var(--bg);}
     .services-inner{max-width:1200px;margin:0 auto;}
     .services-divider{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
@@ -52,12 +40,11 @@
     .services-divider-text{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray2);}
     .services-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(32px,5.5vw,48px);color:var(--br);letter-spacing:-0.03em;margin-bottom:48px;line-height:1.1;}
     .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-    .service-card{background:rgba(255,255,255,0.8);border:1.5px solid var(--border);border-radius:20px;padding:28px 24px;transition:all 0.3s cubic-bezier(0.23,1,0.320,1);cursor:pointer;}
-    .service-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(110,44,20,0.15);border-color:var(--br);background:rgba(255,255,255,0.95);}
+    .service-card{background:rgba(255,255,255,0.8);border:1.5px solid var(--border);border-radius:20px;padding:28px 24px;transition:all 0.3s cubic-bezier(0.23,1,0.320,1);}
+    .service-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(110,44,20,0.15);border-color:var(--br);}
     .service-num{font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray2);margin-bottom:12px;}
     .service-name{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;color:var(--br);margin-bottom:10px;}
     .service-desc{font-size:13px;color:var(--gray);line-height:1.7;font-weight:300;}
-
     .planos-section{padding:clamp(60px,8vw,100px) clamp(24px,6vw,80px);background:var(--bg2);}
     .planos-inner{max-width:1100px;margin:0 auto;}
     .planos-header{margin-bottom:40px;}
@@ -82,182 +69,61 @@
     .plano-cta{display:block;padding:14px 20px;border-radius:11px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;text-align:center;margin-bottom:22px;background:var(--br);color:#F4EADD;border:none;}
     .plano-cta:hover{background:#5A2210;}
     .plano.destaque .plano-cta{background:#F4EADD;color:var(--br);}
-    .plano.destaque .plano-cta:hover{background:rgba(244,234,221,0.85);}
-    .cta-default{display:inline;}
-    .cta-hover{display:none;}
-    .plano-cta:hover .cta-default{display:none;}
-    .plano-cta:hover .cta-hover{display:inline;}
-
     .divider{height:1px;background:var(--border);margin:22px 0;}
     .plano.destaque .divider{background:rgba(244,234,221,0.15);}
-
-    /* LABEL COM TRAÇO */
     .items-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
     .items-label::before{content:'';width:20px;height:1px;background:var(--gray2);}
     .plano.destaque .items-label{color:rgba(244,234,221,0.5);}
     .plano.destaque .items-label::before{background:rgba(244,234,221,0.5);}
-
-    /* ITEM COM BOLINHA CHECK */
     .item-linha{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--gray);margin-bottom:10px;line-height:1.5;}
     .plano.destaque .item-linha{color:rgba(244,234,221,0.8);}
     .item-check{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:rgba(110,44,20,0.12);display:flex;align-items:center;justify-content:center;margin-top:1px;}
     .plano.destaque .item-check{background:rgba(244,234,221,0.15);}
     .item-check svg{width:11px;height:11px;}
-
-    /* ITEM RISCADO (NÃO INCLUSO) */
-    .item-riscado{font-size:13px;font-weight:400;text-decoration:line-through;margin-bottom:10px;line-height:1.5;color:rgba(110,44,20,0.28);}
+    .item-riscado{font-size:13px;text-decoration:line-through;margin-bottom:10px;line-height:1.5;color:rgba(110,44,20,0.28);}
     .plano.destaque .item-riscado{color:rgba(244,234,221,0.28);}
-
     .footer-proposta{background:var(--br);color:#F4EADD;padding:clamp(40px,6vw,60px) clamp(24px,6vw,80px);text-align:center;}
     .footer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;margin-bottom:10px;}
     .footer-sub{font-size:12px;color:rgba(244,234,221,0.6);font-weight:300;}
-
     @media(max-width:768px){.planos-grid{grid-template-columns:1fr;}.services-grid{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
-
   <div class="expired-screen" id="expiredScreen">
     <div class="expired-title">Proposta expirada</div>
-    <div class="expired-sub">Este link não é mais válido. Entre em contato para solicitar uma nova proposta.</div>
-    <a href="https://wa.me/5513996057099?text=Olá!%20Gostaria%20de%20uma%20nova%20proposta." class="expired-btn">Solicitar nova proposta →</a>
+    <div class="expired-sub">Este link n\u00e3o \u00e9 mais v\u00e1lido. Entre em contato para solicitar uma nova proposta.</div>
+    <a href="https://wa.me/5513996057099?text=Ol%C3%A1%21+Gostaria+de+uma+nova+proposta." class="expired-btn">Solicitar nova proposta \u2192</a>
   </div>
-
-  <div class="timer-bar">
-    <div class="timer-logo">STUDIO PULGA</div>
-    <div class="timer-right">
-      <div class="timer-label">Proposta Expira em</div>
-      <div class="timer-count" id="timerCount">—</div>
-    </div>
-  </div>
-
-  <section class="hero">
-    <div class="hero-photo"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="hero-tag">Proposta exclusiva</div>
-      <div class="hero-name" id="heroName">Olá, cliente.</div>
-      <h1 class="hero-title">Feito pra <em>você</em></h1>
-      <p class="hero-desc">Esta proposta foi preparada especialmente para você após nossa conversa. Ela é válida pelo período indicado acima.</p>
-    </div>
-  </section>
-
-  <section class="quote-section">
-    <div class="quote-text">// <strong>can I put it</strong> <em>in a pan?</em></div>
-  </section>
-
-  <section class="services-section">
-    <div class="services-inner">
-      <div class="services-divider"><span class="services-divider-text">COM A GENTE</span></div>
-      <h2 class="services-title">Sua empresa contará com<br>uma equipe completa.</h2>
-      <div class="services-grid">
-        <div class="service-card"><div class="service-num">01</div><div class="service-name">Filmmaker Mobile</div><div class="service-desc">Registros rápidos e com qualidade gravados com celular — mais orgânicos e naturais para as redes sociais.</div></div>
-        <div class="service-card"><div class="service-num">02</div><div class="service-name">Editor de Vídeo e Foto</div><div class="service-desc">Edição e pós-produção profissional de todos os conteúdos captados com o olhar do Studio.</div></div>
-        <div class="service-card"><div class="service-num">03</div><div class="service-name">Social Media</div><div class="service-desc">Responsável pelo planejamento, criação e gestão completa das redes sociais da sua marca.</div></div>
-        <div class="service-card"><div class="service-num">04</div><div class="service-name">Gestor de Tráfego</div><div class="service-desc">Campanhas pagas no Meta e Google para atrair leads qualificados com foco em resultado real.</div></div>
-        <div class="service-card"><div class="service-num">05</div><div class="service-name">Drone</div><div class="service-desc">Vídeos e imagens aéreas para projetos e obras — perspectiva única que eleva a percepção da sua marca.</div></div>
-        <div class="service-card"><div class="service-num">06</div><div class="service-name">Designer Gráfico</div><div class="service-desc">Criação de materiais digitais e impressos com identidade visual alinhada à essência da sua marca.</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="planos-section">
-    <div class="planos-inner">
-      <div class="planos-header">
-        <div class="planos-divider"><span class="planos-divider-text">ESCOLHA SEU PACOTE</span></div>
-        <div class="planos-title">Planos mensais</div>
-      </div>
-      <div class="planos-grid">
-
-        <!-- PLANO 1 -->
-        <div class="plano">
-          <div class="plano-num">1º PACOTE</div>
-          <div class="plano-nome">Pensado na sua marca</div>
-          <div class="plano-subtitle">Para quem quer construir presença consistente</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v1">2.690</span></div>
-          <div class="plano-periodo">por mês</div>
-          <a class="plano-cta" href="#" onclick="fecharPlano(event,1)"><span class="cta-default">Escolher Plano 1</span><span class="cta-hover">Fechar agora ↗</span></a>
-          <div class="divider"></div>
-          <div class="items-label">Incluso</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories diários (até 4 por dia)</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Acompanhamento de repost</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diálogo constante com o cliente</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Reunião mensal de resultados e alinhamento</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Interação pontual com o público</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de postagens</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Relatório mensal de métricas</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Gestor de marca para curadoria visual</div>
-          <div class="divider"></div>
-          <div class="items-label">Não incluso</div>
-          <div class="item-riscado">Análise semanal de desempenho</div>
-          <div class="item-riscado">Diária mensal de captação</div>
-          <div class="item-riscado">Postagens semanais no feed</div>
-        </div>
-
-        <!-- PLANO 2 -->
-        <div class="plano destaque">
-          <div class="badge-destaque">MAIS ESCOLHIDO</div>
-          <div class="plano-num">2º PACOTE</div>
-          <div class="plano-nome">Sua gestão</div>
-          <div class="plano-subtitle">Gestão completa com diária mensal inclusa</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v2">3.690</span></div>
-          <div class="plano-periodo">por mês</div>
-          <a class="plano-cta" href="#" onclick="fecharPlano(event,2)"><span class="cta-default">Escolher Plano 2</span><span class="cta-hover">Fechar agora ↗</span></a>
-          <div class="divider"></div>
-          <div class="items-label">Tudo do plano 1, mais:</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Análise semanal de desempenho</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Postagens semanais no feed</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Uma diária mensal de captação</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Interação com o público + repost</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de conteúdos via app</div>
-          <div class="divider"></div>
-          <div class="items-label">Não incluso</div>
-          <div class="item-riscado">Estudo de marca e rebranding</div>
-          <div class="item-riscado">Stories ilimitados - Drone - Design gráfico</div>
-          <div class="item-riscado">Diárias autônomas em escritório/obra</div>
-        </div>
-
-        <!-- PLANO 3 -->
-        <div class="plano">
-          <div class="plano-num">3º PACOTE</div>
-          <div class="plano-nome">O mais completo</div>
-          <div class="plano-subtitle">Ideal para quem quer presença total</div>
-          <div class="plano-valor"><sup>R$</sup><span id="v3">3.990</span></div>
-          <div class="plano-periodo">por mês</div>
-          <a class="plano-cta" href="#" onclick="fecharPlano(event,3)"><span class="cta-default">Escolher Plano 3</span><span class="cta-hover">Fechar agora ↗</span></a>
-          <div class="divider"></div>
-          <div class="items-label">Tudo do plano 2, mais:</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Estudo de marca e rebranding completo</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories ilimitados</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cobertura com drone</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria e prova social</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Designer gráfico incluso</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Fotos oficiais de projetos entregues</div>
-          <div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diárias autônomas em escritório ou obra</div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer-proposta">
-    <div class="footer-logo">STUDIO PULGA</div>
-    <div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div>
-  </footer>
-
+  <div class="timer-bar"><div class="timer-logo">STUDIO PULGA</div><div class="timer-right"><div class="timer-label">Proposta Expira em</div><div class="timer-count" id="timerCount">\u2014</div></div></div>
+  <section class="hero"><div class="hero-photo"></div><div class="hero-overlay"></div><div class="hero-content"><div class="hero-tag">Proposta exclusiva</div><div class="hero-name" id="heroName">Ol\u00e1, cliente.</div><h1 class="hero-title">Feito pra <em>voc\u00ea</em></h1><p class="hero-desc">Esta proposta foi preparada especialmente para voc\u00ea ap\u00f3s nossa conversa. Ela \u00e9 v\u00e1lida pelo per\u00edodo indicado acima.</p></div></section>
+  <section class="quote-section"><div class="quote-text">// <strong>can I put it</strong> <em>in a pan?</em></div></section>
+  <section class="services-section"><div class="services-inner"><div class="services-divider"><span class="services-divider-text">COM A GENTE</span></div><h2 class="services-title">Sua empresa contar\u00e1 com<br>uma equipe completa.</h2><div class="services-grid"><div class="service-card"><div class="service-num">01</div><div class="service-name">Filmmaker Mobile</div><div class="service-desc">Registros r\u00e1pidos e com qualidade gravados com celular \u2014 mais org\u00e2nicos e naturais para as redes sociais.</div></div><div class="service-card"><div class="service-num">02</div><div class="service-name">Editor de V\u00eddeo e Foto</div><div class="service-desc">Edi\u00e7\u00e3o e p\u00f3s-produ\u00e7\u00e3o profissional de todos os conte\u00fados captados com o olhar do Studio.</div></div><div class="service-card"><div class="service-num">03</div><div class="service-name">Social Media</div><div class="service-desc">Respons\u00e1vel pelo planejamento, cria\u00e7\u00e3o e gest\u00e3o completa das redes sociais da sua marca.</div></div><div class="service-card"><div class="service-num">04</div><div class="service-name">Gestor de Tr\u00e1fego</div><div class="service-desc">Campanhas pagas no Meta e Google para atrair leads qualificados com foco em resultado real.</div></div><div class="service-card"><div class="service-num">05</div><div class="service-name">Drone</div><div class="service-desc">V\u00eddeos e imagens a\u00e9reas para projetos e obras \u2014 perspectiva \u00fanica que eleva a percep\u00e7\u00e3o da sua marca.</div></div><div class="service-card"><div class="service-num">06</div><div class="service-name">Designer Gr\u00e1fico</div><div class="service-desc">Cria\u00e7\u00e3o de materiais digitais e impressos com identidade visual alinhada \u00e0 ess\u00eancia da sua marca.</div></div></div></div></section>
+  <section class="planos-section"><div class="planos-inner"><div class="planos-header"><div class="planos-divider"><span class="planos-divider-text">ESCOLHA SEU PACOTE</span></div><div class="planos-title">Planos mensais</div></div>
+    <div class="planos-grid">
+      <div class="plano" id="plano0"><div class="plano-num">1\u00ba PACOTE</div><div class="plano-nome">Pensado na sua marca</div><div class="plano-subtitle">Para quem quer construir presen\u00e7a consistente</div><div class="plano-valor"><sup>R$</sup><span id="v1">2.690</span></div><div class="plano-periodo">por m\u00eas</div><a class="plano-cta" href="#" onclick="fecharPlano(event,1)">Escolher Plano 1</a><div class="divider"></div><div class="items-label">Incluso</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories di\u00e1rios (at\u00e9 4 por dia)</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Acompanhamento de repost</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Di\u00e1logo constante com o cliente</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Reuni\u00e3o mensal de resultados e alinhamento</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Intera\u00e7\u00e3o pontual com o p\u00fablico</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calend\u00e1rio mensal de postagens</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Relat\u00f3rio mensal de m\u00e9tricas</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Gestor de marca para curadoria visual</div><div class="divider"></div><div class="items-label">N\u00e3o incluso</div><div class="item-riscado">An\u00e1lise semanal de desempenho</div><div class="item-riscado">Di\u00e1ria mensal de capta\u00e7\u00e3o</div><div class="item-riscado">Postagens semanais no feed</div></div>
+      <div class="plano destaque" id="plano1"><div class="badge-destaque">MAIS ESCOLHIDO</div><div class="plano-num">2\u00ba PACOTE</div><div class="plano-nome">Sua gest\u00e3o</div><div class="plano-subtitle">Gest\u00e3o completa com di\u00e1ria mensal inclusa</div><div class="plano-valor"><sup>R$</sup><span id="v2">3.690</span></div><div class="plano-periodo">por m\u00eas</div><a class="plano-cta" href="#" onclick="fecharPlano(event,2)">Escolher Plano 2</a><div class="divider"></div><div class="items-label">Tudo do plano 1, mais:</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>An\u00e1lise semanal de desempenho</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Postagens semanais no feed</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Uma di\u00e1ria mensal de capta\u00e7\u00e3o</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Intera\u00e7\u00e3o com o p\u00fablico + repost</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calend\u00e1rio mensal de conte\u00fados via app</div><div class="divider"></div><div class="items-label">N\u00e3o incluso</div><div class="item-riscado">Estudo de marca e rebranding</div><div class="item-riscado">Stories ilimitados - Drone - Design gr\u00e1fico</div><div class="item-riscado">Di\u00e1rias aut\u00f4nomas em escrit\u00f3rio/obra</div></div>
+      <div class="plano" id="plano2"><div class="plano-num">3\u00ba PACOTE</div><div class="plano-nome">O mais completo</div><div class="plano-subtitle">Ideal para quem quer presen\u00e7a total</div><div class="plano-valor"><sup>R$</sup><span id="v3">3.990</span></div><div class="plano-periodo">por m\u00eas</div><a class="plano-cta" href="#" onclick="fecharPlano(event,3)">Escolher Plano 3</a><div class="divider"></div><div class="items-label">Tudo do plano 2, mais:</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Estudo de marca e rebranding completo</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories ilimitados</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cobertura com drone</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Duas di\u00e1rias mensais (conte\u00fados ilimitados)</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria e prova social</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Designer gr\u00e1fico incluso</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Fotos oficiais de projetos entregues</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Di\u00e1rias aut\u00f4nomas em escrit\u00f3rio ou obra</div></div>
+    </div></div></section>
+  <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga \u00b7 Esta proposta \u00e9 personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
     function getParam(k){return new URLSearchParams(window.location.search).get(k);}
     function loadProposta(){
       try{var d=getParam('d');if(d){PROPOSTA=JSON.parse(decodeURIComponent(escape(atob(d))));}}catch(e){console.log('err',e);}
       if(!PROPOSTA)PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};
-      document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';aplicarItens();
-      document.getElementById('v1').textContent=PROPOSTA.v1;
-      document.getElementById('v2').textContent=PROPOSTA.v2;
-      document.getElementById('v3').textContent=PROPOSTA.v3;
+      document.getElementById('heroName').textContent='Ol\u00e1, '+PROPOSTA.nome+'.';
+      document.getElementById('v1').textContent=PROPOSTA.v1||'2.690';
+      document.getElementById('v2').textContent=PROPOSTA.v2||'3.690';
+      document.getElementById('v3').textContent=PROPOSTA.v3||'3.990';
+      if(PROPOSTA.planos){
+        var pl=PROPOSTA.planos;
+        var cards=document.querySelectorAll('.plano');
+        var vis=pl.filter(Boolean).length;
+        cards.forEach(function(c,i){if(!pl[i])c.style.display='none';});
+        if(vis===1)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr';
+        if(vis===2)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr 1fr';
+      }
+      aplicarItens();
       if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
       startTimer();
     }
@@ -269,39 +135,44 @@
       planos.forEach(function(plano,pi){
         var itens=temItens&&PROPOSTA.itens[pi];
         var ni=(PROPOSTA.naoIncluso&&PROPOSTA.naoIncluso[pi])||(PROPOSTA.ni&&PROPOSTA.ni[pi]);
-        var doNotSkip=true;
-        if(doNotSkip){
         var stroke=plano.classList.contains('destaque')?'#F4EADD':'#6E2C14';
         var firstDiv=plano.querySelector('.divider');
         if(!firstDiv)return;
         var parent=firstDiv.parentNode;
-        var toRemove=[],el=firstDiv.nextSibling;
-        while(el){toRemove.push(el);el=el.nextSibling;}
-        toRemove.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
         if(itens&&itens.length>0){
+          var toRemove=[],el=firstDiv.nextSibling;
+          while(el){toRemove.push(el);el=el.nextSibling;}
+          toRemove.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
           var lI=document.createElement('div');lI.className='items-label';lI.textContent='Incluso';parent.appendChild(lI);
           itens.forEach(function(txt){
             var d=document.createElement('div');d.className='item-linha';
             d.innerHTML='<div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="'+stroke+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+txt;
             parent.appendChild(d);
           });
-        }
-        if(ni&&ni.length>0){
-          var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
-          var lN=document.createElement('div');lN.className='items-label';lN.textContent='N\u00e3o incluso';parent.appendChild(lN);
+          if(ni&&ni.length>0){
+            var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
+            var lN=document.createElement('div');lN.className='items-label';lN.textContent='N\u00e3o incluso';parent.appendChild(lN);
+            ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
+          }
+        } else if(ni&&ni.length>0){
+          var dividers=plano.querySelectorAll('.divider');
+          var lastDiv=dividers[dividers.length-1];
+          if(!lastDiv)return;
+          var toRemove2=[],el2=lastDiv.nextSibling;
+          while(el2){toRemove2.push(el2);el2=el2.nextSibling;}
+          toRemove2.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
+          var lN2=document.createElement('div');lN2.className='items-label';lN2.textContent='N\u00e3o incluso';parent.appendChild(lN2);
           ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
-        }
         }
       });
     }
-        function startTimer(){
+    function startTimer(){
       function tick(){
         var diff=PROPOSTA.expira-Date.now();
         if(diff<=0){document.getElementById('expiredScreen').classList.add('show');return;}
         var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-        var el=document.getElementById('timerCount');
-        el.textContent=(d>0?d+'d ':'')+pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
-        el.classList.toggle('urgent',diff<86400000);
+        document.getElementById('timerCount').textContent=(d>0?d+'d ':'')+pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
+        document.getElementById('timerCount').classList.toggle('urgent',diff<86400000);
         setTimeout(tick,1000);
       }
       tick();
@@ -309,14 +180,13 @@
     function pad(n){return n.toString().padStart(2,'0');}
     function fecharPlano(e,num){
       e.preventDefault();
-      var planos={1:'1º Pacote — Pensado na sua marca',2:'2º Pacote — Sua gestão',3:'3º Pacote — O mais completo'};
-      var valores={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
-      var msg='Olá! Gostaria de fechar o '+planos[num]+' (R$'+valores[num]+'/mês). Podemos avançar?';
-      if(window.fbq)fbq("track","Lead",{content_name:"Fechou Plano "+num});
+      var nomes={1:'1\u00ba Pacote \u2014 Pensado na sua marca',2:'2\u00ba Pacote \u2014 Sua gest\u00e3o',3:'3\u00ba Pacote \u2014 O mais completo'};
+      var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
+      var msg='Ol\u00e1! Gostaria de fechar o '+nomes[num]+' (R$'+vals[num]+'/m\u00eas). Podemos avan\u00e7ar?';
+      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
       window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
     }
     loadProposta();
   </script>
 </body>
 </html>
- 
