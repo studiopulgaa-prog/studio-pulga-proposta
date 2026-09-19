@@ -211,13 +211,13 @@
     (function(){
       try{
         var d=getParam('d');
-        if(!d)return;
-        var h=btoa(navigator.userAgent+screen.width+'x'+screen.height).slice(0,16);
-        var pid=btoa(d.slice(0,40)).slice(0,24);
-        var key='acesso_'+pid+'_'+h;
+        if(!d||!PROPOSTA||!PROPOSTA.nome)return;
+        var dispHash=btoa((navigator.userAgent+screen.width).slice(0,30)).slice(0,16);
+        var propostaHash=btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).slice(0,20);
+        var key='ac_'+propostaHash+'_'+dispHash;
         if(sessionStorage.getItem(key))return;
         sessionStorage.setItem(key,'1');
-        fetch(SUPA_URL_P+'/rest/v1/acessos',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY_P,'Authorization':'Bearer '+SUPA_KEY_P,'Prefer':'return=minimal'},body:JSON.stringify({proposta_id:pid,dispositivo_hash:h})});
+        fetch(SUPA_URL_P+'/rest/v1/acessos',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY_P,'Authorization':'Bearer '+SUPA_KEY_P,'Prefer':'return=minimal'},body:JSON.stringify({proposta_id:propostaHash,dispositivo_hash:dispHash})});
       }catch(e){}
     })();
   </script>
