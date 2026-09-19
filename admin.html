@@ -305,7 +305,11 @@ function gerarLink(){
   document.getElementById('linkResult').classList.add('show');
   document.getElementById('linkCurtoWrap').style.display='none';
   document.getElementById('copyBtn').textContent='Copiar link';
-  fetch(SUPA_URL+'/rest/v1/propostas',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},body:JSON.stringify({cliente:nome,v1:v1,v2:v2,v3:v3,planos:[ck1,ck2,ck3],validade:diasSel})}).then(function(){carregarHistorico();});
+  fetch(SUPA_URL+'/rest/v1/propostas',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},body:(function(){
+      var enc=document.getElementById('linkUrl').textContent.split('?d=')[1]||'';
+      var lh=enc?btoa(enc.slice(0,40)).slice(0,24):'';
+      return JSON.stringify({cliente:nome,v1:v1,v2:v2,v3:v3,planos:[ck1,ck2,ck3],validade:diasSel,link_hash:lh});
+    })()}).then(function(){carregarHistorico();});
 }
 function encurtarLink(){
   var url=document.getElementById('linkUrl').textContent;
@@ -326,22 +330,31 @@ function carregarHistorico(){
   fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();}).then(function(lista){
     if(!lista||!lista.length){renderHistorico([]);return;}
     var ids=lista.map(function(p){return p.id;});
-    fetch(SUPA_URL+'/rest/v1/acessos?proposta_id=in.('+ids.join(',')+')',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
+    fetch(SUPA_URL+'/rest/v1/acessos',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
       var contagem={};
-      (acessos||[]).forEach(function(a){contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;});
-      lista.forEach(function(p){p.acessos=contagem[p.id]||0;});
+      (acessos||[]).forEach(function(a){
+        if(a.proposta_id)contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;
+      });
+      lista.forEach(function(p){
+        var lh=p.link_hash||'';
+        p.acessos=lh?((contagem[lh])||0):0;
+      });
       renderHistorico(lista);
     }).catch(function(){renderHistorico(lista);});
   }).catch(function(){renderHistorico([]);});
 }
-function duplicarProposta(p){
+function duplicarIdx(i){
+  var p=window._propostas&&window._propostas[i];
+  if(!p)return;
   document.getElementById('fNome').value=p.cliente;
-  if(p.v1){document.getElementById('fV1').value=p.v1;}
-  if(p.v2){document.getElementById('fV2').value=p.v2;}
-  if(p.v3){document.getElementById('fV3').value=p.v3;}
+  if(p.v1)document.getElementById('fV1').value=p.v1;
+  if(p.v2)document.getElementById('fV2').value=p.v2;
+  if(p.v3)document.getElementById('fV3').value=p.v3;
   window.scrollTo({top:0,behavior:'smooth'});
-  setTimeout(function(){document.getElementById('fNome').focus();},400);
-  setTimeout(function(){alert('Proposta de "'+p.cliente+'" carregada. Ajuste o nome e valores e clique em Gerar link.');},600);
+  setTimeout(function(){
+    document.getElementById('fNome').select();
+    document.getElementById('fNome').focus();
+  },400);
 }
 function copiarLinkHistorico(link){
   navigator.clipboard.writeText(link).then(function(){
@@ -357,6 +370,7 @@ function excluirProposta(id,el){
 function renderHistorico(lista){
   var el=document.getElementById('historicoLista');
   if(!lista||lista.length===0){el.innerHTML='<div class="historico-vazio">Nenhuma proposta criada ainda.</div>';return;}
+  window._propostas=lista;
   var h='';
   lista.forEach(function(p,i){
     var dt=new Date(p.criado_em);
@@ -379,7 +393,7 @@ function renderHistorico(lista){
     h+='<div style="margin-top:8px;"><span class="proposta-tag'+(pl[0]?'':' inativo')+'">Plano 1</span><span class="proposta-tag'+(pl[1]?'':' inativo')+'">Plano 2</span><span class="proposta-tag'+(pl[2]?'':' inativo')+'">Plano 3</span></div>';
     var linkProposta=window.location.origin+'/proposta.html?d=';
     h+='<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">';
-    h+='<button onclick="event.stopPropagation();duplicarProposta({cliente:\''+p.cliente+'\',v1:\''+p.v1+'\',v2:\''+p.v2+'\',v3:\''+p.v3+'\'}" style="padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:\'Inter\',sans-serif;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;">⊞ Duplicar</button>';
+    h+='<button onclick="event.stopPropagation();duplicarIdx('+i+')" style="padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:Inter,sans-serif;font-size:12px;font-weight:600;color:var(--gray2);cursor:pointer;">⊞ Duplicar proposta</button>';
     h+='</div>';
     h+='</div></div>';
   });
