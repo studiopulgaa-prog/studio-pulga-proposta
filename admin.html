@@ -109,9 +109,45 @@
         <div class="plano-toggle ativo" onclick="togglePlano(2,this)"><input type="checkbox" id="ck2" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">2º Pacote</span></div>
         <div class="plano-toggle ativo" onclick="togglePlano(3,this)"><input type="checkbox" id="ck3" checked onclick="event.stopPropagation()"><span class="plano-toggle-label">3º Pacote</span></div>
       </div>
-      <div class="field" id="fieldV1"><label>Valor — 1º Pacote (R$)</label><input type="text" id="fV1" placeholder="Ex: 2.690"></div><div class="field" id="fieldVO1" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO1" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
-      <div class="field" id="fieldV2"><label>Valor — 2º Pacote (R$)</label><input type="text" id="fV2" placeholder="Ex: 3.690"></div><div class="field" id="fieldVO2" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO2" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
-      <div class="field" id="fieldV3"><label>Valor — 3º Pacote (R$)</label><input type="text" id="fV3" placeholder="Ex: 3.990"></div><div class="field" id="fieldVO3" style="margin-top:-8px;"><label style="font-size:10px;opacity:0.6;">Valor original (opcional)</label><input type="text" id="fVO3" placeholder="Ex: 4.500" style="height:36px;font-size:13px;opacity:0.7;"></div>
+      <div class="field" id="fieldV1">
+        <label>1º Plano (R$)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">De (original)</div>
+            <input type="text" id="fVO1" placeholder="Ex: 4.500" style="height:40px;font-size:13px;">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">Para (novo valor)</div>
+            <input type="text" id="fV1" placeholder="Ex: 2.690">
+          </div>
+        </div>
+      </div>
+      <div class="field" id="fieldV2">
+        <label>2º Plano (R$)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">De (original)</div>
+            <input type="text" id="fVO2" placeholder="Ex: 4.500" style="height:40px;font-size:13px;">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">Para (novo valor)</div>
+            <input type="text" id="fV2" placeholder="Ex: 3.690">
+          </div>
+        </div>
+      </div>
+      <div class="field" id="fieldV3">
+        <label>3º Plano (R$)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">De (original)</div>
+            <input type="text" id="fVO3" placeholder="Ex: 4.500" style="height:40px;font-size:13px;">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(110,44,20,0.35);margin-bottom:5px;">Para (novo valor)</div>
+            <input type="text" id="fV3" placeholder="Ex: 3.990">
+          </div>
+        </div>
+      </div>
       <div class="field">
         <label>Personalizar itens</label>
         <div class="plano-items-toggle" onclick="toggleItems(1)"><span class="plano-items-label">1º Pacote — Itens</span><span class="plano-items-arrow" id="iarrow1">›</span></div>
@@ -295,6 +331,14 @@ function carregarHistorico(){
       renderHistorico(lista);
     }).catch(function(){renderHistorico(lista);});
   }).catch(function(){renderHistorico([]);});
+}
+function duplicarProposta(p){
+  document.getElementById('fNome').value=p.cliente+' (copia)';
+  if(p.v1){document.getElementById('fV1').value=p.v1;}
+  if(p.v2){document.getElementById('fV2').value=p.v2;}
+  if(p.v3){document.getElementById('fV3').value=p.v3;}
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(function(){document.getElementById('fNome').focus();},400);
 }
 function excluirProposta(id,el){
   if(!confirm('Excluir esta proposta?'))return;
