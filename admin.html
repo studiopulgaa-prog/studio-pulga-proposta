@@ -79,6 +79,8 @@
     .proposta-arrow.open{transform:rotate(90deg);}
     .proposta-del{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:18px;padding:2px 6px;line-height:1;flex-shrink:0;margin-left:8px;}
     .proposta-del:hover{color:#c0392b;}
+    .proposta-dup{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:16px;padding:2px 6px;line-height:1;flex-shrink:0;}
+    .proposta-dup:hover{color:var(--br);}
     .proposta-body{display:none;padding:16px 18px;background:rgba(110,44,20,0.03);border-top:1px solid var(--border);}
     .proposta-body.show{display:block;}
     .proposta-info{font-size:13px;color:var(--gray);margin-bottom:6px;display:flex;gap:8px;}
@@ -333,12 +335,20 @@ function carregarHistorico(){
   }).catch(function(){renderHistorico([]);});
 }
 function duplicarProposta(p){
-  document.getElementById('fNome').value=p.cliente+' (copia)';
+  document.getElementById('fNome').value=p.cliente;
   if(p.v1){document.getElementById('fV1').value=p.v1;}
   if(p.v2){document.getElementById('fV2').value=p.v2;}
   if(p.v3){document.getElementById('fV3').value=p.v3;}
   window.scrollTo({top:0,behavior:'smooth'});
   setTimeout(function(){document.getElementById('fNome').focus();},400);
+  setTimeout(function(){alert('Proposta de "'+p.cliente+'" carregada. Ajuste o nome e valores e clique em Gerar link.');},600);
+}
+function copiarLinkHistorico(link){
+  navigator.clipboard.writeText(link).then(function(){
+    alert('Link copiado!');
+  }).catch(function(){
+    prompt('Copie o link abaixo:',link);
+  });
 }
 function excluirProposta(id,el){
   if(!confirm('Excluir esta proposta?'))return;
@@ -367,6 +377,10 @@ function renderHistorico(lista){
     if(p.v3)h+='<div class="proposta-info"><strong>3\u00ba Pacote</strong> R$ '+p.v3+'</div>';
     h+='<div class="proposta-info"><strong>Validade</strong> '+(p.validade||2)+' dias</div>';
     h+='<div style="margin-top:8px;"><span class="proposta-tag'+(pl[0]?'':' inativo')+'">Plano 1</span><span class="proposta-tag'+(pl[1]?'':' inativo')+'">Plano 2</span><span class="proposta-tag'+(pl[2]?'':' inativo')+'">Plano 3</span></div>';
+    var linkProposta=window.location.origin+'/proposta.html?d=';
+    h+='<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">';
+    h+='<button onclick="event.stopPropagation();duplicarProposta({cliente:\''+p.cliente+'\',v1:\''+p.v1+'\',v2:\''+p.v2+'\',v3:\''+p.v3+'\'}" style="padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:\'Inter\',sans-serif;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;">⊞ Duplicar</button>';
+    h+='</div>';
     h+='</div></div>';
   });
   el.innerHTML=h;
