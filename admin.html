@@ -330,14 +330,13 @@ function carregarHistorico(){
   fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();}).then(function(lista){
     if(!lista||!lista.length){renderHistorico([]);return;}
     var ids=lista.map(function(p){return p.id;});
-    fetch(SUPA_URL+'/rest/v1/acessos',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
+    fetch(SUPA_URL+'/rest/v1/acessos?proposta_id=in.('+ids.join(',')+')',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
       var contagem={};
       (acessos||[]).forEach(function(a){
         if(a.proposta_id)contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;
       });
       lista.forEach(function(p){
-        var lh=p.link_hash||'';
-        p.acessos=lh?((contagem[lh])||0):0;
+        p.acessos=contagem[p.id]||0;
       });
       renderHistorico(lista);
     }).catch(function(){renderHistorico(lista);});
@@ -367,7 +366,9 @@ function excluirProposta(id,el){
   if(!confirm('Excluir esta proposta?'))return;
   fetch(SUPA_URL+'/rest/v1/propostas?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(){carregarHistorico();});
 }
+var _listaPropostas=[];
 function renderHistorico(lista){
+  _listaPropostas=lista;
   var el=document.getElementById('historicoLista');
   if(!lista||lista.length===0){el.innerHTML='<div class="historico-vazio">Nenhuma proposta criada ainda.</div>';return;}
   window._propostas=lista;
