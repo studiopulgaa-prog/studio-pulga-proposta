@@ -336,7 +336,7 @@ function carregarHistorico(){
         if(a.proposta_id)contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;
       });
       lista.forEach(function(p){
-        p.acessos=contagem[p.id]||0;
+        p.acessos=contagem[p.link_hash||p.id]||0;
       });
       renderHistorico(lista);
     }).catch(function(){renderHistorico(lista);});
