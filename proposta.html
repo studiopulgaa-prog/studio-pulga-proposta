@@ -213,7 +213,7 @@
         var d=getParam('d');
         if(!d)return;
         var h=btoa(navigator.userAgent+screen.width+'x'+screen.height).slice(0,16);
-        var pid=btoa(d.slice(0,20)).slice(0,16);
+        var pid=btoa(d.slice(0,40)).slice(0,24);
         var key='acesso_'+pid+'_'+h;
         if(sessionStorage.getItem(key))return;
         sessionStorage.setItem(key,'1');
