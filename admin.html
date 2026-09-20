@@ -300,7 +300,16 @@ function gerarLink(){
   var itens=iState.map(function(p){return p.filter(function(x){return x.a;}).map(function(x){return x.t;});});
   var naoIncluso=niState.map(function(p){return p.filter(function(x){return x.a;}).map(function(x){return x.t;});});
   var data={nome:nome,v1:v1,v2:v2,v3:v3,vo1:vo1,vo2:vo2,vo3:vo3,expira:expira,planos:[ck1,ck2,ck3],itens:itens,naoIncluso:naoIncluso};
-  var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  var jsonStr=JSON.stringify(data);
+  var encoded;
+  try{
+    var bytes=new TextEncoder().encode(jsonStr);
+    var binary='';
+    bytes.forEach(function(b){binary+=String.fromCharCode(b);});
+    encoded=btoa(binary);
+  }catch(e){
+    encoded=btoa(unescape(encodeURIComponent(jsonStr)));
+  }
   var link=window.location.origin+'/proposta.html?d='+encoded;
   document.getElementById('linkUrl').textContent=link;
   document.getElementById('linkResult').classList.add('show');
