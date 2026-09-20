@@ -222,6 +222,7 @@ var NI=[
   []
 ];
 var iState,niState;
+initState();
 function initState(){
   iState=ITENS.map(function(p){return p.map(function(t){return{t:t,a:true,edit:false};});});
   niState=NI.map(function(p){return p.map(function(t){return{t:t,a:true,edit:false};});});
