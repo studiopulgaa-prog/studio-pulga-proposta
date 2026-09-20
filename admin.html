@@ -319,7 +319,7 @@ function gerarLink(){
       var enc=document.getElementById('linkUrl').textContent.split('?d=')[1]||'';
       var lh=enc?btoa(enc.slice(0,40)).slice(0,24):'';
       return JSON.stringify({cliente:nome,v1:v1,v2:v2,v3:v3,planos:[ck1,ck2,ck3],validade:diasSel,link_hash:lh});
-    })()}).then(function(){carregarHistorico();});
+    })()}).then(function(){setTimeout(carregarHistorico,800);}).catch(function(){setTimeout(carregarHistorico,800);});
 }
 function encurtarLink(){
   var url=document.getElementById('linkUrl').textContent;
@@ -337,23 +337,39 @@ function encurtarLink(){
 function copiarLink(){navigator.clipboard.writeText(document.getElementById('linkUrl').textContent).then(function(){var b=document.getElementById('copyBtn');b.textContent='Copiado!';b.classList.add('copied');setTimeout(function(){b.textContent='Copiar link';b.classList.remove('copied');},2000);});}
 function copiarLinkCurto(){navigator.clipboard.writeText(document.getElementById('linkCurto').textContent).then(function(){var b=document.getElementById('copyShortBtn');b.textContent='Copiado!';b.classList.add('copied');setTimeout(function(){b.textContent='Copiar link curto';b.classList.remove('copied');},2000);});}
 function carregarHistorico(){
-  fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();}).then(function(lista){
+  document.getElementById('historicoLista').innerHTML='<div class="loading">Atualizando...</div>';
+  fetch(SUPA_URL+'/rest/v1/propostas?order=criado_em.desc&limit=50',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+  .then(function(r){
+    if(!r.ok)throw new Error('erro '+r.status);
+    return r.json();
+  })
+  .then(function(lista){
     if(!lista||!lista.length){renderHistorico([]);return;}
-    var ids=lista.map(function(p){return p.id;});
-    fetch(SUPA_URL+'/rest/v1/acessos?proposta_id=in.('+ids.join(',')+')',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r2){return r2.json();}).then(function(acessos){
+    _listaPropostas=lista;
+    // Buscar acessos — renderizar mesmo se falhar
+    var ids=lista.map(function(p){return p.id;}).filter(Boolean);
+    fetch(SUPA_URL+'/rest/v1/acessos?proposta_id=in.('+ids.join(',')+')',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+    .then(function(r2){return r2.ok?r2.json():[];})
+    .then(function(acessos){
       var contagem={};
       (acessos||[]).forEach(function(a){
         if(a.proposta_id)contagem[a.proposta_id]=(contagem[a.proposta_id]||0)+1;
       });
-      lista.forEach(function(p){
-        p.acessos=contagem[p.link_hash||p.id]||0;
-      });
+      lista.forEach(function(p){p.acessos=contagem[p.link_hash]||contagem[p.id]||0;});
       renderHistorico(lista);
-    }).catch(function(){renderHistorico(lista);});
-  }).catch(function(){renderHistorico([]);});
+    })
+    .catch(function(){
+      lista.forEach(function(p){p.acessos=0;});
+      renderHistorico(lista);
+    });
+  })
+  .catch(function(e){
+    console.log('historico err',e);
+    renderHistorico([]);
+  });
 }
 function duplicarIdx(i){
-  var p=window._propostas&&window._propostas[i];
+  var p=_listaPropostas&&_listaPropostas[i];
   if(!p)return;
   document.getElementById('fNome').value=p.cliente;
   if(p.v1)document.getElementById('fV1').value=p.v1;
@@ -374,7 +390,7 @@ function copiarLinkHistorico(link){
 }
 function excluirProposta(id,el){
   if(!confirm('Excluir esta proposta?'))return;
-  fetch(SUPA_URL+'/rest/v1/propostas?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(){carregarHistorico();});
+  fetch(SUPA_URL+'/rest/v1/propostas?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(){setTimeout(carregarHistorico,800);}).catch(function(){setTimeout(carregarHistorico,800);});
 }
 var _listaPropostas=[];
 function renderHistorico(lista){
