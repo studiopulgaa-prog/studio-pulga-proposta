@@ -277,7 +277,7 @@ function togglePlano(num,div){
   div.classList.toggle('ativo',ck.checked);
   var f=document.getElementById('fieldV'+num);
   f.style.opacity=ck.checked?'1':'0.4';
-  f.querySelector('input[type="text"]').disabled=!ck.checked;
+  f.querySelectorAll('input[type="text"]').forEach(function(inp){inp.disabled=!ck.checked;});
 }
 function gerarLink(){
   var nome=document.getElementById('fNome').value.trim();
