@@ -118,7 +118,24 @@
     var PROPOSTA=null;
     function getParam(k){return new URLSearchParams(window.location.search).get(k);}
     function loadProposta(){
-      try{var d=getParam('d');if(d){PROPOSTA=JSON.parse(decodeURIComponent(escape(atob(d))));}}catch(e){console.log('err',e);}
+      try{
+        var d=getParam('d');
+        if(d){
+          var decoded=null;
+          // Tentativa 1: TextDecoder (UTF-8 puro)
+          try{
+            var bin=atob(d);
+            var bytes=new Uint8Array(bin.length);
+            for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+            decoded=new TextDecoder('utf-8').decode(bytes);
+          }catch(e1){}
+          // Tentativa 2: escape/unescape
+          if(!decoded){try{decoded=decodeURIComponent(escape(atob(d)));}catch(e2){}}
+          // Tentativa 3: direto
+          if(!decoded){try{decoded=atob(d);}catch(e3){}}
+          if(decoded)PROPOSTA=JSON.parse(decoded);
+        }
+      }catch(e){console.log('decode err',e);}
       if(!PROPOSTA)PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};
       document.getElementById('heroName').textContent='Ol\u00e1, '+PROPOSTA.nome+'.';
       document.getElementById('v1').textContent=PROPOSTA.v1||'2.690';
@@ -142,8 +159,8 @@
         if(vis===1)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr';
         if(vis===2)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr 1fr';
       }
-      aplicarItens();
       if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      aplicarItens();
       startTimer();
     }
     function aplicarItens(){
