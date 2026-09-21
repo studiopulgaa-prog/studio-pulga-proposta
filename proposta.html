@@ -123,17 +123,28 @@
 
     // DECODER ROBUSTO — 3 tentativas
     function decodeProposta(d){
+      // Reverter base64url para base64 padrão (- volta a ser +, _ volta a ser /)
+      var b64=d.replace(/-/g,'+').replace(/_/g,'/');
+      // Corrigir padding se necessário
+      while(b64.length%4!==0)b64+='=';
       // Tentativa 1: TextDecoder UTF-8 puro (par do TextEncoder do admin)
       try{
-        var bin=atob(d);
+        var bin=atob(b64);
         var bytes=new Uint8Array(bin.length);
         for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
         return JSON.parse(new TextDecoder('utf-8').decode(bytes));
       }catch(e1){}
       // Tentativa 2: escape/unescape clássico
-      try{return JSON.parse(decodeURIComponent(escape(atob(d))));}catch(e2){}
+      try{return JSON.parse(decodeURIComponent(escape(atob(b64))));}catch(e2){}
       // Tentativa 3: direto
-      try{return JSON.parse(atob(d));}catch(e3){}
+      try{return JSON.parse(atob(b64));}catch(e3){}
+      // Tentativa 4: sem conversão (caso já seja base64 padrão antigo)
+      try{
+        var bin4=atob(d);
+        var bytes4=new Uint8Array(bin4.length);
+        for(var i=0;i<bin4.length;i++)bytes4[i]=bin4.charCodeAt(i);
+        return JSON.parse(new TextDecoder('utf-8').decode(bytes4));
+      }catch(e4){}
       return null;
     }
 
