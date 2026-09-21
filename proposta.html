@@ -116,41 +116,52 @@
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
+    var SUPA='https://ixclkelqjpfkucejbzuq.supabase.co';
+    var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
+
     function getParam(k){return new URLSearchParams(window.location.search).get(k);}
-    function loadProposta(){
+
+    // DECODER ROBUSTO — 3 tentativas
+    function decodeProposta(d){
+      // Tentativa 1: TextDecoder UTF-8 puro (par do TextEncoder do admin)
       try{
-        var d=getParam('d');
-        if(d){
-          var decoded=null;
-          // Tentativa 1: TextDecoder (UTF-8 puro)
-          try{
-            var bin=atob(d);
-            var bytes=new Uint8Array(bin.length);
-            for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-            decoded=new TextDecoder('utf-8').decode(bytes);
-          }catch(e1){}
-          // Tentativa 2: escape/unescape
-          if(!decoded){try{decoded=decodeURIComponent(escape(atob(d)));}catch(e2){}}
-          // Tentativa 3: direto
-          if(!decoded){try{decoded=atob(d);}catch(e3){}}
-          if(decoded)PROPOSTA=JSON.parse(decoded);
-        }
-      }catch(e){console.log('decode err',e);}
-      if(!PROPOSTA)PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};
+        var bin=atob(d);
+        var bytes=new Uint8Array(bin.length);
+        for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+        return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+      }catch(e1){}
+      // Tentativa 2: escape/unescape clássico
+      try{return JSON.parse(decodeURIComponent(escape(atob(d))));}catch(e2){}
+      // Tentativa 3: direto
+      try{return JSON.parse(atob(d));}catch(e3){}
+      return null;
+    }
+
+    function loadProposta(){
+      var d=getParam('d');
+      if(d){PROPOSTA=decodeProposta(d);}
+      if(!PROPOSTA){PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};}
+
+      // Nome
       document.getElementById('heroName').textContent='Ol\u00e1, '+PROPOSTA.nome+'.';
+
+      // Valores
       document.getElementById('v1').textContent=PROPOSTA.v1||'2.690';
       document.getElementById('v2').textContent=PROPOSTA.v2||'3.690';
       document.getElementById('v3').textContent=PROPOSTA.v3||'3.990';
+
+      // Valores originais De/Por
       [1,2,3].forEach(function(n){
         var vo=PROPOSTA['vo'+n];
-        var wrap=document.getElementById('vo'+n+'-wrap');
-        var porLabel=document.getElementById('por'+n+'-label');
         if(vo&&vo.trim()){
-          wrap.style.display='flex';
-          document.getElementById('vo'+n).textContent=vo;
-          if(porLabel)porLabel.style.display='inline';
+          var wrap=document.getElementById('vo'+n+'-wrap');
+          var por=document.getElementById('por'+n+'-label');
+          if(wrap){wrap.style.display='flex';document.getElementById('vo'+n).textContent=vo;}
+          if(por)por.style.display='inline';
         }
       });
+
+      // Planos visíveis
       if(PROPOSTA.planos){
         var pl=PROPOSTA.planos;
         var cards=document.querySelectorAll('.plano');
@@ -159,61 +170,97 @@
         if(vis===1)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr';
         if(vis===2)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr 1fr';
       }
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+
+      // Checar expiração ANTES de aplicar itens
+      if(Date.now()>PROPOSTA.expira){
+        document.getElementById('expiredScreen').classList.add('show');
+        return;
+      }
+
+      // Itens customizados
       aplicarItens();
+
+      // Timer
       startTimer();
+
+      // Registrar acesso
+      registrarAcesso();
     }
+
     function aplicarItens(){
-      var temItens=PROPOSTA.itens;
+      var temI=PROPOSTA.itens;
       var temNI=PROPOSTA.naoIncluso||PROPOSTA.ni;
-      if(!temItens&&!temNI)return;
-      var planos=document.querySelectorAll('.plano');
-      planos.forEach(function(plano,pi){
-        var itens=temItens&&PROPOSTA.itens[pi];
+      if(!temI&&!temNI)return;
+      document.querySelectorAll('.plano').forEach(function(plano,pi){
+        var itens=temI&&temI[pi];
         var ni=(PROPOSTA.naoIncluso&&PROPOSTA.naoIncluso[pi])||(PROPOSTA.ni&&PROPOSTA.ni[pi]);
         var stroke=plano.classList.contains('destaque')?'#F4EADD':'#6E2C14';
         var firstDiv=plano.querySelector('.divider');
         if(!firstDiv)return;
         var parent=firstDiv.parentNode;
         if(itens&&itens.length>0){
-          var toRemove=[],el=firstDiv.nextSibling;
-          while(el){toRemove.push(el);el=el.nextSibling;}
-          toRemove.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
+          // Remover tudo após o 1º divider
+          var toRm=[],el=firstDiv.nextSibling;
+          while(el){toRm.push(el);el=el.nextSibling;}
+          toRm.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
+          // Adicionar inclusos
           var lI=document.createElement('div');lI.className='items-label';lI.textContent='Incluso';parent.appendChild(lI);
           itens.forEach(function(txt){
             var d=document.createElement('div');d.className='item-linha';
             d.innerHTML='<div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="'+stroke+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+txt;
             parent.appendChild(d);
           });
+          // Adicionar não inclusos
           if(ni&&ni.length>0){
             var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
             var lN=document.createElement('div');lN.className='items-label';lN.textContent='N\u00e3o incluso';parent.appendChild(lN);
             ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
           }
         } else if(ni&&ni.length>0){
+          // Só substituir não inclusos
           var dividers=plano.querySelectorAll('.divider');
           var lastDiv=dividers[dividers.length-1];
           if(!lastDiv)return;
-          var toRemove2=[],el2=lastDiv.nextSibling;
-          while(el2){toRemove2.push(el2);el2=el2.nextSibling;}
-          toRemove2.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
+          var toRm2=[],el2=lastDiv.nextSibling;
+          while(el2){toRm2.push(el2);el2=el2.nextSibling;}
+          toRm2.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
           var lN2=document.createElement('div');lN2.className='items-label';lN2.textContent='N\u00e3o incluso';parent.appendChild(lN2);
           ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
         }
       });
     }
+
     function startTimer(){
       function tick(){
         var diff=PROPOSTA.expira-Date.now();
         if(diff<=0){document.getElementById('expiredScreen').classList.add('show');return;}
         var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-        document.getElementById('timerCount').textContent=(d>0?d+'d ':'')+pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
-        document.getElementById('timerCount').classList.toggle('urgent',diff<86400000);
+        var el=document.getElementById('timerCount');
+        el.textContent=(d>0?d+'d ':'')+pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
+        el.classList.toggle('urgent',diff<86400000);
         setTimeout(tick,1000);
       }
       tick();
     }
     function pad(n){return n.toString().padStart(2,'0');}
+
+    function registrarAcesso(){
+      try{
+        var d=getParam('d');
+        if(!d||!PROPOSTA.nome)return;
+        var dispHash=btoa((navigator.userAgent+screen.width).slice(0,30)).replace(/[^a-zA-Z0-9]/g,'').slice(0,16);
+        var propostaHash=btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
+        var key='ac_'+propostaHash+'_'+dispHash;
+        if(sessionStorage.getItem(key))return;
+        sessionStorage.setItem(key,'1');
+        fetch(SUPA+'/rest/v1/acessos',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
+          body:JSON.stringify({proposta_id:propostaHash,dispositivo_hash:dispHash})
+        });
+      }catch(e){}
+    }
+
     function fecharPlano(e,num){
       e.preventDefault();
       var nomes={1:'1\u00ba Pacote \u2014 Pensado na sua marca',2:'2\u00ba Pacote \u2014 Sua gest\u00e3o',3:'3\u00ba Pacote \u2014 O mais completo'};
@@ -222,21 +269,8 @@
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
       window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
     }
+
     loadProposta();
-    var SUPA_URL_P='https://ixclkelqjpfkucejbzuq.supabase.co';
-    var SUPA_KEY_P='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
-    (function(){
-      try{
-        var d=getParam('d');
-        if(!d||!PROPOSTA||!PROPOSTA.nome)return;
-        var dispHash=btoa((navigator.userAgent+screen.width).slice(0,30)).slice(0,16);
-        var propostaHash=btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).slice(0,20);
-        var key='ac_'+propostaHash+'_'+dispHash;
-        if(sessionStorage.getItem(key))return;
-        sessionStorage.setItem(key,'1');
-        fetch(SUPA_URL_P+'/rest/v1/acessos',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY_P,'Authorization':'Bearer '+SUPA_KEY_P,'Prefer':'return=minimal'},body:JSON.stringify({proposta_id:propostaHash,dispositivo_hash:dispHash})});
-      }catch(e){}
-    })();
   </script>
 </body>
 </html>
