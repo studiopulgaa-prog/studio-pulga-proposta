@@ -223,14 +223,17 @@ function renderNI(p) {
 
 function encode(data) {
   var s = JSON.stringify(data);
+  var b64;
   try {
     var bytes = new TextEncoder().encode(s);
     var bin = '';
     for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-    return btoa(bin);
+    b64 = btoa(bin);
   } catch(e) {
-    return btoa(unescape(encodeURIComponent(s)));
+    b64 = btoa(unescape(encodeURIComponent(s)));
   }
+  // base64url: substitui + e / para nunca quebrar em querystring (URLSearchParams decodifica + como espaço)
+  return b64.replace(/\+/g,'-').replace(/\//g,'_');
 }
 
 function gerarLink() {
