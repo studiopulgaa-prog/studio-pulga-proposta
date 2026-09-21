@@ -232,7 +232,8 @@ function initState(){
   iS=ITENS_DEFAULT.map(function(p){return p.map(function(t){return{t:t,a:true,ed:false};});});
   niS=NI_DEFAULT.map(function(p){return p.map(function(t){return{t:t,a:true,ed:false};});});
 }
-initState();
+// Estado inicializado no carregamento
+window.addEventListener('DOMContentLoaded',function(){initState();});
 
 // LOGIN
 function doLogin(){
