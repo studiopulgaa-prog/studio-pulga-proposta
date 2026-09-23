@@ -277,13 +277,14 @@ function carregarHistorico() {
   .then(function(lista) {
     if (!lista || !lista.length) { document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
     _lista = lista;
-    var ids = lista.map(function(p){ return p.id; }).filter(Boolean);
-    fetch(SUPA + '/rest/v1/acessos?proposta_id=in.(' + ids.join(',') + ')', {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
+    var hashes = lista.map(function(p){ return p.link_hash; }).filter(Boolean);
+    if(!hashes.length){ lista.forEach(function(p){p.ac=0;}); renderHistorico(lista); return; }
+    fetch(SUPA + '/rest/v1/acessos?proposta_id=in.(' + hashes.join(',') + ')', {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
     .then(function(r2){ return r2.ok ? r2.json() : []; })
     .then(function(acessos) {
       var cnt = {};
       (acessos||[]).forEach(function(a){ if(a.proposta_id) cnt[a.proposta_id] = (cnt[a.proposta_id]||0)+1; });
-      lista.forEach(function(p){ p.ac = cnt[p.link_hash] || cnt[p.id] || 0; });
+      lista.forEach(function(p){ p.ac = cnt[p.link_hash] || 0; });
       renderHistorico(lista);
     }).catch(function(){ lista.forEach(function(p){ p.ac=0; }); renderHistorico(lista); });
   }).catch(function(){ document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar.</div>'; });
@@ -316,6 +317,13 @@ function renderHistorico(lista) {
 // EVENT DELEGATION — zero onclick inline
 document.addEventListener('DOMContentLoaded', function() {
   initState();
+
+  // Restaurar sessão se já logou antes
+  if(sessionStorage.getItem('sp_logado')==='1'){
+    document.getElementById('loginCard').style.display='none';
+    document.getElementById('adminWrap').style.display='block';
+    carregarHistorico();
+  }
 
   // Login
   document.getElementById('btnLogin').addEventListener('click', doLogin);
@@ -429,6 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function doLogin() {
   if (document.getElementById('loginSenha').value === SENHA) {
+    sessionStorage.setItem('sp_logado','1');
     document.getElementById('loginCard').style.display = 'none';
     document.getElementById('adminWrap').style.display = 'block';
     document.getElementById('loginErr').style.display = 'none';
@@ -439,6 +448,7 @@ function doLogin() {
   }
 }
 function logout() {
+  sessionStorage.removeItem('sp_logado');
   document.getElementById('adminWrap').style.display = 'none';
   document.getElementById('loginCard').style.display = 'block';
   document.getElementById('loginSenha').value = '';
