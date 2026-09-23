@@ -260,7 +260,7 @@
         var d=getParam('d');
         if(!d||!PROPOSTA.nome)return;
         var dispHash=btoa((navigator.userAgent+screen.width).slice(0,30)).replace(/[^a-zA-Z0-9]/g,'').slice(0,16);
-        var propostaHash=btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
+        var propostaHash=PROPOSTA.lh||btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
         var key='ac_'+propostaHash+'_'+dispHash;
         if(sessionStorage.getItem(key))return;
         sessionStorage.setItem(key,'1');
