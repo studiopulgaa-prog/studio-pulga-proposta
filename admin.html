@@ -255,14 +255,14 @@ function gerarLink() {
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var itens = iS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
   var naoIncluso = niS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
-  var data = {nome:nome, v1:v1, v2:v2, v3:v3, vo1:vo1, vo2:vo2, vo3:vo3, expira:expira, planos:[ck1,ck2,ck3], itens:itens, naoIncluso:naoIncluso};
+  var lh = btoa(nome + String(expira)).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
+  var data = {nome:nome, v1:v1, v2:v2, v3:v3, vo1:vo1, vo2:vo2, vo3:vo3, expira:expira, planos:[ck1,ck2,ck3], itens:itens, naoIncluso:naoIncluso, lh:lh};
   var encoded = encode(data);
   var link = window.location.origin + '/proposta.html?d=' + encoded;
   document.getElementById('resultUrl').textContent = link;
   document.getElementById('result').classList.add('show');
   document.getElementById('shortWrap').style.display = 'none';
   document.getElementById('btnCopy').textContent = 'Copiar link';
-  var lh = btoa(nome + String(expira)).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
   fetch(SUPA + '/rest/v1/propostas', {
     method: 'POST',
     headers: {'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
