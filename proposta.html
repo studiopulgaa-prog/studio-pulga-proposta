@@ -153,6 +153,30 @@
       if(d){PROPOSTA=decodeProposta(d);}
       if(!PROPOSTA){PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};}
 
+      // Verificar no Supabase se foi encerrada manualmente pelo admin
+      // (o campo expira_em no banco prevalece sobre o expira no URL)
+      if(PROPOSTA.lh){
+        fetch(SUPA+'/rest/v1/propostas?link_hash=eq.'+PROPOSTA.lh+'&select=expira_em',{
+          headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}
+        }).then(function(r){return r.json();}).then(function(rows){
+          if(rows&&rows[0]&&rows[0].expira_em){
+            var expiradoNoBanco=new Date(rows[0].expira_em).getTime();
+            if(Date.now()>expiradoNoBanco){
+              document.getElementById('expiredScreen').classList.add('show');
+              return;
+            }
+          }
+          renderProposta();
+        }).catch(function(){
+          // Se falhar a consulta, renderiza normalmente (não bloqueia o cliente)
+          renderProposta();
+        });
+      } else {
+        renderProposta();
+      }
+    }
+
+    function renderProposta(){
       // Nome
       document.getElementById('heroName').textContent='Ol\u00e1, '+PROPOSTA.nome+'.';
 
