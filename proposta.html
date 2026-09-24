@@ -150,28 +150,52 @@
 
     function loadProposta(){
       var d=getParam('d');
-      if(d){PROPOSTA=decodeProposta(d);}
-      if(!PROPOSTA){PROPOSTA={nome:'cliente',v1:'2.690',v2:'3.690',v3:'3.990',expira:Date.now()+(5*24*60*60*1000)};}
+      // Sem parametro: exibe tela de expirada direto
+      if(!d){
+        document.getElementById('expiredScreen').classList.add('show');
+        return;
+      }
+      PROPOSTA=decodeProposta(d);
+      // Decode falhou: exibe tela de expirada
+      if(!PROPOSTA){
+        document.getElementById('expiredScreen').classList.add('show');
+        return;
+      }
 
-      // Verificar no Supabase se foi encerrada manualmente pelo admin
-      // (o campo expira_em no banco prevalece sobre o expira no URL)
-      if(PROPOSTA.lh){
-        fetch(SUPA+'/rest/v1/propostas?link_hash=eq.'+PROPOSTA.lh+'&select=expira_em',{
+      // Sempre consultar o banco antes de renderizar
+      // O expira_em do banco prevalece sobre o expira embutido na URL
+      var lh=PROPOSTA.lh;
+      if(lh){
+        fetch(SUPA+'/rest/v1/propostas?link_hash=eq.'+lh+'&select=expira_em',{
           headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}
         }).then(function(r){return r.json();}).then(function(rows){
-          if(rows&&rows[0]&&rows[0].expira_em){
+          if(rows&&rows.length>0&&rows[0].expira_em){
             var expiradoNoBanco=new Date(rows[0].expira_em).getTime();
             if(Date.now()>expiradoNoBanco){
               document.getElementById('expiredScreen').classList.add('show');
               return;
             }
           }
+          // Sem registro no banco ou consulta ok: checar o expira da URL
+          if(Date.now()>PROPOSTA.expira){
+            document.getElementById('expiredScreen').classList.add('show');
+            return;
+          }
           renderProposta();
         }).catch(function(){
-          // Se falhar a consulta, renderiza normalmente (não bloqueia o cliente)
+          // Se falhar a consulta, checar pelo expira da URL
+          if(Date.now()>PROPOSTA.expira){
+            document.getElementById('expiredScreen').classList.add('show');
+            return;
+          }
           renderProposta();
         });
       } else {
+        // Sem lh (link antigo sem hash): checar pelo expira da URL
+        if(Date.now()>PROPOSTA.expira){
+          document.getElementById('expiredScreen').classList.add('show');
+          return;
+        }
         renderProposta();
       }
     }
