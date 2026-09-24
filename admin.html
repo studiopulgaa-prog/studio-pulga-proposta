@@ -241,26 +241,28 @@ function encode(data) {
 }
 
 function encerrarProposta(id) {
-  fetch('/api/encerrar-proposta', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({senha:'Studio2801', id:id})
-  }).then(function(r){return r.json();}).then(function(j){
-    if(j.ok){alert('Proposta encerrada.');carregarHistorico();}
-    else{alert('Erro ao encerrar: '+j.error);}
-  }).catch(function(){alert('Erro de conexão ao encerrar.');});
+  var agora = new Date().toISOString();
+  fetch(SUPA+'/rest/v1/propostas?id=eq.'+id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({expira_em:agora})
+  }).then(function(r){
+    if(r.ok){alert('Proposta encerrada.');carregarHistorico();}
+    else{r.text().then(function(t){alert('Erro: '+t);});}
+  }).catch(function(){alert('Erro de conexão.');});
 }
 
 function encerrarTodas() {
   if(!confirm('Encerrar TODAS as propostas agora? Nenhum cliente poderá mais acessar nenhuma proposta ativa.')) return;
-  fetch('/api/encerrar-todas', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({senha:'Studio2801'})
-  }).then(function(r){return r.json();}).then(function(j){
-    if(j.ok){alert('Todas as propostas foram encerradas.');carregarHistorico();}
-    else{alert('Erro ao encerrar: '+j.error);}
-  }).catch(function(){alert('Erro de conexão ao encerrar.');});
+  var agora = new Date().toISOString();
+  fetch(SUPA+'/rest/v1/propostas?id=neq.00000000-0000-0000-0000-000000000000', {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({expira_em:agora})
+  }).then(function(r){
+    if(r.ok){alert('Todas as propostas foram encerradas.');carregarHistorico();}
+    else{r.text().then(function(t){alert('Erro: '+t);});}
+  }).catch(function(){alert('Erro de conexão.');});
 }
 
 function gerarLink() {
@@ -293,7 +295,7 @@ function gerarLink() {
   fetch(SUPA + '/rest/v1/propostas', {
     method: 'POST',
     headers: {'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
-    body: JSON.stringify({cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh})
+    body: JSON.stringify({cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString()})
   }).then(function(){ carregarHistorico(); }).catch(function(){ carregarHistorico(); });
 }
 
