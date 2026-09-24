@@ -65,6 +65,10 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 .btn-out{padding:8px 18px;border-radius:8px;border:1.5px solid var(--br);background:transparent;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
 .btn-out:hover,.btn-out.ok{background:var(--br);color:#F4EADD;}
+.btn-enc{padding:8px 14px;border-radius:8px;border:1.5px solid #c0392b55;background:transparent;color:#c0392b;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-enc:hover{background:#c0392b;color:#fff;}
+.btn-enc-all{padding:7px 14px;border-radius:10px;border:none;background:#c0392b;color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.btn-enc-all:hover{background:#9b2926;}
 .hist-item{border:1.5px solid var(--brl);border-radius:14px;margin-bottom:8px;overflow:hidden;}
 .hist-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:rgba(255,255,255,0.7);}
 .hist-hdr:hover{background:#fff;}
@@ -147,7 +151,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     </div>
   </div>
   <div class="card">
-    <div class="card-title">Propostas enviadas</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
     <div id="histLista"><div class="loading">Carregando…</div></div>
   </div>
 </div>
@@ -236,6 +240,30 @@ function encode(data) {
   return b64.replace(/\+/g,'-').replace(/\//g,'_');
 }
 
+function encerrarProposta(id) {
+  var agora = new Date().toISOString();
+  fetch(SUPA+'/rest/v1/propostas?id=eq.'+id, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({expira_em:agora})
+  }).then(function(r){
+    if(r.ok){alert('Proposta encerrada.');carregarHistorico();}
+    else{alert('Erro ao encerrar.');}
+  });
+}
+
+function encerrarTodas() {
+  if(!confirm('Encerrar TODAS as propostas agora? Nenhum cliente poderá mais acessar nenhuma proposta ativa.')) return;
+  fetch(SUPA+'/rest/v1/propostas', {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
+    body:JSON.stringify({expira_em:new Date().toISOString()})
+  }).then(function(r){
+    if(r.ok){alert('Todas as propostas foram encerradas.');carregarHistorico();}
+    else{alert('Erro ao encerrar. Tente novamente.');}
+  });
+}
+
 function gerarLink() {
   var nome = document.getElementById('fNome').value.trim();
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
@@ -308,7 +336,7 @@ function renderHistorico(lista) {
     if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + p.v3 + '</div>';
     h += '<div class="hist-info"><strong>Validade</strong>' + (p.validade||2) + ' dias</div>';
     h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions"><button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button></div>';
+    h += '<div class="hist-actions"><button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + p.id + '">✕ Encerrar</button></div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = h;
@@ -390,6 +418,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('hb'+i).classList.toggle('show');
         document.getElementById('ha'+i).classList.toggle('open');
       }
+    }
+    // Encerrar proposta
+    if (t.dataset.enc) {
+      e.stopPropagation();
+      if (!confirm('Encerrar esta proposta? O cliente não conseguirá mais acessá-la.')) return;
+      encerrarProposta(t.dataset.enc);
+      return;
     }
     // Excluir proposta
     if (t.dataset.del) {
