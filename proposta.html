@@ -53,6 +53,9 @@
     .planos-divider-text{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray2);}
     .planos-title{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(36px,6vw,56px);color:var(--br);letter-spacing:-0.03em;line-height:1.0;}
     .planos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    .planos-grid.cols-1{grid-template-columns:1fr;max-width:420px;margin:0 auto;}
+    .planos-grid.cols-2{grid-template-columns:1fr 1fr;}
+    .planos-grid.cols-3{grid-template-columns:repeat(3,1fr);}
     .plano{background:rgba(255,255,255,0.7);border:1.5px solid var(--border);border-radius:22px;padding:32px 26px;position:relative;transition:all 0.3s ease;}
     .plano:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(110,44,20,0.12);}
     .plano.destaque{background:var(--br);border-color:var(--br);color:#F4EADD;}
@@ -94,7 +97,7 @@
     .footer-proposta{background:var(--br);color:#F4EADD;padding:clamp(40px,6vw,60px) clamp(24px,6vw,80px);text-align:center;}
     .footer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;margin-bottom:10px;}
     .footer-sub{font-size:12px;color:rgba(244,234,221,0.6);font-weight:300;}
-    @media(max-width:768px){.planos-grid{grid-template-columns:1fr;}.services-grid{grid-template-columns:1fr;}}
+    @media(max-width:768px){.planos-grid,.planos-grid.cols-1,.planos-grid.cols-2,.planos-grid.cols-3{grid-template-columns:1fr!important;max-width:100%!important;}.services-grid{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
@@ -226,8 +229,9 @@
         var cards=document.querySelectorAll('.plano');
         var vis=pl.filter(Boolean).length;
         cards.forEach(function(c,i){if(!pl[i])c.style.display='none';});
-        if(vis===1)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr';
-        if(vis===2)document.querySelector('.planos-grid').style.gridTemplateColumns='1fr 1fr';
+        var grid=document.querySelector('.planos-grid');
+        grid.classList.remove('cols-1','cols-2','cols-3');
+        grid.classList.add('cols-'+vis);
       }
 
       // Checar expiração ANTES de aplicar itens
