@@ -307,11 +307,26 @@
     }
     function pad(n){return n.toString().padStart(2,'0');}
 
+    // Identificador do dispositivo: impressao digital estavel (navegador + tela + idioma + fuso),
+    // igual em aba normal e anonima. Prefixo d2_ diferencia do formato antigo (que era igual para todos).
+    function _h53(str,seed){
+      var h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;
+      for(var i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
+      h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+      h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+      return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);
+    }
+    function deviceId(){
+      var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';}catch(e){}
+      var fp=[navigator.userAgent,navigator.language,navigator.platform,screen.width+'x'+screen.height,window.devicePixelRatio||1,screen.colorDepth,navigator.hardwareConcurrency||0,tz].join('|');
+      return 'd2_'+_h53(fp,1)+_h53(fp,2);
+    }
+
     function registrarAcesso(){
       try{
         var d=getParam('d');
         if(!d||!PROPOSTA.nome)return;
-        var dispHash=btoa((navigator.userAgent+screen.width).slice(0,30)).replace(/[^a-zA-Z0-9]/g,'').slice(0,16);
+        var dispHash=deviceId();
         var propostaHash=PROPOSTA.lh||btoa(unescape(encodeURIComponent(PROPOSTA.nome+(PROPOSTA.expira||'')))).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
         var key='ac_'+propostaHash+'_'+dispHash;
         if(sessionStorage.getItem(key))return;
