@@ -311,9 +311,20 @@ function carregarHistorico() {
     fetch(SUPA + '/rest/v1/acessos?proposta_id=in.(' + hashes.join(',') + ')', {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
     .then(function(r2){ return r2.ok ? r2.json() : []; })
     .then(function(acessos) {
-      var cnt = {};
-      (acessos||[]).forEach(function(a){ if(a.proposta_id) cnt[a.proposta_id] = (cnt[a.proposta_id]||0)+1; });
-      lista.forEach(function(p){ p.ac = cnt[p.link_hash] || 0; });
+      // aberturas = linhas registradas; dispositivos = hashes DISTINTOS (formato novo d2_).
+      // Linhas antigas (hash igual para todos) contam so como abertura, nao como dispositivo.
+      var ab = {}, dv = {};
+      (acessos||[]).forEach(function(a){
+        if(!a.proposta_id) return;
+        ab[a.proposta_id] = (ab[a.proposta_id]||0)+1;
+        if(a.dispositivo_hash && a.dispositivo_hash.indexOf('d2_')===0){
+          (dv[a.proposta_id] = dv[a.proposta_id] || {})[a.dispositivo_hash] = 1;
+        }
+      });
+      lista.forEach(function(p){
+        p.ac = ab[p.link_hash] || 0;
+        p.dv = dv[p.link_hash] ? Object.keys(dv[p.link_hash]).length : 0;
+      });
       renderHistorico(lista);
     }).catch(function(){ lista.forEach(function(p){ p.ac=0; }); renderHistorico(lista); });
   }).catch(function(){ document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar.</div>'; });
@@ -325,7 +336,9 @@ function renderHistorico(lista) {
     var dt = new Date(p.criado_em);
     var ds = dt.toLocaleDateString('pt-BR') + ' às ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     var pl = p.planos || [true,true,true];
-    var badge = p.ac > 0 ? '<span class="badge-ab">Aberto • ' + p.ac + ' disp.</span>' : '<span class="badge-wt">Aguardando</span>';
+    var badge = p.ac > 0
+      ? '<span class="badge-ab">Aberto • ' + (p.dv > 0 ? p.dv + (p.dv===1?' disp. • ':' disp. • ') : '') + p.ac + (p.ac===1?' abertura':' aberturas') + '</span>'
+      : '<span class="badge-wt">Aguardando</span>';
     h += '<div class="hist-item">';
     h += '<div class="hist-hdr" data-hist="' + i + '">';
     h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome">' + p.cliente + '</span>' + badge + '</div><div class="hist-data">' + ds + '</div></div>';
