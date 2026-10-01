@@ -115,14 +115,14 @@ export async function enviar({ to, tipo, dados, bcc }) {
     auth: { user: process.env.BREVO_USER, pass: process.env.BREVO_PASS },
   });
   const msg = {
-    from: process.env.BREVO_FROM || 'Studio Pulga <studio.pulgaa@gmail.com>',
+    from: process.env.BREVO_FROM || 'Studio Pulga <contato@studiopulga.com>',
     to,
     subject: m.subject,
     html: m.html,
     text: m.text,
     headers: { 'List-Unsubscribe': `<${unsubUrl(dados.lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
   };
-  if (process.env.REPLY_TO) msg.replyTo = process.env.REPLY_TO;
+  msg.replyTo = process.env.REPLY_TO || 'contato@studiopulga.com';
   if (bcc) msg.bcc = bcc;
   return transporter.sendMail(msg);
 }
