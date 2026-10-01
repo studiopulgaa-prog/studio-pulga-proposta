@@ -345,7 +345,12 @@
       var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
       var msg='Ol\u00e1! Gostaria de fechar o '+nomes[num]+' (R$'+vals[num]+'/m\u00eas). Podemos avan\u00e7ar?';
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
-      window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
+      var email=(window.prompt('Quer receber esta proposta por e-mail? Digite seu e-mail ou deixe em branco para ir direto ao WhatsApp.')||'').trim();
+      if(/^\S+@\S+\.\S+$/.test(email)){
+        try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',cliente:PROPOSTA.nome,email:email,v1:PROPOSTA.v1,v2:PROPOSTA.v2,v3:PROPOSTA.v3,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
+      }
+      var w=window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
+      if(!w)window.location.href='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
     }
 
     loadProposta();

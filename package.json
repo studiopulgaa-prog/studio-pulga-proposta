@@ -6,5 +6,8 @@
     "dev": "echo 'Open index.html in browser'"
   },
   "keywords": ["propostas", "studio", "pulga"],
-  "author": "Studio Pulga"
+  "author": "Studio Pulga",
+  "dependencies": {
+    "nodemailer": "^6.9.7"
+  }
 }
