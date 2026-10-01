@@ -115,14 +115,15 @@ export async function enviar({ to, tipo, dados, bcc }) {
     auth: { user: process.env.BREVO_USER, pass: process.env.BREVO_PASS },
   });
   const msg = {
-    from: process.env.BREVO_FROM || 'Studio Pulga <contato@studiopulga.com>',
+    // enquanto o dominio nao estiver autenticado no Brevo, o padrao e o Gmail verificado
+    from: process.env.BREVO_FROM || 'Studio Pulga <studio.pulgaa@gmail.com>',
     to,
     subject: m.subject,
     html: m.html,
     text: m.text,
     headers: { 'List-Unsubscribe': `<${unsubUrl(dados.lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
   };
-  msg.replyTo = process.env.REPLY_TO || 'contato@studiopulga.com';
+  msg.replyTo = process.env.REPLY_TO || 'contato@studiopulga.com.br';
   if (bcc) msg.bcc = bcc;
   return transporter.sendMail(msg);
 }
