@@ -205,7 +205,7 @@
 
     function renderProposta(){
       // Nome
-      document.getElementById('heroName').textContent='Ol\u00e1, '+PROPOSTA.nome+'.';
+      document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';
 
       // Valores
       document.getElementById('v1').textContent=PROPOSTA.v1||'2.690';
@@ -276,7 +276,7 @@
           // Adicionar não inclusos
           if(ni&&ni.length>0){
             var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
-            var lN=document.createElement('div');lN.className='items-label';lN.textContent='N\u00e3o incluso';parent.appendChild(lN);
+            var lN=document.createElement('div');lN.className='items-label';lN.textContent='Não incluso';parent.appendChild(lN);
             ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
           }
         } else if(ni&&ni.length>0){
@@ -287,7 +287,7 @@
           var toRm2=[],el2=lastDiv.nextSibling;
           while(el2){toRm2.push(el2);el2=el2.nextSibling;}
           toRm2.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
-          var lN2=document.createElement('div');lN2.className='items-label';lN2.textContent='N\u00e3o incluso';parent.appendChild(lN2);
+          var lN2=document.createElement('div');lN2.className='items-label';lN2.textContent='Não incluso';parent.appendChild(lN2);
           ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
         }
       });
@@ -341,11 +341,12 @@
 
     function fecharPlano(e,num){
       e.preventDefault();
-      var nomes={1:'1\u00ba Pacote \u2014 Pensado na sua marca',2:'2\u00ba Pacote \u2014 Sua gest\u00e3o',3:'3\u00ba Pacote \u2014 O mais completo'};
+      var nomes={1:'1º Pacote — Pensado na sua marca',2:'2º Pacote — Sua gestão',3:'3º Pacote — O mais completo'};
       var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
-      var msg='Ol\u00e1! Gostaria de fechar o '+nomes[num]+' (R$'+vals[num]+'/m\u00eas). Podemos avan\u00e7ar?';
+      var msg='Olá! Gostaria de fechar o '+nomes[num]+' (R$'+vals[num]+'/mês). Podemos avançar?';
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
-      var email=(window.prompt('Quer receber esta proposta por e-mail? Digite seu e-mail ou deixe em branco para ir direto ao WhatsApp.')||'').trim();
+      var email=(PROPOSTA.em||'').trim();
+      if(!/^\S+@\S+\.\S+$/.test(email)){email=(window.prompt('Quer receber esta proposta por e-mail? Digite seu e-mail ou deixe em branco para ir direto ao WhatsApp.')||'').trim();}
       if(/^\S+@\S+\.\S+$/.test(email)){
         try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',cliente:PROPOSTA.nome,email:email,v1:PROPOSTA.v1,v2:PROPOSTA.v2,v3:PROPOSTA.v3,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
       }
