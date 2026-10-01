@@ -66,7 +66,7 @@ export default async function handler(req, res) {
     });
 
     const info = await transporter.sendMail({
-      from: 'Studio Pulga <seumarketing@studiopulga.com>',
+      from: process.env.BREVO_FROM || 'Studio Pulga <seumarketing@studiopulga.com>',
       to: email,
       subject: `Sua proposta Studio Pulga — ${planName}`,
       html,
