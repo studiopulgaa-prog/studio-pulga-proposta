@@ -3,8 +3,5 @@
   "routes": [
     { "src": "/p/(.*)", "dest": "/p.html" },
     { "src": "/p", "dest": "/p.html" }
-  ],
-  "crons": [
-    { "path": "/api/lembretes", "schedule": "0 12 * * *" }
   ]
 }
