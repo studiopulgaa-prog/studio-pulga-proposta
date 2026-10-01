@@ -107,6 +107,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     <div class="card-title">Nova proposta</div>
     <div class="card-sub">Preencha e gere o link exclusivo para o cliente.</div>
     <div class="field"><label class="label">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
+    <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"></div>
     <div class="field">
       <label class="label">Planos a exibir</label>
       <div class="plano-ck on" id="divCk1"><input type="checkbox" id="ck1" checked><span class="plano-ck-label">1º Pacote</span></div>
@@ -281,11 +282,14 @@ function gerarLink() {
   var vo1 = document.getElementById('fVO1').value.trim();
   var vo2 = document.getElementById('fVO2').value.trim();
   var vo3 = document.getElementById('fVO3').value.trim();
+  var em = (document.getElementById('fEmail').value || '').trim();
+  if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var itens = iS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
   var naoIncluso = niS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
   var lh = btoa(nome + String(expira)).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
   var data = {nome:nome, v1:v1, v2:v2, v3:v3, vo1:vo1, vo2:vo2, vo3:vo3, expira:expira, planos:[ck1,ck2,ck3], itens:itens, naoIncluso:naoIncluso, lh:lh};
+  if (em) data.em = em;
   var encoded = encode(data);
   var link = window.location.origin + '/proposta.html?d=' + encoded;
   document.getElementById('resultUrl').textContent = link;
@@ -452,6 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var p = _lista[+t.dataset.dup];
       if (!p) return;
       document.getElementById('fNome').value = p.cliente;
+      document.getElementById('fEmail').value = '';
       document.getElementById('fV1').value = p.v1||'';
       document.getElementById('fV2').value = p.v2||'';
       document.getElementById('fV3').value = p.v3||'';
@@ -543,7 +548,7 @@ function copiarLink() {
 }
 function encurtarLink() {
   var url = document.getElementById('resultUrl').textContent;
-  var nome = document.getElementById('fNome').value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
+  var nome = document.getElementById('fNome').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
   var slug = nome + '-' + Date.now().toString(36);
   document.getElementById('btnShort').textContent = 'Gerando…';
   fetch(SUPA+'/rest/v1/links', {method:'POST', headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'}, body:JSON.stringify({slug:slug, url:url})})
