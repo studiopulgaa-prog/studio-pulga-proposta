@@ -17,3 +17,10 @@ Sistema de propostas personalizadas da Studio Pulga (Praia Grande, SP).
 - Editar, conferir com `git diff` que só o necessário mudou, commitar em português no `master` e dar push. Informar o hash no final.
 - Responder em português do Brasil, de forma direta e objetiva.
 - Marca: terracota `#6E2C14` e creme `#F4EADD`.
+
+## Segurança (obrigatório)
+- O repositório pode ser público: NUNCA escrever senhas, tokens ou chaves no código. Tudo em variáveis do Vercel.
+- Senha do painel: variável `ADMIN_PASSWORD` (Vercel). Sessão assinada com `ADMIN_TOKEN_SECRET`.
+- Tabelas `propostas`, `links`, `acessos` têm RLS. O navegador só chama `proposta_status` e `link_url` (RPC) e insere em `acessos`.
+- Ações do admin passam por `/api/admin` (exige sessão). O servidor usa RPCs com o segredo `EMAIL_SECRET`.
+- Nunca usar `innerHTML` com dados vindos do link, do banco ou do usuário sem escapar.
