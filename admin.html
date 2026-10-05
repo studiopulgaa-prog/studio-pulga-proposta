@@ -158,9 +158,23 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 </div>
 </div>
 <script>
-var SENHA = 'Studio2801';
-var SUPA  = 'https://ixclkelqjpfkucejbzuq.supabase.co';
-var KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
+// Seguranca: a senha e conferida no servidor (/api/admin-login). O painel guarda so uma sessao de 12h.
+var TOKEN = sessionStorage.getItem('sp_token') || '';
+function adm(acao, dados) {
+  return fetch('/api/admin', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+    body: JSON.stringify(Object.assign({acao:acao}, dados||{}))
+  }).then(function(r){
+    if (r.status === 401) { logout(); alert('Sua sessão expirou. Entre novamente.'); throw new Error('sessao'); }
+    return r.json();
+  });
+}
+function sha256hex(t) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function(b){
+    return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join('');
+  });
+}
 var diasSel = 2;
 var iS = [], niS = [], _lista = [];
 
@@ -180,7 +194,7 @@ function initState() {
   niS = NI_DEF.map(function(p){    return p.map(function(t){ return {t:t, a:true, ed:false}; }); });
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderI(p) {
   var h = '';
@@ -194,7 +208,7 @@ function renderI(p) {
     } else {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' data-ck-i="' + p + '" data-ck-j="' + i + '" data-is-i="1">';
-      h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + item.t + '</span>';
+      h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + esc(item.t) + '</span>';
       h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="1">↑</button>';
       h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="1">↓</button>';
       h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="1">✏️</button>';
@@ -216,7 +230,7 @@ function renderNI(p) {
     } else {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' data-ck-i="' + p + '" data-ck-j="' + i + '" data-is-i="0">';
-      h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + item.t + '</span>';
+      h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + esc(item.t) + '</span>';
       h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="0">↑</button>';
       h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="0">↓</button>';
       h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="0">✏️</button>';
@@ -242,28 +256,18 @@ function encode(data) {
 }
 
 function encerrarProposta(id) {
-  var agora = new Date().toISOString();
-  fetch(SUPA+'/rest/v1/propostas?id=eq.'+id, {
-    method:'PATCH',
-    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
-    body:JSON.stringify({expira_em:agora})
-  }).then(function(r){
+  adm('encerrar', {id:id}).then(function(r){
     if(r.ok){alert('Proposta encerrada.');carregarHistorico();}
-    else{r.text().then(function(t){alert('Erro: '+t);});}
-  }).catch(function(){alert('Erro de conexão.');});
+    else{alert('Erro: '+(r.erro||''));}
+  }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão.'); });
 }
 
 function encerrarTodas() {
   if(!confirm('Encerrar TODAS as propostas agora? Nenhum cliente poderá mais acessar nenhuma proposta ativa.')) return;
-  var agora = new Date().toISOString();
-  fetch(SUPA+'/rest/v1/propostas?id=neq.00000000-0000-0000-0000-000000000000', {
-    method:'PATCH',
-    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
-    body:JSON.stringify({expira_em:agora})
-  }).then(function(r){
+  adm('encerrar_todas').then(function(r){
     if(r.ok){alert('Todas as propostas foram encerradas.');carregarHistorico();}
-    else{r.text().then(function(t){alert('Erro: '+t);});}
-  }).catch(function(){alert('Erro de conexão.');});
+    else{alert('Erro: '+(r.erro||''));}
+  }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão.'); });
 }
 
 function gerarLink() {
@@ -292,46 +296,30 @@ function gerarLink() {
   if (em) data.em = em;
   var encoded = encode(data);
   var link = window.location.origin + '/proposta.html?d=' + encoded;
-  document.getElementById('resultUrl').textContent = link;
-  document.getElementById('result').classList.add('show');
-  document.getElementById('shortWrap').style.display = 'none';
-  document.getElementById('btnCopy').textContent = 'Copiar link';
-  fetch(SUPA + '/rest/v1/propostas', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'},
-    body: JSON.stringify({cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString()})
-  }).then(function(){ carregarHistorico(); }).catch(function(){ carregarHistorico(); });
+  var btn = document.getElementById('btnGerar');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  // o link so vale depois de salvo no banco (com a assinatura dele)
+  sha256hex(encoded).then(function(h){
+    return adm('criar', {proposta:{cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
+  }).then(function(r){
+    if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro||'erro')); return; }
+    document.getElementById('resultUrl').textContent = link;
+    document.getElementById('result').classList.add('show');
+    document.getElementById('shortWrap').style.display = 'none';
+    document.getElementById('btnCopy').textContent = 'Copiar link';
+    carregarHistorico();
+  }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
+  .then(function(){ btn.disabled = false; btn.textContent = 'Gerar link →'; });
 }
 
 function carregarHistorico() {
   document.getElementById('histLista').innerHTML = '<div class="loading">Atualizando…</div>';
-  fetch(SUPA + '/rest/v1/propostas?order=criado_em.desc&limit=50', {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
-  .then(function(r){ return r.ok ? r.json() : []; })
-  .then(function(lista) {
-    if (!lista || !lista.length) { document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
+  adm('listar').then(function(r){
+    var lista = (r && r.ok && r.lista) || [];
+    if (!lista.length) { document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
     _lista = lista;
-    var hashes = lista.map(function(p){ return p.link_hash; }).filter(Boolean);
-    if(!hashes.length){ lista.forEach(function(p){p.ac=0;}); renderHistorico(lista); return; }
-    fetch(SUPA + '/rest/v1/acessos?proposta_id=in.(' + hashes.join(',') + ')', {headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
-    .then(function(r2){ return r2.ok ? r2.json() : []; })
-    .then(function(acessos) {
-      // aberturas = linhas registradas; dispositivos = hashes DISTINTOS (formato novo d2_).
-      // Linhas antigas (hash igual para todos) contam so como abertura, nao como dispositivo.
-      var ab = {}, dv = {};
-      (acessos||[]).forEach(function(a){
-        if(!a.proposta_id) return;
-        ab[a.proposta_id] = (ab[a.proposta_id]||0)+1;
-        if(a.dispositivo_hash && a.dispositivo_hash.indexOf('d2_')===0){
-          (dv[a.proposta_id] = dv[a.proposta_id] || {})[a.dispositivo_hash] = 1;
-        }
-      });
-      lista.forEach(function(p){
-        p.ac = ab[p.link_hash] || 0;
-        p.dv = dv[p.link_hash] ? Object.keys(dv[p.link_hash]).length : 0;
-      });
-      renderHistorico(lista);
-    }).catch(function(){ lista.forEach(function(p){ p.ac=0; }); renderHistorico(lista); });
-  }).catch(function(){ document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar.</div>'; });
+    renderHistorico(lista);
+  }).catch(function(e){ if(e.message!=='sessao') document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar.</div>'; });
 }
 
 function renderHistorico(lista) {
@@ -345,16 +333,16 @@ function renderHistorico(lista) {
       : '<span class="badge-wt">Aguardando</span>';
     h += '<div class="hist-item">';
     h += '<div class="hist-hdr" data-hist="' + i + '">';
-    h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome">' + p.cliente + '</span>' + badge + '</div><div class="hist-data">' + ds + '</div></div>';
-    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + p.id + '" title="Excluir">×</button></div>';
+    h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome">' + esc(p.cliente) + '</span>' + badge + '</div><div class="hist-data">' + ds + '</div></div>';
+    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Excluir">×</button></div>';
     h += '</div>';
     h += '<div class="hist-body" id="hb' + i + '">';
-    if (p.v1) h += '<div class="hist-info"><strong>1º Pacote</strong>R$ ' + p.v1 + '</div>';
-    if (p.v2) h += '<div class="hist-info"><strong>2º Pacote</strong>R$ ' + p.v2 + '</div>';
-    if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + p.v3 + '</div>';
-    h += '<div class="hist-info"><strong>Validade</strong>' + (p.validade||2) + ' dias</div>';
+    if (p.v1) h += '<div class="hist-info"><strong>1º Pacote</strong>R$ ' + esc(p.v1) + '</div>';
+    if (p.v2) h += '<div class="hist-info"><strong>2º Pacote</strong>R$ ' + esc(p.v2) + '</div>';
+    if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
+    h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
     h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions"><button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + p.id + '">✕ Encerrar</button></div>';
+    h += '<div class="hist-actions"><button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Encerrar</button></div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = h;
@@ -365,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initState();
 
   // Restaurar sessão se já logou antes
-  if(sessionStorage.getItem('sp_logado')==='1'){
+  if(TOKEN){
     document.getElementById('loginCard').style.display='none';
     document.getElementById('adminWrap').style.display='block';
     carregarHistorico();
@@ -448,8 +436,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (t.dataset.del) {
       e.stopPropagation();
       if (!confirm('Excluir esta proposta?')) return;
-      fetch(SUPA+'/rest/v1/propostas?id=eq.'+t.dataset.del, {method:'DELETE', headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}})
-      .then(function(){ carregarHistorico(); });
+      adm('excluir', {id:t.dataset.del}).then(function(r){
+        if(!r.ok) alert('Erro: '+(r.erro||''));
+        carregarHistorico();
+      }).catch(function(){});
     }
     // Duplicar proposta
     if (t.dataset.dup !== undefined) {
@@ -490,18 +480,29 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function doLogin() {
-  if (document.getElementById('loginSenha').value === SENHA) {
-    sessionStorage.setItem('sp_logado','1');
-    document.getElementById('loginCard').style.display = 'none';
-    document.getElementById('adminWrap').style.display = 'block';
-    document.getElementById('loginErr').style.display = 'none';
-    carregarHistorico();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('loginSenha').value = '';
-  }
+  var campo = document.getElementById('loginSenha');
+  var btn = document.getElementById('btnLogin');
+  var err = document.getElementById('loginErr');
+  btn.disabled = true; btn.textContent = 'Entrando…'; err.style.display = 'none';
+  fetch('/api/admin-login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:campo.value})})
+  .then(function(r){ return r.json(); })
+  .then(function(r){
+    if (r.ok && r.token) {
+      TOKEN = r.token;
+      sessionStorage.setItem('sp_token', TOKEN);
+      document.getElementById('loginCard').style.display = 'none';
+      document.getElementById('adminWrap').style.display = 'block';
+      carregarHistorico();
+    } else {
+      err.textContent = r.erro || 'Senha incorreta.';
+      err.style.display = 'block';
+    }
+  }).catch(function(){ err.textContent = 'Erro de conexão.'; err.style.display = 'block'; })
+  .then(function(){ campo.value = ''; btn.disabled = false; btn.textContent = 'Entrar'; });
 }
 function logout() {
+  TOKEN = '';
+  sessionStorage.removeItem('sp_token');
   sessionStorage.removeItem('sp_logado');
   document.getElementById('adminWrap').style.display = 'none';
   document.getElementById('loginCard').style.display = 'block';
@@ -551,8 +552,9 @@ function encurtarLink() {
   var nome = document.getElementById('fNome').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
   var slug = nome + '-' + Date.now().toString(36);
   document.getElementById('btnShort').textContent = 'Gerando…';
-  fetch(SUPA+'/rest/v1/links', {method:'POST', headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=minimal'}, body:JSON.stringify({slug:slug, url:url})})
-  .then(function(){
+  adm('link', {slug:slug, url:url})
+  .then(function(r){
+    if (!r.ok) throw new Error('falha');
     var lc = window.location.origin + '/p/' + slug;
     document.getElementById('shortUrl').textContent = lc;
     document.getElementById('shortWrap').style.display = 'block';

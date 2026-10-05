@@ -1,10 +1,11 @@
 // admin-email.js — acoes de e-mail no admin: enviar link por e-mail e marcar proposta como fechada
 (function () {
   function api(body) {
-    body.senha = window.SENHA;
-    return fetch('/api/email-admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    var token = sessionStorage.getItem('sp_token') || '';
+    return fetch('/api/email-admin', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) })
       .then(function (r) { return r.json().catch(function () { return { ok: false, erro: 'resposta invalida' }; }); });
   }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function decodeLink(link) {
     try {
       var d = new URL(link).searchParams.get('d');
@@ -76,7 +77,7 @@
           var enviados = Object.keys(e.enviados || {}).filter(function (k) { return TIPOS[k]; }).map(function (k) { return TIPOS[k]; }).join(', ');
           var row = document.createElement('div');
           row.className = 'hist-info';
-          row.innerHTML = '<strong>E-mail</strong>' + e.email + ' · ' + ROTULO[e.status] + (enviados ? '<br><span style="font-size:11px;opacity:.7">Enviados: ' + enviados + '</span>' : '');
+          row.innerHTML = '<strong>E-mail</strong>' + esc(e.email) + ' · ' + esc(ROTULO[e.status] || e.status) + (enviados ? '<br><span style="font-size:11px;opacity:.7">Enviados: ' + enviados + '</span>' : '');
           var acoes = corpo.querySelector('.hist-actions');
           corpo.insertBefore(row, acoes);
           var b = document.createElement('button');
@@ -87,7 +88,7 @@
             b.disabled = true;
             api({ acao: 'status', lh: p.link_hash, status: novo }).then(function (x) { if (x.ok) carregarHistorico(); else { alert('Erro: ' + (x.erro || '')); b.disabled = false; } });
           });
-          if (acoes) acoes.appendChild(b);
+          if (acoes && e.status !== 'descadastrada') acoes.appendChild(b);
         });
       });
     };
