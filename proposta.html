@@ -165,42 +165,47 @@
         return;
       }
 
-      // Sempre consultar o banco antes de renderizar
-      // O expira_em do banco prevalece sobre o expira embutido na URL
+      // Confere no banco (funcao segura) se o link existe, nao foi alterado e nao expirou.
+      // O expira_em do banco prevalece sobre o expira embutido na URL.
       var lh=PROPOSTA.lh;
-      if(lh){
-        fetch(SUPA+'/rest/v1/propostas?link_hash=eq.'+lh+'&select=expira_em',{
-          headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}
-        }).then(function(r){return r.json();}).then(function(rows){
-          if(rows&&rows.length>0&&rows[0].expira_em){
-            var expiradoNoBanco=new Date(rows[0].expira_em).getTime();
-            if(Date.now()>expiradoNoBanco){
-              document.getElementById('expiredScreen').classList.add('show');
-              return;
-            }
-          }
-          // Sem registro no banco ou consulta ok: checar o expira da URL
-          if(Date.now()>PROPOSTA.expira){
-            document.getElementById('expiredScreen').classList.add('show');
-            return;
-          }
-          renderProposta();
-        }).catch(function(){
-          // Se falhar a consulta, checar pelo expira da URL
-          if(Date.now()>PROPOSTA.expira){
-            document.getElementById('expiredScreen').classList.add('show');
-            return;
-          }
-          renderProposta();
+      if(!lh){
+        document.getElementById('expiredScreen').classList.add('show');
+        return;
+      }
+      sha256hex(d).then(function(h){
+        return fetch(SUPA+'/rest/v1/rpc/proposta_status',{
+          method:'POST',
+          headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'},
+          body:JSON.stringify({p_lh:lh,p_dhash:h})
         });
-      } else {
-        // Sem lh (link antigo sem hash): checar pelo expira da URL
+      }).then(function(r){
+        if(!r.ok)throw new Error('falha');
+        return r.json();
+      }).then(function(st){
+        if(!st||!st.valida){
+          document.getElementById('expiredScreen').classList.add('show');
+          return;
+        }
+        if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
         if(Date.now()>PROPOSTA.expira){
           document.getElementById('expiredScreen').classList.add('show');
           return;
         }
         renderProposta();
-      }
+      }).catch(function(){
+        // Sem conexao com o banco: usa o expira da URL
+        if(Date.now()>PROPOSTA.expira){
+          document.getElementById('expiredScreen').classList.add('show');
+          return;
+        }
+        renderProposta();
+      });
+    }
+
+    function sha256hex(t){
+      return crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)).then(function(b){
+        return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2);}).join('');
+      });
     }
 
     function renderProposta(){
@@ -270,14 +275,15 @@
           var lI=document.createElement('div');lI.className='items-label';lI.textContent='Incluso';parent.appendChild(lI);
           itens.forEach(function(txt){
             var d=document.createElement('div');d.className='item-linha';
-            d.innerHTML='<div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="'+stroke+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+txt;
+            d.innerHTML='<div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="'+stroke+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+            d.appendChild(document.createTextNode(String(txt)));
             parent.appendChild(d);
           });
           // Adicionar não inclusos
           if(ni&&ni.length>0){
             var div2=document.createElement('div');div2.className='divider';parent.appendChild(div2);
             var lN=document.createElement('div');lN.className='items-label';lN.textContent='Não incluso';parent.appendChild(lN);
-            ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
+            ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=String(txt);parent.appendChild(d);});
           }
         } else if(ni&&ni.length>0){
           // Só substituir não inclusos
@@ -288,7 +294,7 @@
           while(el2){toRm2.push(el2);el2=el2.nextSibling;}
           toRm2.forEach(function(e){if(e.parentNode)e.parentNode.removeChild(e);});
           var lN2=document.createElement('div');lN2.className='items-label';lN2.textContent='Não incluso';parent.appendChild(lN2);
-          ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=txt;parent.appendChild(d);});
+          ni.forEach(function(txt){var d=document.createElement('div');d.className='item-riscado';d.textContent=String(txt);parent.appendChild(d);});
         }
       });
     }
@@ -348,7 +354,7 @@
       var email=(PROPOSTA.em||'').trim();
       if(!/^\S+@\S+\.\S+$/.test(email)){email=(window.prompt('Quer receber esta proposta por e-mail? Digite seu e-mail ou deixe em branco para ir direto ao WhatsApp.')||'').trim();}
       if(/^\S+@\S+\.\S+$/.test(email)){
-        try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',cliente:PROPOSTA.nome,email:email,v1:PROPOSTA.v1,v2:PROPOSTA.v2,v3:PROPOSTA.v3,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
+        try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',email:email,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
       }
       var w=window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
       if(!w)window.location.href='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
