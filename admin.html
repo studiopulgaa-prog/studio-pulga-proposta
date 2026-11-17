@@ -146,12 +146,13 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     </div>
     <div id="cdBlock" style="display:none;">
       <div class="field">
-        <label class="label">Catálogo do cardápio</label>
+        <label class="label">Caminhos do cardápio</label>
         <div class="cd-count" id="cdCount"></div>
-        <div id="cdGroups"></div>
+        <div id="cdCaminhos"></div>
       </div>
+      <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
       <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Ex: Valores combinados na reunião de hoje."></textarea></div>
-      <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do catálogo.</div></div>
+      <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do caminho A.</div></div>
     </div>
     <div class="field">
       <label class="label">Validade do link</label>
@@ -597,58 +598,84 @@ function copiarLinkCurto() {
 }
 </script>
 <script>
-// ===== Tipo de proposta: CARDAPIO (novo). O tipo "Planos" continua exatamente como antes. =====
+// ===== Tipo de proposta: CARDAPIO v2 (apresentacao guiada). O tipo "Planos" continua exatamente como antes. =====
 window.CD_ATIVO = false;
-var CD_GRUPOS = [
-  {k:'entrada', t:'Plano de entrada'},
-  {k:'extras', t:'Extras de captação'},
-  {k:'artes', t:'Artes e design'},
-  {k:'avulsos', t:'Avulsos de captação'}
+var C2_FOTOS = [['casal-plantas','Casal e plantas'],['abajur-tablet','Abajur e tablet'],['obra-colher','Obra e colher'],['maos-tachinhas','Mãos e tachinhas'],['bone-vermelho','Boné vermelho']];
+var C2_COMB = [
+  'Tolerância de até 20 minutos após o término do período contratado; depois disso, cobra-se hora adicional',
+  'A diária conta a partir da chegada ao local, independente do início da gravação',
+  'Pagamento de 50% antes do início da captação e 50% após a finalização do serviço',
+  'Valores válidos para captações na Baixada Santista',
+  'Serviços adicionais ou ajustes fora do escopo podem ser orçados à parte',
+  'Vídeos de até 1 minuto; vídeo de 2 partes conta como individual'
 ];
-var CD_UN = {mensal:'por mês', unico:'único', unidade:'por unidade'};
-function cdItem(id, grupo, nome, valor, un, extra) {
-  var o = {id:id, grupo:grupo, nome:nome, desc:'', valor:valor, de:'', unidade:un, exibir:true, preSelecionado:false, recomendado:false, ed:false};
-  if (extra) { for (var k in extra) o[k] = extra[k]; }
+function I(nome, valor, un, ex) {
+  var o = {nome:nome, desc:'', valor:String(valor), de:'', unidade:un, rot:'', g:'', pre:false, tag:'', nota:''};
+  if (ex) { for (var k in ex) o[k] = ex[k]; }
   return o;
 }
-// Catalogo inicial: valores sugeridos (nao oficiais). Tudo editavel no painel.
-var cdS = [
-  cdItem('entrada','entrada','Plano de entrada','990','mensal',{
-    desc:'Rotina mensal de captação e edição simples.', preSelecionado:true,
-    inclui:['1 captação por mês de até 2 h','3 vídeos de até 1 min ou 4 de até 30 s','Legenda pronta para cada vídeo','Tabela mensal de postagem por WhatsApp','Grupo com o videomaker em horário comercial','Edição simples com 1 ajuste por vídeo'],
-    naoInclui:['Drone','Horário adicional','Vídeo adicional','Gestão de perfil (quem posta é o cliente)'],
-    condicoes:['Mínimo de 3 meses','Pagamento antecipado até o dia 5']
-  }),
-  cdItem('hora','extras','Hora adicional de captação','290','unidade',{desc:'Inclui 2 vídeos de 30 s.'}),
-  cdItem('v30','extras','Vídeo extra de 30 s','150','unidade'),
-  cdItem('v60','extras','Vídeo extra de 1 min','220','unidade'),
-  cdItem('rev','extras','Revisão extra','60','unidade'),
-  cdItem('post','artes','Post de arte','90','unidade'),
-  cdItem('data','artes','Data sazonal','90','unidade'),
-  cdItem('pack3','artes','Pack 3 datas sazonais','240','unico'),
-  cdItem('car_c','artes','Carrossel até 7 lâminas (briefing do cliente)','250','unidade'),
-  cdItem('car_n','artes','Carrossel até 7 lâminas (briefing nosso)','290','unidade'),
-  cdItem('st_c','artes','Sequência de stories até 5 telas (briefing do cliente)','120','unidade'),
-  cdItem('st_n','artes','Sequência de stories até 5 telas (briefing nosso)','140','unidade'),
-  cdItem('cap_c','artes','Capas de destaque, set de 5 (briefing do cliente)','120','unico'),
-  cdItem('cap_n','artes','Capas de destaque, set de 5 (briefing nosso)','140','unico'),
-  cdItem('art2m','artes','Pacote 2 artes por mês','150','mensal'),
-  cdItem('cal','artes','Calendário anual de 12 datas','900','unico'),
-  cdItem('vc1','avulsos','Vídeos captados até 1 h','470','unico'),
-  cdItem('vc2','avulsos','Vídeos captados até 2 h','567','unico'),
-  cdItem('vc3','avulsos','Vídeos captados até 3 h','649','unico'),
-  cdItem('cb1','avulsos','Cobertura até 1 h','440','unico'),
-  cdItem('cb2','avulsos','Cobertura até 2 h','527','unico'),
-  cdItem('cb3','avulsos','Cobertura até 3 h','625','unico'),
-  cdItem('ft1','avulsos','Ensaio de fotos 1 h','490','unico'),
-  cdItem('ft2','avulsos','Ensaio de fotos 2 h','750','unico'),
-  cdItem('ed5','avulsos','Edição até 5 vídeos','690','unico'),
-  cdItem('ed10','avulsos','Edição até 10 vídeos','1.099','unico'),
-  cdItem('ed14','avulsos','Edição até 14 vídeos','1.299','unico')
-];
-var cdAberto = {entrada:true};
+// Valores de referencia (editaveis). Nada aqui e promessa de prazo ou resultado.
+function c2Defaults() {
+  return [
+    {id:'a', on:true, foto:'abajur-tablet', titulo:'Manter o feed vivo', apoio:'Plano de entrada: captação mensal, vídeos editados e legenda pronta.',
+      para:'Arquitetos e empresas que querem constância no feed sem montar uma equipe.',
+      conteudos:[], video:'', modo:'um',
+      inclui:['1 captação por mês de até 2 h','3 vídeos de até 1 min ou 4 de até 30 s','Legenda pronta para cada vídeo','Tabela mensal de postagem por WhatsApp','Grupo com o videomaker em horário comercial','Edição simples com 1 ajuste por vídeo','Quem posta é o cliente'],
+      nao:['Drone','Horário adicional','Vídeo adicional','Gestão de perfil'],
+      comb:['Mínimo de 3 meses','Pagamento antecipado até o dia 5'],
+      ops:[I('Plano de entrada',990,'mensal',{pre:true,tag:'Ponto de partida'})],
+      extras:[
+        I('Hora adicional de captação, com 2 vídeos de 30 s',290,'unidade',{rot:'por hora'}),
+        I('Vídeo extra de 30 s',150,'unidade',{rot:'por vídeo'}),
+        I('Vídeo extra de 1 min',220,'unidade',{rot:'por vídeo'}),
+        I('Revisão extra',60,'unidade',{rot:'por revisão'}),
+        I('Post de arte',90,'unidade',{rot:'por arte'}),
+        I('Data sazonal',90,'unidade',{rot:'por arte'}),
+        I('Pack 3 datas sazonais',240,'unico'),
+        I('Carrossel até 7 lâminas',250,'unico',{g:'car'}),
+        I('Carrossel até 7 lâminas, com briefing nosso',290,'unico',{g:'car'}),
+        I('Sequência de stories até 5 telas',120,'unico',{g:'sto'}),
+        I('Sequência de stories até 5 telas, com briefing nosso',140,'unico',{g:'sto'}),
+        I('Capas de destaque, set de 5',120,'unico',{g:'cap'}),
+        I('Capas de destaque, set de 5, com briefing nosso',140,'unico',{g:'cap'}),
+        I('Pacote 2 artes por mês',150,'mensal'),
+        I('Calendário anual de 12 datas',900,'unico'),
+        I('TikTok: criação de conta e conteúdos da agência',890,'mensal',{g:'tt',nota:'a confirmar',desc:'Postagens semanais, gerenciamento e acompanhamento.'}),
+        I('TikTok: criação de conta e conteúdos prontos',849,'mensal',{g:'tt',nota:'a confirmar',desc:'Postagens semanais, gerenciamento e acompanhamento.'}),
+        I('TikTok: só conteúdos prontos',750,'mensal',{g:'tt',nota:'a confirmar',desc:'Postagens semanais, gerenciamento e acompanhamento.'})
+      ]},
+    {id:'b', on:true, foto:'obra-colher', titulo:'Registrar uma obra ou entrega', apoio:'Vídeos captados e editados, com valor único.',
+      para:'', conteudos:['Depoimentos','Entrega de projeto ou obra','Feedbacks de clientes','Diário de obra','Institucionais'], video:'', modo:'um',
+      inclui:['Captação e edição inclusas'], nao:[], comb:C2_COMB.slice(),
+      ops:[I('Até 1 h',470,'unico',{desc:'Até 1 vídeo de 1 min'}),I('Até 2 h',567,'unico',{desc:'Até 2 vídeos de 1 min'}),I('Até 3 h',649,'unico',{desc:'Até 3 vídeos de 1 min'})],
+      extras:[I('Hora adicional',120,'unidade',{rot:'por hora'}),I('Vídeo adicional de até 1 min',100,'unidade',{rot:'por vídeo'})]},
+    {id:'c', on:true, foto:'casal-plantas', titulo:'Cobrir a rotina ou um evento', apoio:'Cobertura com acompanhamento e gravação, valor único.',
+      para:'', conteudos:['Stories','Backstage de obra, projeto ou ensaio','Rotina','Evento'], video:'', modo:'um',
+      inclui:['Acompanhamento com gravação'], nao:[], comb:C2_COMB.slice(),
+      ops:[I('Até 1 h',440,'unico',{desc:'Até 2 vídeos de 30 s'}),I('Até 2 h',527,'unico',{desc:'Até 5 vídeos de 30 s'}),I('Até 3 h',625,'unico',{desc:'Até 7 vídeos de 30 s'})],
+      extras:[I('Hora adicional',97,'unidade',{rot:'por hora'}),I('Vídeo adicional de até 30 s',57,'unidade',{rot:'por vídeo'})]},
+    {id:'d', on:true, foto:'bone-vermelho', titulo:'Fotos do projeto', apoio:'Ensaio de fotos, com valor único.',
+      para:'', conteudos:[], video:'', modo:'um', inclui:[], nao:[], comb:C2_COMB.slice(),
+      ops:[I('1 h de ensaio',490,'unico',{desc:'Apenas um local. Captação e edição de 20 fotos no período.'}),I('2 h de ensaio',750,'unico',{desc:'Até dois locais. Captação e edição de 30 fotos no período.'})],
+      extras:[]},
+    {id:'e', on:true, foto:'maos-tachinhas', titulo:'Editar o que já tenho', apoio:'Edição de vídeos e stories que você mesmo gravou.',
+      para:'', conteudos:[], video:'', modo:'varios', inclui:[], nao:[], comb:C2_COMB.slice(),
+      ops:[
+        I('Edição: até 5 vídeos',690,'unico',{g:'ed',desc:'Todos no período contratado.'}),
+        I('Edição: até 10 vídeos',1099,'unico',{g:'ed',desc:'Todos no período contratado.'}),
+        I('Edição: até 14 vídeos',1299,'unico',{g:'ed',desc:'Todos no período contratado.'}),
+        I('Stories editados: diária',97,'unico',{g:'st',desc:'Vídeos enviados por você. Valor integral. Postagem pelo cliente.'}),
+        I('Stories editados: semanal',526,'unico',{g:'st',desc:'10% menor. Vídeos enviados por você. Postagem pelo cliente.'}),
+        I('Stories editados: mensal',1497,'mensal',{g:'st',desc:'40% menor. Vídeos enviados por você. Postagem pelo Studio.'})
+      ],
+      extras:[I('Vídeo adicional',115,'unidade',{rot:'por vídeo'})]}
+  ];
+}
+var c2S = c2Defaults();
+var c2Aberto = {};   // caminho aberto no editor
+var c2ItAberto = {}; // item aberto (chave "p.l.i")
+var CD_UN = {mensal:'Mensal', unico:'Único', unidade:'Por unidade'};
 
-// "1.099" / "1099" / "1.099,50" -> numero (ou null)
 function cdNum(s) {
   s = String(s == null ? '' : s).replace(/[^\d.,]/g, '');
   if (!s) return null;
@@ -656,53 +683,6 @@ function cdNum(s) {
   else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
   var n = parseFloat(s);
   return isFinite(n) ? n : null;
-}
-function cdFmt(n) { return n.toLocaleString('pt-BR', {minimumFractionDigits: (n % 1 ? 2 : 0), maximumFractionDigits: 2}); }
-
-function cdRow(it, i) {
-  var v = cdNum(it.valor);
-  var meta = (v == null ? 'sem valor' : 'R$ ' + cdFmt(v)) + (it.de ? ' (de R$ ' + esc(it.de) + ')' : '') + ' · ' + CD_UN[it.unidade];
-  var h = '<div class="item-row cd-row">';
-  h += '<input type="checkbox"' + (it.exibir ? ' checked' : '') + ' data-cd-ck="' + i + '" title="Exibir no link">';
-  h += '<span class="cd-name' + (it.exibir ? '' : ' off') + '">' + esc(it.nome) + '<span class="cd-meta">' + meta + '</span></span>';
-  h += '<button type="button" class="ibtn cd-flag' + (it.preSelecionado ? ' on' : '') + '" data-cd-pre="' + i + '" title="Já vem marcado para o cliente">pré</button>';
-  h += '<button type="button" class="ibtn cd-flag' + (it.recomendado ? ' on' : '') + '" data-cd-rec="' + i + '" title="Selo Recomendado">★</button>';
-  h += '<button type="button" class="ibtn" data-cd-mv="' + i + '" data-cd-d="-1">↑</button>';
-  h += '<button type="button" class="ibtn" data-cd-mv="' + i + '" data-cd-d="1">↓</button>';
-  h += '<button type="button" class="ibtn" data-cd-ed="' + i + '">✏️</button>';
-  h += '</div>';
-  if (it.ed) {
-    h += '<div class="cd-ed" id="cded' + i + '" data-un="' + esc(it.unidade) + '">';
-    h += '<div class="field"><label class="label">Nome</label><input class="inp" type="text" id="cdn' + i + '" value="' + esc(it.nome) + '"></div>';
-    h += '<div class="field"><label class="label">Descrição curta</label><input class="inp" type="text" id="cdd' + i + '" value="' + esc(it.desc) + '"></div>';
-    h += '<div class="de-para"><div><div class="de-para-label">Valor (R$)</div><input class="inp" type="text" id="cdv' + i + '" value="' + esc(it.valor) + '"></div><div><div class="de-para-label">De (opcional)</div><input class="inp" type="text" id="cdo' + i + '" value="' + esc(it.de) + '"></div></div>';
-    h += '<div class="field"><label class="label">Cobrança</label><div class="cd-seg-row">';
-    ['mensal','unico','unidade'].forEach(function(u) { h += '<button type="button" class="cd-seg' + (it.unidade === u ? ' on' : '') + '" data-cd-un="' + u + '" data-cd-i="' + i + '">' + CD_UN[u] + '</button>'; });
-    h += '</div></div>';
-    if (it.grupo === 'entrada') {
-      h += '<div class="field"><label class="label">O que inclui (um por linha)</label><textarea class="inp cd-ta" id="cdinc' + i + '">' + esc((it.inclui || []).join('\n')) + '</textarea></div>';
-      h += '<div class="field"><label class="label">Não inclui (um por linha)</label><textarea class="inp cd-ta" id="cdnao' + i + '">' + esc((it.naoInclui || []).join('\n')) + '</textarea></div>';
-      h += '<div class="field"><label class="label">Condições (um por linha)</label><textarea class="inp cd-ta" id="cdcon' + i + '">' + esc((it.condicoes || []).join('\n')) + '</textarea></div>';
-    }
-    h += '<button type="button" class="btn-out" data-cd-save="' + i + '">✔ Salvar item</button>';
-    h += '</div>';
-  }
-  return h;
-}
-
-function cdRender() {
-  var h = '';
-  CD_GRUPOS.forEach(function(g) {
-    var open = !!cdAberto[g.k];
-    h += '<div class="items-toggle" data-cd-tog="' + g.k + '"><span class="items-toggle-label">' + esc(g.t) + '</span><span class="items-arrow' + (open ? ' open' : '') + '">›</span></div>';
-    h += '<div class="items-body' + (open ? ' show' : '') + '">';
-    cdS.forEach(function(it, i) { if (it.grupo === g.k) h += cdRow(it, i); });
-    h += '<div class="add-row"><input class="add-inp" type="text" id="cdadd_' + g.k + '" placeholder="Adicionar item…"><button type="button" class="add-btn" data-cd-add="' + g.k + '">+</button></div>';
-    h += '</div>';
-  });
-  document.getElementById('cdGroups').innerHTML = h;
-  var vis = cdS.filter(function(x) { return x.exibir; }).length;
-  document.getElementById('cdCount').textContent = vis + ' de ' + cdS.length + ' itens visíveis. "pré" = já vem marcado. ★ = selo Recomendado (um por grupo).';
 }
 
 function cdTipo(card) {
@@ -713,65 +693,142 @@ function cdTipo(card) {
     el.style.display = card ? 'none' : '';
   });
   document.getElementById('cdBlock').style.display = card ? 'block' : 'none';
-  if (card) cdRender();
+  if (card) c2Render();
 }
 document.getElementById('tpPlanos').addEventListener('click', function() { cdTipo(false); });
 document.getElementById('tpCardapio').addEventListener('click', function() { cdTipo(true); });
 
-function cdLinhas(id) {
-  var el = document.getElementById(id);
-  return el ? el.value.split('\n').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+// ---- construtores de campo (DOM puro, sem innerHTML com dados) ----
+function c2e(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+function c2Campo(label, obj, key, opt) {
+  opt = opt || {};
+  var f = c2e('div', 'field'); f.appendChild(c2e('label', 'label', label));
+  var inp = opt.ta ? c2e('textarea', 'inp cd-ta') : c2e('input', 'inp');
+  if (!opt.ta) inp.type = 'text';
+  if (opt.ph) inp.placeholder = opt.ph;
+  if (opt.max) inp.maxLength = opt.max;
+  inp.value = obj[key] == null ? '' : obj[key];
+  inp.addEventListener('input', function() { obj[key] = inp.value; if (opt.on) opt.on(); });
+  f.appendChild(inp);
+  if (opt.hint) f.appendChild(c2e('div', 'cd-hint', opt.hint));
+  return f;
 }
-document.addEventListener('click', function(e) {
-  var t = e.target;
-  if (!t || !t.dataset) return;
-  var i;
-  if (t.closest && t.closest('[data-cd-tog]')) {
-    var k = t.closest('[data-cd-tog]').dataset.cdTog; cdAberto[k] = !cdAberto[k]; cdRender(); return;
+function c2Linhas(label, obj, key, hint) {
+  var f = c2e('div', 'field'); f.appendChild(c2e('label', 'label', label + ' (um por linha)'));
+  var ta = c2e('textarea', 'inp cd-ta'); ta.value = (obj[key] || []).join('\n');
+  ta.addEventListener('input', function() { obj[key] = ta.value.split('\n').map(function(s) { return s.trim(); }).filter(Boolean); });
+  f.appendChild(ta);
+  if (hint) f.appendChild(c2e('div', 'cd-hint', hint));
+  return f;
+}
+
+function c2ItemEd(P, lista, i, pi) {
+  var it = P[lista][i], key = pi + '.' + lista + '.' + i;
+  var box = c2e('div', 'cd-ed');
+  var head = c2e('div', 'item-row');
+  var nm = c2e('span', 'cd-name', it.nome || '(sem nome)');
+  var meta = c2e('span', 'cd-meta', (it.valor ? 'R$ ' + it.valor : 'sem valor') + ' · ' + CD_UN[it.unidade]);
+  nm.appendChild(meta);
+  var bEd = c2e('button', 'ibtn', c2ItAberto[key] ? '▲' : '✏️'); bEd.type = 'button';
+  var bUp = c2e('button', 'ibtn', '↑'); bUp.type = 'button';
+  var bDn = c2e('button', 'ibtn', '↓'); bDn.type = 'button';
+  var bRm = c2e('button', 'ibtn', '🗑'); bRm.type = 'button';
+  head.appendChild(nm); head.appendChild(bUp); head.appendChild(bDn); head.appendChild(bEd); head.appendChild(bRm);
+  box.appendChild(head);
+  bEd.addEventListener('click', function() { c2ItAberto[key] = !c2ItAberto[key]; c2Render(); });
+  bUp.addEventListener('click', function() { if (i > 0) { var t = P[lista][i - 1]; P[lista][i - 1] = it; P[lista][i] = t; c2Render(); } });
+  bDn.addEventListener('click', function() { if (i < P[lista].length - 1) { var t = P[lista][i + 1]; P[lista][i + 1] = it; P[lista][i] = t; c2Render(); } });
+  bRm.addEventListener('click', function() { if (confirm('Remover "' + it.nome + '"?')) { P[lista].splice(i, 1); c2Render(); } });
+  if (c2ItAberto[key]) {
+    var body = c2e('div');
+    body.style.marginTop = '8px';
+    body.appendChild(c2Campo('Nome', it, 'nome', {max:90}));
+    body.appendChild(c2Campo('Descrição (opcional)', it, 'desc', {max:160}));
+    var g2 = c2e('div', 'de-para');
+    var a = c2e('div'); a.appendChild(c2e('div', 'de-para-label', 'Valor (R$)'));
+    var ia = c2e('input', 'inp'); ia.type = 'text'; ia.value = it.valor; ia.placeholder = 'Ex: 990';
+    ia.addEventListener('input', function() { it.valor = ia.value; }); a.appendChild(ia);
+    var b = c2e('div'); b.appendChild(c2e('div', 'de-para-label', 'De (riscado, opcional)'));
+    var ib = c2e('input', 'inp'); ib.type = 'text'; ib.value = it.de; ib.placeholder = 'Ex: 1.200';
+    ib.addEventListener('input', function() { it.de = ib.value; }); b.appendChild(ib);
+    g2.appendChild(a); g2.appendChild(b); body.appendChild(g2);
+    var f = c2e('div', 'field'); f.style.marginTop = '10px'; f.appendChild(c2e('label', 'label', 'Cobrança'));
+    var seg = c2e('div', 'cd-seg-row');
+    ['mensal', 'unico', 'unidade'].forEach(function(u) {
+      var s = c2e('button', 'cd-seg' + (it.unidade === u ? ' on' : ''), CD_UN[u]); s.type = 'button';
+      s.addEventListener('click', function() { it.unidade = u; seg.querySelectorAll('.cd-seg').forEach(function(x) { x.classList.toggle('on', x === s); }); meta.textContent = (it.valor ? 'R$ ' + it.valor : 'sem valor') + ' · ' + CD_UN[u]; });
+      seg.appendChild(s);
+    });
+    f.appendChild(seg); body.appendChild(f);
+    body.appendChild(c2Campo('Texto da unidade (só "por unidade")', it, 'rot', {ph:'Ex: por hora', max:24}));
+    body.appendChild(c2Campo('Grupo de escolha única (opcional)', it, 'g', {ph:'Ex: car', max:12, hint:'Itens do mesmo caminho com o mesmo código: o cliente escolhe só um deles.'}));
+    body.appendChild(c2Campo('Selo (opcional)', it, 'tag', {ph:'Ex: Ponto de partida', max:24}));
+    body.appendChild(c2Campo('Nota ao lado do valor (opcional)', it, 'nota', {ph:'Ex: a confirmar', max:24}));
+    var pr = c2e('label', 'plano-ck'); pr.style.cursor = 'pointer';
+    var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!it.pre;
+    ck.addEventListener('change', function() { it.pre = ck.checked; });
+    pr.appendChild(ck); pr.appendChild(c2e('span', 'plano-ck-label', 'Já vem marcado para o cliente'));
+    body.appendChild(pr);
+    box.appendChild(body);
   }
-  if (t.dataset.cdCk !== undefined) { cdS[+t.dataset.cdCk].exibir = t.checked; cdRender(); return; }
-  if (t.dataset.cdPre !== undefined || t.dataset.cdRec !== undefined) {
-    var campo = t.dataset.cdPre !== undefined ? 'preSelecionado' : 'recomendado';
-    i = +(t.dataset.cdPre !== undefined ? t.dataset.cdPre : t.dataset.cdRec);
-    var ligar = !cdS[i][campo];
-    cdS.forEach(function(x) { if (x.grupo === cdS[i].grupo) x[campo] = false; }); // um por grupo
-    cdS[i][campo] = ligar;
-    cdRender(); return;
-  }
-  if (t.dataset.cdMv !== undefined) {
-    i = +t.dataset.cdMv; var d = +t.dataset.cdD, j = i + d;
-    while (j >= 0 && j < cdS.length && cdS[j].grupo !== cdS[i].grupo) j += d; // vizinho do mesmo grupo
-    if (j >= 0 && j < cdS.length) { var tmp = cdS[i]; cdS[i] = cdS[j]; cdS[j] = tmp; }
-    cdRender(); return;
-  }
-  if (t.dataset.cdEd !== undefined) { cdS[+t.dataset.cdEd].ed = true; cdRender(); return; }
-  if (t.dataset.cdUn !== undefined) {
-    var box = document.getElementById('cded' + t.dataset.cdI);
-    box.dataset.un = t.dataset.cdUn;
-    box.querySelectorAll('.cd-seg').forEach(function(b) { b.classList.toggle('on', b.dataset.cdUn === t.dataset.cdUn); });
-    return;
-  }
-  if (t.dataset.cdSave !== undefined) {
-    i = +t.dataset.cdSave; var it = cdS[i];
-    var nome = document.getElementById('cdn' + i).value.trim();
-    if (nome) it.nome = nome;
-    it.desc = document.getElementById('cdd' + i).value.trim();
-    it.valor = document.getElementById('cdv' + i).value.trim();
-    it.de = document.getElementById('cdo' + i).value.trim();
-    it.unidade = document.getElementById('cded' + i).dataset.un || it.unidade;
-    if (it.grupo === 'entrada') { it.inclui = cdLinhas('cdinc' + i); it.naoInclui = cdLinhas('cdnao' + i); it.condicoes = cdLinhas('cdcon' + i); }
-    it.ed = false; cdRender(); return;
-  }
-  if (t.dataset.cdAdd !== undefined) {
-    var g = t.dataset.cdAdd, inp = document.getElementById('cdadd_' + g), nm = inp.value.trim();
-    if (!nm) return;
-    var novo = cdItem('n' + Date.now().toString(36), g, nm, '', 'unico'); novo.ed = true;
-    // entra no fim do proprio grupo
-    var ult = -1; cdS.forEach(function(x, n) { if (x.grupo === g) ult = n; });
-    cdS.splice(ult + 1, 0, novo); cdAberto[g] = true; cdRender();
-    setTimeout(function() { var el = document.getElementById('cdv' + (ult + 1)); if (el) el.focus(); }, 30);
-  }
-});
+  return box;
+}
+
+function c2Render() {
+  var cont = document.getElementById('cdCaminhos');
+  var rolagem = window.pageYOffset;
+  cont.textContent = '';
+  c2S.forEach(function(P, pi) {
+    var tg = c2e('div', 'items-toggle');
+    var lab = c2e('span', 'items-toggle-label', String.fromCharCode(65 + pi) + ' · ' + (P.titulo || '(sem título)') + (P.on ? '' : ' (desligado)'));
+    var ar = c2e('span', 'items-arrow' + (c2Aberto[pi] ? ' open' : ''), '›');
+    var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = P.on; ck.title = 'Exibir este caminho no link';
+    ck.style.cssText = 'width:16px;height:16px;accent-color:#6E2C14;margin-right:10px;flex-shrink:0;';
+    ck.addEventListener('click', function(e) { e.stopPropagation(); });
+    ck.addEventListener('change', function() { P.on = ck.checked; c2Render(); });
+    var lw = c2e('span'); lw.style.cssText = 'display:flex;align-items:center;min-width:0;'; lw.appendChild(ck); lw.appendChild(lab);
+    tg.appendChild(lw); tg.appendChild(ar);
+    tg.addEventListener('click', function() { c2Aberto[pi] = !c2Aberto[pi]; c2Render(); });
+    cont.appendChild(tg);
+    if (!c2Aberto[pi]) return;
+    var body = c2e('div', 'items-body show');
+    body.appendChild(c2Campo('Título', P, 'titulo', {max:60}));
+    body.appendChild(c2Campo('Linha de apoio (aparece no cartão)', P, 'apoio', {max:110}));
+    var ff = c2e('div', 'field'); ff.appendChild(c2e('label', 'label', 'Foto do cartão'));
+    var sel = c2e('select', 'inp');
+    C2_FOTOS.forEach(function(f) { var o = c2e('option', null, f[1]); o.value = f[0]; if (P.foto === f[0]) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener('change', function() { P.foto = sel.value; });
+    ff.appendChild(sel); body.appendChild(ff);
+    body.appendChild(c2Campo('Para quem é', P, 'para', {ta:true, max:260}));
+    body.appendChild(c2Linhas('Conteúdos sugestivos', P, 'conteudos'));
+    body.appendChild(c2Linhas('O que inclui', P, 'inclui'));
+    body.appendChild(c2Linhas('O que não inclui', P, 'nao', 'Em branco: o bloco não aparece.'));
+    body.appendChild(c2Linhas('Combinados', P, 'comb'));
+    body.appendChild(c2Campo('Vídeo curto em loop (URL https, opcional)', P, 'video', {ph:'https://...'}));
+    var fm = c2e('div', 'field'); fm.appendChild(c2e('label', 'label', 'Opções de preço'));
+    var sg = c2e('div', 'cd-seg-row');
+    [['um', 'Escolhe uma'], ['varios', 'Escolhe várias']].forEach(function(m) {
+      var s = c2e('button', 'cd-seg' + (P.modo === m[0] ? ' on' : ''), m[1]); s.type = 'button';
+      s.addEventListener('click', function() { P.modo = m[0]; sg.querySelectorAll('.cd-seg').forEach(function(x) { x.classList.toggle('on', x === s); }); });
+      sg.appendChild(s);
+    });
+    fm.appendChild(sg); body.appendChild(fm);
+    [['ops', 'Opções (preços do caminho)'], ['extras', 'Combina com (extras)']].forEach(function(L) {
+      body.appendChild(c2e('div', 'sec-sep', L[1]));
+      P[L[0]].forEach(function(x, i) { body.appendChild(c2ItemEd(P, L[0], i, pi)); });
+      var add = c2e('button', 'btn-out', '+ Adicionar item'); add.type = 'button'; add.style.marginTop = '8px';
+      add.addEventListener('click', function() { var n = I('Novo item', '', 'unico'); n.valor = ''; P[L[0]].push(n); c2ItAberto[pi + '.' + L[0] + '.' + (P[L[0]].length - 1)] = true; c2Render(); });
+      body.appendChild(add);
+    });
+    var rs = c2e('button', 'btn-out', 'Restaurar textos e valores de referência deste caminho'); rs.type = 'button'; rs.style.cssText = 'margin-top:14px;width:100%;';
+    rs.addEventListener('click', function() { if (confirm('Voltar este caminho aos valores de referência?')) { var d = c2Defaults()[pi]; d.on = P.on; c2S[pi] = d; c2Render(); } });
+    body.appendChild(rs);
+    cont.appendChild(body);
+  });
+  var vis = c2S.filter(function(x) { return x.on; }).length;
+  document.getElementById('cdCount').textContent = vis + ' de ' + c2S.length + ' caminhos ligados. Os valores são de referência e podem ser editados.';
+  window.scrollTo(0, rolagem);
+}
 
 // comprime o JSON (deflate) so quando o link ficaria longo. Prefixo "z~" (nunca aparece em base64url).
 function cdComprimir(data) {
@@ -785,39 +842,56 @@ function cdComprimir(data) {
   });
 }
 
+function c2Limpa(x) {
+  var o = {nome:String(x.nome || '').trim(), valor:String(x.valor).trim(), unidade:x.unidade};
+  ['desc','de','rot','g','tag','nota'].forEach(function(k) { var v = String(x[k] || '').trim(); if (v) o[k] = v; });
+  if (x.pre) o.pre = true;
+  return o;
+}
+
 function gerarCardapio() {
   var nome = document.getElementById('fNome').value.trim();
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
-  var vis = cdS.filter(function(x) { return x.exibir; });
-  if (!vis.length) { alert('Deixe ao menos 1 item visível no cardápio.'); return; }
-  for (var n = 0; n < vis.length; n++) { if (cdNum(vis[n].valor) == null) { alert('Preencha o valor de: ' + vis[n].nome); return; } }
+  var on = c2S.filter(function(P) { return P.on; });
+  if (!on.length) { alert('Ligue ao menos 1 caminho.'); return; }
   var vEnt = document.getElementById('cdVEntrada').value.trim();
   if (vEnt && cdNum(vEnt) == null) { alert('Valor do plano de entrada inválido.'); return; }
-  var ent = vis.filter(function(x) { return x.grupo === 'entrada'; });
-  var alvo = ent.filter(function(x) { return x.preSelecionado; })[0] || ent[0];
-  if (vEnt && !alvo) { alert('O plano de entrada está oculto. Marque-o como visível ou limpe o valor especial.'); return; }
-  var itens = vis.map(function(x) {
-    var o = {id:x.id, nome:x.nome, valor:(x === alvo && vEnt) ? vEnt : x.valor, unidade:x.unidade, grupo:x.grupo};
-    if (x.desc) o.desc = x.desc;
-    if (x.de) o.de = x.de;
-    if (x.preSelecionado) o.preSelecionado = true;
-    if (x.recomendado) o.recomendado = true;
-    if (x.grupo === 'entrada') {
-      if (x.inclui && x.inclui.length) o.inclui = x.inclui;
-      if (x.naoInclui && x.naoInclui.length) o.naoInclui = x.naoInclui;
-      if (x.condicoes && x.condicoes.length) o.condicoes = x.condicoes;
+  var vid = document.getElementById('cdVidAbertura').value.trim();
+  if (vid && !/^https:\/\/\S+$/i.test(vid)) { alert('O vídeo de abertura precisa ser uma URL que comece com https://'); return; }
+  var alvo = null, caminhos = [];
+  for (var p = 0; p < on.length; p++) {
+    var P = on[p];
+    if (!String(P.titulo).trim()) { alert('Caminho sem título.'); return; }
+    if (P.video && String(P.video).trim() && !/^https:\/\/\S+$/i.test(String(P.video).trim())) { alert('O vídeo de "' + P.titulo + '" precisa começar com https://'); return; }
+    var its = P.ops.concat(P.extras);
+    if (!P.ops.length && !P.extras.length) { alert('"' + P.titulo + '" está sem nenhum item de preço. Adicione um item ou desligue o caminho.'); return; }
+    for (var n = 0; n < its.length; n++) {
+      if (!String(its[n].nome).trim()) { alert('Há um item sem nome em "' + P.titulo + '".'); return; }
+      if (cdNum(its[n].valor) == null) { alert('Preencha o valor de: ' + its[n].nome); return; }
     }
-    return o;
-  });
+    var c = {id:P.id, foto:P.foto, titulo:String(P.titulo).trim(), modo:P.modo};
+    ['apoio','para'].forEach(function(k) { var v = String(P[k] || '').trim(); if (v) c[k] = v; });
+    ['conteudos','inclui','nao','comb'].forEach(function(k) { if (P[k] && P[k].length) c[k] = P[k]; });
+    if (P.video && String(P.video).trim()) c.video = String(P.video).trim();
+    c.ops = P.ops.map(c2Limpa); c.extras = P.extras.map(c2Limpa);
+    if (P.id === 'a' && vEnt) {
+      var tgt = c.ops.filter(function(x) { return x.pre; })[0] || c.ops[0];
+      if (tgt) { tgt.valor = vEnt; alvo = tgt; }
+    }
+    caminhos.push(c);
+  }
+  if (vEnt && !alvo) { alert('O caminho A está desligado ou sem opções. Ligue-o ou limpe o valor especial.'); return; }
+  if (!alvo) { var ca = caminhos.filter(function(c) { return c.id === 'a'; })[0]; if (ca) alvo = ca.ops.filter(function(x) { return x.pre; })[0] || ca.ops[0]; }
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var lh = btoa(unescape(encodeURIComponent(String(expira) + nome))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
-  var data = {tipo:'cardapio', nome:nome, expira:expira, itensCardapio:itens, lh:lh};
+  var data = {tipo:'cardapio', v:2, nome:nome, expira:expira, caminhos:caminhos, lh:lh};
   var obs = document.getElementById('cdObs').value.trim();
   if (obs) data.obs = obs;
+  if (vid) data.video_abertura = vid;
   if (em) data.em = em;
-  var v1 = alvo ? String((vEnt || alvo.valor)).slice(0, 20) : '';
+  var v1 = alvo ? String(alvo.valor).slice(0, 20) : '';
   var btn = document.getElementById('btnGerar');
   btn.disabled = true; btn.textContent = 'Salvando…';
   var enc = encode(data);
@@ -836,7 +910,7 @@ function gerarCardapio() {
       carregarHistorico();
     });
   }).catch(function(e) {
-    if (e.message === 'longo') alert('O cardápio ficou grande demais para um link. Oculte alguns itens ou encurte as descrições.');
+    if (e.message === 'longo') alert('O cardápio ficou grande demais para um link. Desligue alguns caminhos ou encurte os textos.');
     else if (e.message !== 'sessao') alert('Erro de conexão. A proposta não foi salva.');
   }).then(function() { btn.disabled = false; btn.textContent = 'Gerar link →'; });
 }
