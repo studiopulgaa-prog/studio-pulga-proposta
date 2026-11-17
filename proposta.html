@@ -287,6 +287,100 @@
     .c2-item{scroll-margin-top:64px;}
     .c2-pc>.c2-p{margin-top:4px;}
     .c2-ob{margin:-14px 0 24px;}
+    /* ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) ===== */
+    .c3-root{display:none;}
+    .c3-root.show{display:block;}
+    .c3-apoio{max-width:1240px;margin:0 auto;padding:34px clamp(16px,4vw,40px) 14px;font-size:15px;font-weight:400;line-height:1.5;color:var(--br);}
+    .c3-tabs{position:sticky;top:var(--c3h,48px);z-index:120;background:var(--bg);border-bottom:1px solid var(--border);}
+    .c3-tabs-in{max-width:1240px;margin:0 auto;padding:8px clamp(16px,4vw,40px);display:flex;gap:8px;}
+    .c3-tab{flex:1 1 0;min-width:0;padding:11px 6px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .25s,color .25s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;line-height:1.15;}
+    .c3-tab[aria-selected="true"]{background:var(--br);color:#F4EADD;}
+    .c3-tab:focus-visible,.c3-chip:focus-visible,.c3-acc:focus-visible,.c3-link:focus-visible{outline:2px solid #FFB347;outline-offset:2px;}
+    .c3-tri{display:block;width:34px;height:3px;border-radius:2px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F4EADD 33.33% 66.66%,#BF4630 66.66% 100%);box-shadow:0 0 0 1px rgba(94,44,26,0.35);}
+    .c3-pane{display:none;}
+    .c3-pane.on{display:block;animation:c3in .45s ease both;}
+    @keyframes c3in{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+    #c3Anchor{scroll-margin-top:var(--c3off,110px);}
+    .c3-chips{display:flex;gap:8px;overflow-x:auto;padding:22px 0 10px;scrollbar-width:none;}
+    .c3-chips::-webkit-scrollbar{display:none;}
+    .c3-chip{flex:0 0 auto;padding:9px 16px;border-radius:50px;border:1.5px solid var(--border);background:#fff;color:var(--br);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+    .c3-svc{padding-top:clamp(30px,5vw,48px);scroll-margin-top:var(--c3off,110px);}
+    .c3-svc-ph{position:relative;aspect-ratio:16/9;max-height:300px;width:100%;overflow:hidden;border-radius:20px;background:linear-gradient(135deg,#6E2C14,#B5683F);}
+    .c3-svc-ph img,.c3-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+    .c3-svc-ph::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(110,44,20,0.78),rgba(30,8,2,0.08) 70%);pointer-events:none;}
+    .c3-svc-tt{position:absolute;z-index:2;left:20px;right:20px;bottom:16px;color:#F4EADD;font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(22px,5vw,34px);letter-spacing:-0.02em;line-height:1.1;overflow-wrap:anywhere;}
+    .c3-svc-bd{background:rgba(255,255,255,0.78);border:1.5px solid var(--border);border-top:none;border-radius:0 0 20px 20px;margin-top:-20px;padding:34px 20px 22px;}
+    @media(min-width:720px){.c3-svc-bd{padding:34px 28px 26px;}}
+    .c3-ap{font-size:14px;line-height:1.6;color:var(--gray);font-weight:400;margin-bottom:4px;}
+    .c3-bd-b{margin:0 0 6px;}
+    .c3-co{margin-top:18px;border-top:1px solid var(--border);}
+    .c3-acc{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 0 6px;background:none;border:none;font:inherit;color:var(--br);cursor:pointer;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
+    .c3-acc svg{width:18px;height:18px;transition:transform .35s ease;}
+    .c3-co.open .c3-acc svg{transform:rotate(180deg);}
+    .c3-co.open .c2-pw{grid-template-rows:1fr;opacity:1;visibility:visible;transition-delay:0s;}
+    .c3-co .c2-pi{padding-top:4px;}
+    .c3-end{margin:44px 0 0;padding:22px 20px;border:1.5px dashed var(--border);border-radius:18px;text-align:center;}
+    .c3-link{display:inline-block;margin-top:10px;padding:13px 26px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,color .2s;}
+    @media(hover:hover){.c3-link:hover{background:var(--br);color:#F4EADD;}}
+    .c3-end-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.02em;}
+    .c3-h2{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(28px,6vw,48px);letter-spacing:-0.03em;line-height:1.08;padding-top:clamp(28px,5vw,44px);margin-bottom:22px;}
+    .c3-sh{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(22px,4.4vw,30px);letter-spacing:-0.02em;line-height:1.15;margin:clamp(40px,6vw,64px) 0 16px;}
+    .c3-cmp{display:grid;grid-template-columns:1.25fr 1fr 1fr;border:1.5px solid var(--border);border-radius:18px;overflow:hidden;background:#fff;font-size:13px;}
+    .c3-cmp>div{padding:12px 12px;border-bottom:1px solid var(--border);line-height:1.4;display:flex;align-items:center;gap:6px;min-width:0;overflow-wrap:anywhere;}
+    .c3-cmp>div.h{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);background:rgba(110,44,20,0.05);}
+    .c3-cmp>div.h.r{background:var(--br);color:#F4EADD;}
+    .c3-cmp>div.l{font-weight:600;}
+    .c3-cmp>div.r{background:rgba(110,44,20,0.05);font-weight:600;}
+    .c3-cmp>div.no{color:var(--gray2);text-decoration:line-through;font-weight:400;}
+    .c3-cmp>div:nth-last-child(-n+3){border-bottom:none;}
+    .c3-cmp svg{flex:0 0 14px;width:14px;height:14px;}
+    .c3-gal-tr{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 2px 14px;scroll-behavior:smooth;cursor:grab;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
+    .c3-gal-tr.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto;}
+    .c3-fig{flex:0 0 min(72vw,280px);scroll-snap-align:start;margin:0;}
+    .c3-fig-m{position:relative;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#6E2C14,#B5683F);}
+    .c3-fig-m img{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none;user-select:none;}
+    .c3-fig-m::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(110,44,20,0.35),transparent 55%);pointer-events:none;}
+    .c3-fig figcaption{font-size:12px;color:var(--gray);margin-top:8px;font-weight:400;line-height:1.4;}
+    .c3-difs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:6px;}
+    .c3-dif{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:18px 18px 20px;}
+    .c3-dif-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;letter-spacing:-0.02em;line-height:1.2;margin-bottom:6px;}
+    .c3-dif-d{font-size:13px;line-height:1.6;color:var(--gray);font-weight:400;}
+    .c3-tl{padding-bottom:20px;}
+    /* Especial Milao: tema so aqui (variaveis CSS) */
+    .c3-mi{--mi-bg:#F2E8D8;--mi-r:#BF4630;--mi-g:#3F6B4F;--mi-o:#D8A23A;--mi-a:#5B84A6;--mi-b:#5E2C1A;position:relative;background:var(--mi-bg);color:var(--mi-b);}
+    .c3-mi::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+    .c3-mi-b{padding:clamp(44px,8vw,90px) clamp(22px,6vw,80px);}
+    .c3-mi-in{max-width:880px;margin:0 auto;}
+    .c3-mi-k{font-family:'League Spartan',sans-serif;font-weight:300;font-size:clamp(15px,2.6vw,20px);letter-spacing:0.02em;margin-bottom:14px;opacity:0.85;}
+    .c3-mi-h{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(38px,10vw,96px);letter-spacing:-0.04em;line-height:0.98;overflow-wrap:anywhere;}
+    .c3-mi-tri{display:block;width:clamp(120px,30vw,220px);height:6px;margin:20px 0 22px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F2E8D8 33.33% 66.66%,#BF4630 66.66% 100%);box-shadow:0 0 0 1px rgba(94,44,26,0.35);}
+    .c3-mi-sub{font-size:clamp(16px,2.6vw,22px);line-height:1.5;font-weight:400;max-width:620px;}
+    .c3-mi-hero{background:var(--mi-r);color:#F2E8D8;}
+    .c3-mi-hero .c3-mi-tri{box-shadow:0 0 0 1px rgba(242,232,216,0.5);}
+    .c3-mi-oq{background:var(--mi-bg);}
+    .c3-mi-lv{background:var(--mi-g);color:#F2E8D8;}
+    .c3-mi-cm{background:var(--mi-a);color:#F2E8D8;}
+    .c3-mi-vl{background:var(--mi-o);color:var(--mi-b);}
+    .c3-mi-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(26px,6vw,44px);letter-spacing:-0.03em;line-height:1.05;margin-bottom:20px;}
+    .c3-mi-p{font-size:clamp(15px,2.2vw,18px);line-height:1.7;font-weight:400;}
+    .c3-mi-ul{list-style:none;display:grid;gap:10px;}
+    .c3-mi-ul li{font-size:clamp(16px,2.4vw,20px);line-height:1.4;font-weight:600;padding:14px 16px;border:2px solid rgba(242,232,216,0.55);border-radius:14px;}
+    .c3-mi-st{display:grid;gap:12px;}
+    .c3-mi-s{padding:16px 18px;border-radius:14px;background:#F2E8D8;color:var(--mi-b);}
+    .c3-mi-s b{display:block;font-family:'League Spartan',sans-serif;font-weight:900;font-size:19px;letter-spacing:-0.02em;margin-bottom:4px;}
+    .c3-mi-s span{font-size:14px;line-height:1.55;font-weight:400;}
+    .c3-mi-vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px;}
+    .c3-mi-v{padding:16px 18px;border:2px solid var(--mi-b);border-radius:14px;min-width:0;}
+    .c3-mi-v small{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+    .c3-mi-v b{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(20px,4.4vw,30px);letter-spacing:-0.02em;line-height:1.1;overflow-wrap:anywhere;}
+    .c3-mi-go{display:inline-block;padding:16px 34px;border-radius:50px;border:none;background:var(--mi-b);color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
+    .c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
+    body.c3-mi-on{padding-bottom:0!important;}
+    @media (prefers-reduced-motion:reduce){
+      .c3-pane.on{animation:none;}
+      .c3-gal-tr{scroll-behavior:auto;}
+      .c3-tab,.c3-link,.c3-acc svg{transition:none!important;}
+    }
   </style>
 </head>
 <body>
@@ -347,6 +441,31 @@
       </div>
     </div></section>
   </div>
+  <template id="c3Tpl"><div class="c2-root c3-root" id="c3Root">
+    <section class="c2-open" id="c2Open"><div class="c2-slides" id="c2Slides"></div><div class="c2-veil"></div><div class="c2-open-in"><div class="c2-open-k">// o seu novo studio,</div><div class="c2-open-t" id="c2OpenT"></div></div></section>
+    <section class="c2-manif"><div class="c2-mk c2-reveal">// antes de tudo, você precisa saber:</div><div class="c2-mt c2-reveal" style="transition-delay:.15s">temos uma identidade <strong>COOL</strong> e <strong>AUTORAL</strong> e não abrimos mão dela.</div></section>
+    <div class="c2-strip" id="c2Strip1" aria-hidden="true"><div class="c2-strip-track"></div></div>
+    <div class="c3-apoio c2-reveal">Precisa de algo pontual ou de constância no feed? Escolha como prefere começar.</div>
+    <div class="c3-tabs" id="c3Tabs"><div class="c3-tabs-in" role="tablist" id="c3TabBtns"></div></div>
+    <div id="c3Anchor"></div>
+    <div class="c2-layout" id="c3Layout">
+      <div id="c3Main">
+        <div class="cd-obs c2-ob" id="c2Obs" style="display:none;margin-top:22px;"></div>
+        <div class="c3-pane" data-tab="avulsos" id="c3PAv" role="tabpanel"></div>
+        <div class="c3-pane" data-tab="recorrente" id="c3PRc" role="tabpanel"></div>
+      </div>
+      <aside class="c2-recibo" id="c2Recibo" aria-label="Seu pacote">
+        <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="c2-rl-w"><div class="c2-rl" id="c2Rl"></div></div>
+        <div class="c2-tots">
+          <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v zero" id="c2TotM"><span class="cd-tot-de" id="c2TotMDe" style="display:none;"></span><span id="c2TotMV">—</span></div></div>
+          <div class="cd-tot"><div class="cd-tot-l">Total único</div><div class="cd-tot-v zero" id="c2TotU"><span class="cd-tot-de" id="c2TotUDe" style="display:none;"></span><span id="c2TotUV">—</span></div></div>
+          <button type="button" class="cd-go" id="c2Go">Quero este pacote</button>
+        </div>
+      </aside>
+    </div>
+    <div class="c3-pane c3-mi" data-tab="milao" id="c3PMi" role="tabpanel"></div>
+  </div></template>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
@@ -450,7 +569,7 @@
 
     function renderProposta(){
       // Tipo cardapio (novo). Links sem "tipo" seguem o fluxo de planos abaixo, sem nenhuma mudanca.
-      if(PROPOSTA.tipo==='cardapio'){if(PROPOSTA.v===2||Array.isArray(PROPOSTA.caminhos))renderCardapio2();else renderCardapio();return;}
+      if(PROPOSTA.tipo==='cardapio'){if(PROPOSTA.v===3)renderCardapio3();else if(PROPOSTA.v===2||Array.isArray(PROPOSTA.caminhos))renderCardapio2();else renderCardapio();return;}
       // Nome
       document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';
 
@@ -1115,6 +1234,291 @@
       if(C2.reduce||!('IntersectionObserver' in window)){rv.forEach(function(e){e.classList.add('in');});}
       else{
         var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.15,rootMargin:'0px 0px -6% 0px'});
+        rv.forEach(function(e){io.observe(e);});
+      }
+      c2Recalc();
+      startTimer();
+      registrarAcesso();
+    }
+
+    // ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) =====
+    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false};
+    var C3_NOMES={avulsos:'Avulsos',recorrente:'Recorrente',milao:'Especial Milão'};
+    var C3_GAL=[
+      {src:'/img/casal-plantas.jpg',leg:'Rotina em campo'},
+      {src:'/img/abajur-tablet.jpg',leg:'Detalhes do projeto'},
+      {src:'/img/obra-colher.jpg',leg:'Obra em andamento'},
+      {src:'/img/maos-tachinhas.jpg',leg:'Mãos na massa'},
+      {src:'/img/bone-vermelho.jpg',leg:'Registro com identidade'}
+    ];
+    function c3Src(s){
+      s=String(s==null?'':s).trim();
+      return (/^\/img\/[\w\-.]+\.(jpe?g|png|webp)$/i.test(s)||/^https:\/\/[^\s"'<>]{1,500}$/i.test(s))?s:null;
+    }
+    function c3Pic(src,eager){
+      var s=c3Src(src);if(!s)return null;
+      var im=document.createElement('img');im.alt='';im.decoding='async';im.draggable=false;
+      if(!eager)im.loading='lazy';
+      im.addEventListener('error',function(){if(im.parentNode)im.parentNode.removeChild(im);});
+      im.src=s;return im;
+    }
+    // video curto em loop: so toca quando aparece na tela; se falhar, some e fica a foto
+    function c3Vid(box,url,poster){
+      var u=c2Video(url);if(!u||C2.reduce)return;
+      var v=document.createElement('video');v.className='c3-vid';v.muted=true;v.loop=true;v.playsInline=true;
+      v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='none';
+      var ps=c3Src(poster);if(ps)v.poster=ps;
+      v.addEventListener('error',function(){if(v.parentNode)v.parentNode.removeChild(v);});
+      box.appendChild(v);
+      if(!('IntersectionObserver' in window))return;
+      new IntersectionObserver(function(es){es.forEach(function(e){
+        if(e.isIntersecting){if(!v.getAttribute('src'))v.src=u;var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});}else v.pause();
+      });},{threshold:0.35}).observe(box);
+    }
+
+    // bloco de servico (Avulsos) ou do plano (Recorrente). Registra os itens em C2.it com p=pi.
+    function c3Servico(P,pi,id){
+      var sec=cdEl('section','c3-svc c2-reveal');sec.id=id;
+      var ph=cdEl('div','c3-svc-ph');
+      var im=c3Pic('/img/'+P.foto+'.jpg',false);if(c2Src(P.foto)&&im)ph.appendChild(im);
+      c3Vid(ph,P.video,c2Src(P.foto));
+      ph.appendChild(cdEl('h3','c3-svc-tt',P.titulo));
+      var bd=cdEl('div','c3-svc-bd');
+      var bg=cdEl('span','c2-badge c3-bd-b');bd.appendChild(bg);
+      if(P.apoio)bd.appendChild(cdEl('div','c3-ap',P.apoio));
+      if(P.para){bd.appendChild(cdEl('div','items-label','Para quem serve'));bd.appendChild(cdEl('p','c2-p',P.para));}
+      if(P.conteudos.length){bd.appendChild(cdEl('div','items-label','Conteúdos sugestivos'));var pl=cdEl('div');P.conteudos.forEach(function(t){pl.appendChild(cdEl('span','c2-pill',t));});bd.appendChild(pl);}
+      if(P.inclui.length)bd.appendChild(c2Lista('O que inclui',P.inclui));
+      if(P.nao.length)bd.appendChild(c2Lista('O que não inclui',P.nao,'no'));
+      var ks=[];
+      function itens(lista,rot,dica){
+        if(!lista.length)return;
+        bd.appendChild(cdEl('div','items-label',rot));
+        if(dica)bd.appendChild(cdEl('div','c2-hint',dica));
+        lista.forEach(function(x){
+          var k=C2.it.length;C2.it.push({p:pi,x:x});
+          C2.sel[k]={on:!!x.pre&&!P.lazy,q:1};
+          var u=c2Row(x,k);C2.ui[k]=u;ks.push(k);bd.appendChild(u.w);
+        });
+      }
+      itens(P.ops,P.rotOps||'Escolha o seu',P.modo==='um'&&P.ops.length>1?'Escolha uma opção':'');
+      itens(P.extras,'Extras');
+      if(P.comb.length){
+        var co=cdEl('div','c3-co');
+        var ac=cdEl('button','c3-acc');ac.type='button';ac.setAttribute('aria-expanded','false');
+        ac.appendChild(cdEl('span',null,'Combinados'));
+        ac.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        var pw=cdEl('div','c2-pw'),pin=cdEl('div','c2-pi');
+        P.comb.forEach(function(t){pin.appendChild(cdEl('div','c2-comb',t));});
+        pw.appendChild(pin);co.appendChild(ac);co.appendChild(pw);bd.appendChild(co);
+        ac.addEventListener('click',function(){var o=!co.classList.contains('open');co.classList.toggle('open',o);ac.setAttribute('aria-expanded',o?'true':'false');});
+      }
+      sec.appendChild(ph);sec.appendChild(bd);
+      C2.cards.push({badge:bg,ks:ks});
+      return sec;
+    }
+
+    function c3Cel(v,cls){
+      var d=cdEl('div',cls||'');
+      var t=String(v==null?'':v);
+      if(/^n[ãa]o incluso/i.test(t))d.classList.add('no');
+      if(/^incluso/i.test(t)){d.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');}
+      d.appendChild(document.createTextNode(t));
+      return d;
+    }
+    function c3Comp(rows){
+      var g=cdEl('div','c3-cmp');
+      g.appendChild(cdEl('div','h',''));g.appendChild(cdEl('div','h','Avulso'));g.appendChild(cdEl('div','h r','Recorrente'));
+      rows.forEach(function(r){
+        g.appendChild(cdEl('div','l',r.l));g.appendChild(c3Cel(r.a));g.appendChild(c3Cel(r.r,'r'));
+      });
+      return g;
+    }
+
+    function c3GalBuild(list,box){
+      box.textContent='';
+      var tr=cdEl('div','c3-gal-tr');tr.tabIndex=0;tr.setAttribute('aria-label','Galeria Nosso olhar');
+      list.forEach(function(it){
+        var f=cdEl('figure','c3-fig'),m=cdEl('div','c3-fig-m');
+        var im=c3Pic(it.src||it.poster,false);if(im)m.appendChild(im);
+        if(it.video)c3Vid(m,it.video,it.poster||it.src);
+        f.appendChild(m);
+        if(it.leg)f.appendChild(cdEl('figcaption',null,it.leg));
+        tr.appendChild(f);
+      });
+      // arrasto com o mouse (no toque a rolagem ja e nativa)
+      var dn=false,x0=0,s0=0,moved=false;
+      tr.addEventListener('mousedown',function(e){dn=true;moved=false;x0=e.pageX;s0=tr.scrollLeft;tr.classList.add('drag');});
+      window.addEventListener('mouseup',function(){dn=false;tr.classList.remove('drag');});
+      window.addEventListener('mousemove',function(e){if(!dn)return;var dx=e.pageX-x0;if(Math.abs(dx)>3)moved=true;tr.scrollLeft=s0-dx;});
+      tr.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+      box.appendChild(tr);
+    }
+    function c3Galeria(box,lista){
+      var base=Array.isArray(lista)&&lista.length?lista:null;
+      c3GalBuild(base||C3_GAL,box);
+      if(base)return;
+      // sem lista no link: tenta o arquivo editavel /img/galeria.json (so troca se for uma lista valida)
+      try{
+        fetch('/img/galeria.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+          if(!Array.isArray(j))return;
+          var ok=j.filter(function(it){return it&&(c3Src(it.src)||c3Src(it.poster))&&(!it.video||c2Video(it.video));}).slice(0,24);
+          if(ok.length)c3GalBuild(ok,box);
+        }).catch(function(){});
+      }catch(e){}
+    }
+
+    function c3Recorrente(pane,R){
+      pane.appendChild(cdEl('h2','c3-h2',R.tit||'Avulso é pontual. Recorrente é constância.'));
+      var rows=(Array.isArray(R.comp)?R.comp:[]).filter(function(r){return r&&r.l;});
+      if(rows.length)pane.appendChild(c3Comp(rows));
+      pane.appendChild(cdEl('h3','c3-sh','Plano de entrada'));
+      var pl=c2Norm(R.plano||{});pl.lazy=true;
+      var pi=C2.paths.length;C2.paths.push({titulo:'Plano recorrente',lazy:true});
+      if(!pl.foto)pl.foto='abajur-tablet';
+      pane.appendChild(c3Servico(pl,pi,'c3plano'));
+      var gal=cdEl('div');
+      pane.appendChild(cdEl('h3','c3-sh','Nosso olhar'));
+      pane.appendChild(gal);c3Galeria(gal,R.gal);
+      var df=(Array.isArray(R.difs)?R.difs:[]).filter(function(d){return d&&d.t;});
+      if(df.length){var dv=cdEl('div','c3-difs');df.forEach(function(d,i){var c=cdEl('div','c3-dif c2-reveal');c.style.transitionDelay=(i*0.07)+'s';c.appendChild(cdEl('div','c3-dif-t',d.t));if(d.d)c.appendChild(cdEl('div','c3-dif-d',d.d));dv.appendChild(c);});pane.appendChild(dv);}
+      var tl=cdEl('div','c3-tl');
+      tl.appendChild(cdEl('h3','c3-sh','Para onde isso leva'));
+      var wrap=cdEl('div','cd-tl');
+      [['Meses 1 a 3','Rotina com o plano de entrada: a captação do mês, os vídeos editados com legenda e a tabela de postagem no seu WhatsApp.'],
+       ['Durante a rotina','Você acompanha o que está sendo entregue e conversa com o videomaker no grupo, em horário comercial.'],
+       ['Depois','Se fizer sentido para a sua marca, a gente conversa sobre evoluir para a gestão com estratégia.']].forEach(function(s){
+        var st=cdEl('div','cd-step c2-reveal');st.appendChild(cdEl('div','cd-step-t',s[0]));st.appendChild(cdEl('div','cd-step-d',s[1]));wrap.appendChild(st);
+      });
+      tl.appendChild(wrap);pane.appendChild(tl);
+    }
+
+    function c3Avulsos(pane,A){
+      var sv=(Array.isArray(A.servicos)?A.servicos:[]).filter(function(S){return S&&S.on!==false&&S.titulo;});
+      var chips=cdEl('div','c3-chips');chips.setAttribute('role','navigation');chips.setAttribute('aria-label','Serviços');
+      pane.appendChild(chips);
+      var comum=cdLista(A.comb);
+      sv.forEach(function(S,i){
+        var P=c2Norm(S);if(!P.comb.length)P.comb=comum.slice();
+        var pi=C2.paths.length;C2.paths.push({titulo:P.titulo});
+        var id='c3s'+i;
+        var ch=cdEl('button','c3-chip',P.titulo);ch.type='button';
+        ch.addEventListener('click',function(){var e=document.getElementById(id);if(e)e.scrollIntoView({behavior:C2.reduce?'auto':'smooth',block:'start'});});
+        chips.appendChild(ch);
+        pane.appendChild(c3Servico(P,pi,id));
+      });
+      var st=cdEl('div','c2-strip');st.id='c2Strip2';st.setAttribute('aria-hidden','true');st.style.marginTop='40px';st.appendChild(cdEl('div','c2-strip-track'));pane.appendChild(st);
+      c2Strip('c2Strip2');
+      if(C3.tabs.indexOf('recorrente')>-1){
+        var end=cdEl('div','c3-end c2-reveal');
+        end.appendChild(cdEl('div','c3-end-t','Prefere constância?'));
+        var b=cdEl('button','c3-link','Veja o plano recorrente');b.type='button';
+        b.addEventListener('click',function(){c3Tab('recorrente');});
+        end.appendChild(b);pane.appendChild(end);
+      }
+    }
+
+    function c3Milao(pane,M){
+      M=M||{};
+      var T=function(k,d){var v=String(M[k]==null?'':M[k]).trim();return v||d;};
+      function bloco(cls){var b=cdEl('section','c3-mi-b '+cls),i=cdEl('div','c3-mi-in');b.appendChild(i);pane.appendChild(b);return i;}
+      var h=bloco('c3-mi-hero');
+      h.appendChild(cdEl('div','c3-mi-k','// projeto recorrente'));
+      h.appendChild(cdEl('h2','c3-mi-h',T('titulo','Especial Milão')));
+      h.appendChild(cdEl('span','c3-mi-tri'));
+      h.appendChild(cdEl('p','c3-mi-sub',T('sub','Viaje com a gente ao evento de arquitetura de abril.')));
+      var o=bloco('c3-mi-oq c2-reveal');
+      o.appendChild(cdEl('div','c3-mi-t','O que é'));
+      o.appendChild(cdEl('p','c3-mi-p',T('oque','Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.')));
+      var lv=cdLista(M.leva);if(!lv.length)lv=['Captação de foto','Captação de vídeo','Edição','Acompanhamento presencial no evento','Preparação mensal até lá'];
+      var l=bloco('c3-mi-lv c2-reveal');l.appendChild(cdEl('div','c3-mi-t','O que você leva'));
+      var ul=cdEl('ul','c3-mi-ul');lv.forEach(function(t){ul.appendChild(cdEl('li',null,t));});l.appendChild(ul);
+      var et=(Array.isArray(M.etapas)?M.etapas:[]).filter(function(e){return e&&e.t;});
+      if(!et.length)et=[{t:'Até abril',d:'Mensalidades recorrentes e preparação mensal.'},{t:'A viagem',d:'O Studio acompanha e grava com você no evento.'},{t:'Depois',d:'Entrega dos conteúdos.'}];
+      var c=bloco('c3-mi-cm c2-reveal');c.appendChild(cdEl('div','c3-mi-t','Como funciona até abril'));
+      var sd=cdEl('div','c3-mi-st');et.forEach(function(e){var s=cdEl('div','c3-mi-s');s.appendChild(cdEl('b',null,e.t));if(e.d)s.appendChild(cdEl('span',null,e.d));sd.appendChild(s);});c.appendChild(sd);
+      var v=bloco('c3-mi-vl c2-reveal');v.appendChild(cdEl('div','c3-mi-t','Valor'));
+      var vs=cdEl('div','c3-mi-vs');
+      [['Mensalidade',T('mensal','a definir')],['Mês de início',T('inicio','a definir')]].forEach(function(p){var d=cdEl('div','c3-mi-v');d.appendChild(cdEl('small',null,p[0]));d.appendChild(cdEl('b',null,p[1]));vs.appendChild(d);});
+      v.appendChild(vs);
+      var go=cdEl('button','c3-mi-go','Quero saber mais');go.type='button';
+      go.addEventListener('click',function(){
+        if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+        var url='https://wa.me/5513996057099?text='+encodeURIComponent('Olá! Sou '+PROPOSTA.nome+'. Tenho interesse no Especial Milão. Podemos conversar?');
+        var w=window.open(url,'_blank');if(!w)window.location.href=url;
+      });
+      v.appendChild(go);
+    }
+
+    function c3AtivaRc(){
+      if(C3.lazyOk)return;C3.lazyOk=true;
+      C2.it.forEach(function(o,k){if(C2.paths[o.p]&&C2.paths[o.p].lazy&&o.x.pre)C2.sel[k].on=true;});
+      c2Recalc();
+    }
+
+    function c3Medidas(){
+      var tb=document.querySelector('.timer-bar');var h=tb?tb.offsetHeight:48;C3.hdr=h;
+      var tabs=document.getElementById('c3Tabs');
+      document.documentElement.style.setProperty('--c3h',h+'px');
+      document.documentElement.style.setProperty('--c3off',(h+(tabs?tabs.offsetHeight:56)+12)+'px');
+    }
+
+    function c3Tab(id){
+      if(C3.tab===id||C3.tabs.indexOf(id)<0)return;
+      C3.tab=id;
+      document.querySelectorAll('#c3TabBtns .c3-tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false');});
+      document.querySelectorAll('#c3Root .c3-pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===id);});
+      var mi=id==='milao';
+      document.getElementById('c3Layout').style.display=mi?'none':'';
+      document.getElementById('c2Recibo').style.display=mi?'none':'';
+      document.body.classList.toggle('c3-mi-on',mi);
+      if(id==='recorrente')c3AtivaRc();
+      var an=document.getElementById('c3Anchor'),tb=document.getElementById('c3Tabs');
+      if(tb.getBoundingClientRect().top<=C3.hdr+1)an.scrollIntoView({behavior:C2.reduce?'auto':'smooth',block:'start'});
+    }
+
+    function renderCardapio3(){
+      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      C2.reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      document.querySelectorAll('body > .hero, body > .quote-section, body > .services-section, body > .planos-section').forEach(function(s){s.style.display='none';});
+      var old=document.getElementById('c2Root');if(old&&old.parentNode)old.parentNode.removeChild(old);
+      var rt=document.getElementById('c3Tpl').content.firstElementChild.cloneNode(true);
+      var ft=document.querySelector('.footer-proposta');ft.parentNode.insertBefore(rt,ft);
+      document.body.classList.add('c2-on');
+      var P=PROPOSTA;
+      C3.tabs=[];if(P.av)C3.tabs.push('avulsos');if(P.rc)C3.tabs.push('recorrente');if(P.mi)C3.tabs.push('milao');
+      c2Abertura();c2Strip('c2Strip1');
+      if(P.obs){var ob=document.getElementById('c2Obs');ob.textContent=String(P.obs);ob.style.display='block';}
+      if(P.av)c3Avulsos(document.getElementById('c3PAv'),P.av);
+      if(P.rc)c3Recorrente(document.getElementById('c3PRc'),P.rc);
+      if(P.mi)c3Milao(document.getElementById('c3PMi'),P.mi);
+      // abas
+      var bx=document.getElementById('c3TabBtns');
+      C3.tabs.forEach(function(id){
+        var b=cdEl('button','c3-tab');b.type='button';b.dataset.tab=id;b.setAttribute('role','tab');b.setAttribute('aria-selected','false');
+        b.appendChild(cdEl('span',null,C3_NOMES[id]));if(id==='milao')b.appendChild(cdEl('span','c3-tri'));
+        b.addEventListener('click',function(){c3Tab(id);});bx.appendChild(b);
+      });
+      var ini=C3.tabs.indexOf(P.aba)>-1?P.aba:(C3.tabs[0]||'');
+      if(!C3.tabs.length)document.getElementById('c3Tabs').style.display='none';
+      document.getElementById('c2Go').addEventListener('click',c2Quero);
+      var rc=document.getElementById('c2RcT');
+      rc.addEventListener('click',function(){var r=document.getElementById('c2Recibo');var o=!r.classList.contains('open');r.classList.toggle('open',o);rc.setAttribute('aria-expanded',o?'true':'false');});
+      rt.classList.add('show');
+      c3Medidas();window.addEventListener('resize',c3Medidas);window.addEventListener('load',c3Medidas);setTimeout(c3Medidas,700);
+      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(c3Medidas);
+      // marcado inicial: se a aba inicial e a Recorrente, o plano ja entra marcado
+      c3Tab(ini);
+      if(ini==='recorrente')c3AtivaRc();
+      // o recibo (barra no mobile) so aparece depois que a abertura sai da tela
+      var rec=document.getElementById('c2Recibo');
+      if('IntersectionObserver' in window){
+        new IntersectionObserver(function(es){rec.classList.toggle('show',!es[0].isIntersecting||es[0].intersectionRatio<0.55);},{threshold:[0,0.55,1]}).observe(document.getElementById('c2Open'));
+      }else rec.classList.add('show');
+      var rv=rt.querySelectorAll('.c2-reveal');
+      if(C2.reduce||!('IntersectionObserver' in window)){rv.forEach(function(e){e.classList.add('in');});}
+      else{
+        var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -5% 0px'});
         rv.forEach(function(e){io.observe(e);});
       }
       c2Recalc();
