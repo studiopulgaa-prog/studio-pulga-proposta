@@ -98,6 +98,67 @@
     .footer-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;margin-bottom:10px;}
     .footer-sub{font-size:12px;color:rgba(244,234,221,0.6);font-weight:300;}
     @media(max-width:768px){.planos-grid,.planos-grid.cols-1,.planos-grid.cols-2,.planos-grid.cols-3{grid-template-columns:1fr!important;max-width:100%!important;}.services-grid{grid-template-columns:1fr;}}
+    /* ===== Tipo Cardapio (novo): so aparece quando o link tem "tipo":"cardapio" ===== */
+    .cd-root{display:none;}
+    .cd-root.show{display:block;}
+    body.cd-on{padding-bottom:150px;}
+    .cd-hero{min-height:54vh;}
+    .cd-entry{max-width:560px;margin:0 auto;}
+    .cd-btn{display:block;width:100%;padding:14px 20px;border-radius:11px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:center;background:var(--br);color:#F4EADD;border:1.5px solid var(--br);transition:background .2s,color .2s,border-color .2s;}
+    .cd-btn:hover{background:#5A2210;}
+    .cd-btn.on{background:transparent;color:var(--br);}
+    .plano.destaque .cd-btn{background:#F4EADD;color:var(--br);border-color:#F4EADD;}
+    .plano.destaque .cd-btn.on{background:transparent;color:#F4EADD;border-color:rgba(244,234,221,0.6);}
+    .cd-btn:focus-visible,.cd-q button:focus-visible,.cd-go:focus-visible{outline:2px solid #FFB347;outline-offset:2px;}
+    .cd-cond{font-size:12px;line-height:1.6;color:rgba(244,234,221,0.7);margin-bottom:6px;font-weight:300;}
+    .cd-obs{max-width:560px;margin:22px auto 0;background:rgba(255,255,255,0.8);border:1.5px solid var(--border);border-left:4px solid var(--br);border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.6;color:var(--br);white-space:pre-line;overflow-wrap:anywhere;}
+    .cd-gt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:22px;letter-spacing:-0.02em;margin:0 0 16px;}
+    .cd-group{margin-bottom:44px;}
+    .cd-group:last-child{margin-bottom:0;}
+    .cd-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+    @media(min-width:640px){.cd-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(min-width:960px){.cd-grid{grid-template-columns:repeat(3,1fr);}}
+    .cd-card{position:relative;display:flex;flex-direction:column;background:rgba(255,255,255,0.8);border:1.5px solid var(--border);border-radius:20px;padding:26px 22px 22px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;}
+    .cd-card.rec{padding-top:32px;}
+    .cd-card.on{border-color:var(--br);box-shadow:0 10px 30px rgba(110,44,20,0.12);}
+    @media(hover:hover){.cd-card:hover{transform:translateY(-4px);}}
+    .cd-nome{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;line-height:1.2;margin-bottom:6px;overflow-wrap:anywhere;}
+    .cd-desc{font-size:13px;color:var(--gray);line-height:1.6;font-weight:300;margin-bottom:10px;overflow-wrap:anywhere;}
+    .cd-preco{margin-top:auto;padding-top:8px;}
+    .cd-de{font-size:13px;color:rgba(110,44,20,0.35);text-decoration:line-through;font-weight:400;margin-right:6px;}
+    .cd-val{font-family:'League Spartan',sans-serif;font-weight:900;font-size:28px;letter-spacing:-0.03em;line-height:1.1;}
+    .cd-val sup{font-size:14px;font-weight:400;margin-right:2px;}
+    .cd-un{font-size:12px;color:var(--gray);font-weight:300;margin:2px 0 14px;}
+    .cd-q{display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .cd-q.show{display:flex;}
+    .cd-q-l{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);}
+    .cd-q-c{display:flex;align-items:center;gap:6px;}
+    .cd-q button{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--br);background:transparent;color:var(--br);font-size:18px;font-weight:700;line-height:1;cursor:pointer;font-family:'Outfit',sans-serif;}
+    .cd-q button:hover{background:var(--br);color:#F4EADD;}
+    .cd-q output{min-width:30px;text-align:center;font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;}
+    .plano.destaque .cd-q button{border-color:rgba(244,234,221,0.6);color:#F4EADD;}
+    .plano.destaque .cd-q-l{color:rgba(244,234,221,0.5);}
+    .cd-tl{max-width:560px;margin:0 auto;position:relative;padding-left:34px;}
+    .cd-tl::before{content:'';position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--border);}
+    .cd-step{position:relative;margin-bottom:26px;}
+    .cd-step:last-child{margin-bottom:0;}
+    .cd-step::before{content:'';position:absolute;left:-30px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--br);box-shadow:0 0 0 4px var(--bg2);}
+    .cd-step-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;margin-bottom:4px;}
+    .cd-step-d{font-size:14px;line-height:1.65;color:var(--gray);font-weight:300;}
+    .cd-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:150;background:var(--br);color:#F4EADD;padding:12px clamp(16px,4vw,40px) calc(12px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(30,8,2,0.25);}
+    .cd-bar.show{display:block;}
+    .cd-bar-in{max-width:1100px;margin:0 auto;display:flex;align-items:flex-end;gap:12px 20px;flex-wrap:wrap;}
+    .cd-tot{flex:1 1 130px;min-width:0;}
+    .cd-tot-l{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.6);}
+    .cd-tot-v{font-family:'League Spartan',sans-serif;font-weight:900;font-size:22px;line-height:1.15;}
+    .cd-tot-v.zero{opacity:0.45;}
+    .cd-tot-de{font-size:12px;font-weight:400;text-decoration:line-through;color:rgba(244,234,221,0.5);margin-right:6px;}
+    .cd-bump{animation:cdBump .25s ease;}
+    @keyframes cdBump{0%{transform:scale(1);}40%{transform:scale(1.06);}100%{transform:scale(1);}}
+    .cd-go{flex:1 1 100%;padding:14px 20px;border-radius:50px;border:none;background:#F4EADD;color:var(--br);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+    .cd-go[disabled]{opacity:0.45;cursor:not-allowed;}
+    @media(min-width:720px){.cd-go{flex:0 0 auto;padding:14px 36px;}}
+    @media (prefers-reduced-motion:reduce){.cd-card,.cd-btn,.cd-go{transition:none!important;}.cd-bump{animation:none!important;}.cd-card:hover{transform:none!important;}}
   </style>
 </head>
 <body>
@@ -116,6 +177,23 @@
       <div class="plano destaque" id="plano1"><div class="badge-destaque">MAIS ESCOLHIDO</div><div class="plano-num">2º PACOTE</div><div class="plano-nome">Sua gestão</div><div class="plano-subtitle">Gestão completa com diária mensal inclusa</div><div id="vo2-wrap" style="display:none;" class="valor-preco-wrap"><span class="valor-de-label">De</span><span class="valor-original">R$ <span id="vo2"></span></span></div><div style="display:flex;align-items:baseline;gap:0;"><span id="por2-label" class="valor-por-label" style="display:none;">Por&nbsp;</span><div class="plano-valor"><sup>R$</sup><span id="v2">3.690</span></div></div><div class="plano-periodo">por mês</div><a class="plano-cta" href="#" onclick="fecharPlano(event,2)">Escolher Plano 2</a><div class="divider"></div><div class="items-label">Tudo do plano 1, mais:</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Análise semanal de desempenho</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Postagens semanais no feed</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Uma diária mensal de captação</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria de imagem e identidade visual com gestor de marca</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Interação com o público + repost</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#F4EADD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Calendário mensal de conteúdos via app</div><div class="divider"></div><div class="items-label">Não incluso</div><div class="item-riscado">Estudo de marca e rebranding</div><div class="item-riscado">Stories ilimitados ~ Drone ~ Design gráfico</div><div class="item-riscado">Diárias autônomas em escritório/obra</div></div>
       <div class="plano" id="plano2"><div class="plano-num">3º PACOTE</div><div class="plano-nome">O mais completo</div><div class="plano-subtitle">Ideal para quem quer presença total</div><div id="vo3-wrap" style="display:none;" class="valor-preco-wrap"><span class="valor-de-label">De</span><span class="valor-original">R$ <span id="vo3"></span></span></div><div style="display:flex;align-items:baseline;gap:0;"><span id="por3-label" class="valor-por-label" style="display:none;">Por&nbsp;</span><div class="plano-valor"><sup>R$</sup><span id="v3">3.990</span></div></div><div class="plano-periodo">por mês</div><a class="plano-cta" href="#" onclick="fecharPlano(event,3)">Escolher Plano 3</a><div class="divider"></div><div class="items-label">Tudo do plano 2, mais:</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Estudo de marca e rebranding completo</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Stories ilimitados</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cobertura com drone</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Duas diárias mensais (conteúdos ilimitados)</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Curadoria e prova social</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Designer gráfico incluso</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Fotos oficiais de projetos entregues</div><div class="item-linha"><div class="item-check"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#6E2C14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diárias autônomas em escritório ou obra</div></div>
     </div></div></section>
+  <div class="cd-root" id="cdRoot">
+    <section class="hero cd-hero"><div class="hero-photo"></div><div class="hero-overlay"></div><div class="hero-content"><div class="hero-tag">Proposta exclusiva</div><div class="hero-name" id="cdHeroName">Olá, cliente.</div><h1 class="hero-title">Feito pra <em style="font-family:'Outfit',sans-serif;font-style:normal;font-weight:300;font-size:clamp(44px,9vw,100px);color:rgba(244,234,221,0.75);letter-spacing:0.01em;">você</em></h1><p class="hero-desc">Comece pelo plano de entrada e adicione só o que fizer sentido para a sua marca. O total é atualizado na hora.</p></div></section>
+    <section class="planos-section" id="cdSecEntrada"><div class="planos-inner"><div class="planos-header"><div class="planos-divider"><span class="planos-divider-text">PONTO DE PARTIDA</span></div><div class="planos-title">Plano de entrada</div></div><div id="cdEntrada"></div><div class="cd-obs" id="cdObs" style="display:none;"></div></div></section>
+    <section class="services-section" id="cdSecExtras"><div class="services-inner"><div class="services-divider"><span class="services-divider-text">PERSONALIZE</span></div><h2 class="services-title">Adicione só o que<br>fizer sentido.</h2><div id="cdGrupos"></div></div></section>
+    <section class="planos-section" id="cdSecTl"><div class="planos-inner"><div class="planos-header"><div class="planos-divider"><span class="planos-divider-text">PARA ONDE ISSO LEVA</span></div><div class="planos-title">Os próximos passos</div></div>
+      <div class="cd-tl">
+        <div class="cd-step"><div class="cd-step-t">Meses 1 a 3</div><div class="cd-step-d">Rotina com o plano de entrada: a captação do mês, os vídeos editados com legenda e a tabela de postagem no seu WhatsApp.</div></div>
+        <div class="cd-step"><div class="cd-step-t">Durante a rotina</div><div class="cd-step-d">Você acompanha o que está sendo entregue e conversa com o videomaker no grupo, em horário comercial.</div></div>
+        <div class="cd-step"><div class="cd-step-t">Depois</div><div class="cd-step-d">Se fizer sentido para a sua marca, a gente conversa sobre evoluir para a gestão com estratégia.</div></div>
+      </div>
+    </div></section>
+    <div class="cd-bar" id="cdBar"><div class="cd-bar-in">
+      <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v" id="cdTotM"><span class="cd-tot-de" id="cdTotMDe" style="display:none;"></span><span id="cdTotMV">R$ 0</span></div></div>
+      <div class="cd-tot"><div class="cd-tot-l">Total único</div><div class="cd-tot-v" id="cdTotU"><span class="cd-tot-de" id="cdTotUDe" style="display:none;"></span><span id="cdTotUV">R$ 0</span></div></div>
+      <button type="button" class="cd-go" id="cdGo">Quero este pacote</button>
+    </div></div>
+  </div>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
@@ -158,7 +236,16 @@
         document.getElementById('expiredScreen').classList.add('show');
         return;
       }
+      // Links do tipo cardapio muito grandes vem comprimidos (prefixo "z~"). Os demais seguem como sempre.
+      if(d.slice(0,2)==='z~'){
+        decodeComprimido(d.slice(2)).then(function(p){PROPOSTA=p;seguirCarga(d);});
+        return;
+      }
       PROPOSTA=decodeProposta(d);
+      seguirCarga(d);
+    }
+
+    function seguirCarga(d){
       // Decode falhou: exibe tela de expirada
       if(!PROPOSTA){
         document.getElementById('expiredScreen').classList.add('show');
@@ -209,6 +296,8 @@
     }
 
     function renderProposta(){
+      // Tipo cardapio (novo). Links sem "tipo" seguem o fluxo de planos abaixo, sem nenhuma mudanca.
+      if(PROPOSTA.tipo==='cardapio'){renderCardapio();return;}
       // Nome
       document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';
 
@@ -358,6 +447,212 @@
       }
       var w=window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
       if(!w)window.location.href='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
+    }
+
+    // ===== Tipo CARDAPIO (novo) =====
+    // Descomprime links "z~..." (deflate-raw + base64url). Devolve o JSON ou null.
+    function decodeComprimido(s){
+      try{
+        var b64=s.replace(/-/g,'+').replace(/_/g,'/');
+        while(b64.length%4!==0)b64+='=';
+        var bin=atob(b64),u=new Uint8Array(bin.length);
+        for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+        var ds=new DecompressionStream('deflate-raw');
+        var w=ds.writable.getWriter();w.write(u);w.close();
+        return new Response(ds.readable).arrayBuffer().then(function(buf){
+          return JSON.parse(new TextDecoder('utf-8').decode(buf));
+        }).catch(function(){return null;});
+      }catch(e){return Promise.resolve(null);}
+    }
+
+    var CD={items:[],sel:{},ui:{}};
+    var CD_GRUPOS_ORDEM=['extras','artes','avulsos'];
+    var CD_GRUPOS_NOME={extras:'Extras de captação',artes:'Artes e design',avulsos:'Avulsos de captação'};
+    var CD_CHECK='<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function cdEl(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+    // "1.099" / "1099" / "1.099,50" -> numero (ou null)
+    function cdNum(s){
+      s=String(s==null?'':s).replace(/[^\d.,]/g,'');
+      if(!s)return null;
+      if(s.indexOf(',')>-1)s=s.replace(/\./g,'').replace(',','.');
+      else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+      var n=parseFloat(s);
+      return isFinite(n)?n:null;
+    }
+    function cdFmt(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2});}
+    function cdLista(a){return Array.isArray(a)?a.map(function(x){return String(x==null?'':x).trim();}).filter(Boolean):[];}
+
+    function cdPreco(x,k){
+      var v=cdNum(x.valor),de=x.de?cdNum(x.de):null;
+      var box=cdEl('div','cd-preco');
+      if(de!=null&&v!=null&&de>v)box.appendChild(cdEl('span','cd-de','De R$ '+cdFmt(de)));
+      var val=cdEl('div','cd-val');
+      var sup=cdEl('sup',null,'R$');val.appendChild(sup);
+      val.appendChild(document.createTextNode(v==null?'—':cdFmt(v)));
+      box.appendChild(val);
+      box.appendChild(cdEl('div','cd-un',x.unidade==='mensal'?'por mês':(x.unidade==='unidade'?'por unidade':'pagamento único')));
+      return box;
+    }
+
+    function cdControles(x,k,parent){
+      var ui={};
+      if(x.unidade==='unidade'){
+        var q=cdEl('div','cd-q');
+        q.appendChild(cdEl('span','cd-q-l','Quantidade'));
+        var c=cdEl('div','cd-q-c');
+        var menos=cdEl('button',null,'−');menos.type='button';menos.setAttribute('aria-label','Diminuir quantidade de '+x.nome);
+        var out=document.createElement('output');out.textContent='1';
+        var mais=cdEl('button',null,'+');mais.type='button';mais.setAttribute('aria-label','Aumentar quantidade de '+x.nome);
+        menos.addEventListener('click',function(){CD.sel[k].q=Math.max(1,CD.sel[k].q-1);cdRecalc();});
+        mais.addEventListener('click',function(){CD.sel[k].q=Math.min(99,CD.sel[k].q+1);cdRecalc();});
+        c.appendChild(menos);c.appendChild(out);c.appendChild(mais);q.appendChild(c);
+        parent.appendChild(q);
+        ui.q=q;ui.out=out;
+      }
+      var btn=cdEl('button','cd-btn');btn.type='button';
+      btn.addEventListener('click',function(){CD.sel[k].on=!CD.sel[k].on;cdRecalc();});
+      parent.appendChild(btn);
+      ui.btn=btn;
+      return ui;
+    }
+
+    function cdBuildEntrada(x,k){
+      var card=cdEl('div','plano destaque cd-entry');
+      card.appendChild(cdEl('div','plano-num','PLANO DE ENTRADA'));
+      card.appendChild(cdEl('div','plano-nome',x.nome));
+      if(x.desc)card.appendChild(cdEl('div','plano-subtitle',x.desc));
+      var v=cdNum(x.valor),de=x.de?cdNum(x.de):null;
+      if(de!=null&&v!=null&&de>v){
+        var w=cdEl('div','valor-preco-wrap');w.appendChild(cdEl('span','valor-de-label','De'));w.appendChild(cdEl('span','valor-original','R$ '+cdFmt(de)));card.appendChild(w);
+      }
+      var row=cdEl('div');row.style.cssText='display:flex;align-items:baseline;gap:0;';
+      if(de!=null&&v!=null&&de>v){row.appendChild(cdEl('span','valor-por-label','Por '));}
+      var pv=cdEl('div','plano-valor');pv.appendChild(cdEl('sup',null,'R$'));pv.appendChild(document.createTextNode(v==null?'—':cdFmt(v)));
+      row.appendChild(pv);card.appendChild(row);
+      card.appendChild(cdEl('div','plano-periodo',x.unidade==='mensal'?'por mês':(x.unidade==='unidade'?'por unidade':'pagamento único')));
+      var ui=cdControles(x,k,card);ui.card=card;
+      var inc=cdLista(x.inclui),nao=cdLista(x.naoInclui),con=cdLista(x.condicoes);
+      if(inc.length){
+        card.appendChild(cdEl('div','divider'));card.appendChild(cdEl('div','items-label','Incluso'));
+        inc.forEach(function(t){var d=cdEl('div','item-linha');var ck=cdEl('div','item-check');ck.style.color='#F4EADD';ck.innerHTML=CD_CHECK;d.appendChild(ck);d.appendChild(document.createTextNode(t));card.appendChild(d);});
+      }
+      if(nao.length){
+        card.appendChild(cdEl('div','divider'));card.appendChild(cdEl('div','items-label','Não incluso'));
+        nao.forEach(function(t){card.appendChild(cdEl('div','item-riscado',t));});
+      }
+      if(con.length){
+        card.appendChild(cdEl('div','divider'));card.appendChild(cdEl('div','items-label','Condições'));
+        con.forEach(function(t){card.appendChild(cdEl('div','cd-cond',t));});
+      }
+      return ui;
+    }
+
+    function cdBuildCard(x,k){
+      var card=cdEl('div','cd-card'+(x.recomendado?' rec':''));
+      if(x.recomendado)card.appendChild(cdEl('div','badge-destaque','RECOMENDADO'));
+      card.appendChild(cdEl('div','cd-nome',x.nome));
+      if(x.desc)card.appendChild(cdEl('div','cd-desc',x.desc));
+      card.appendChild(cdPreco(x,k));
+      var ui=cdControles(x,k,card);ui.card=card;
+      return {ui:ui,node:card};
+    }
+
+    function renderCardapio(){
+      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      // esconde as secoes do tipo "planos" (so as do corpo da pagina, nao as do cardapio)
+      document.querySelectorAll('body > .hero, body > .quote-section, body > .services-section, body > .planos-section').forEach(function(s){s.style.display='none';});
+      document.body.classList.add('cd-on');
+      document.getElementById('cdHeroName').textContent='Olá, '+PROPOSTA.nome+'.';
+      var lista=Array.isArray(PROPOSTA.itensCardapio)?PROPOSTA.itensCardapio:[];
+      CD.items=lista.filter(function(x){return x&&x.exibir!==false&&x.nome;});
+      CD.items.forEach(function(x,k){CD.sel[k]={on:!!x.preSelecionado,q:1};});
+      var entradas=[],grupos={};
+      CD.items.forEach(function(x,k){
+        if(x.grupo==='entrada'){entradas.push(k);return;}
+        var g=x.grupo||'extras';(grupos[g]=grupos[g]||[]).push(k);
+      });
+      // plano de entrada
+      var boxE=document.getElementById('cdEntrada');
+      entradas.forEach(function(k){CD.ui[k]=cdBuildEntrada(CD.items[k],k);boxE.appendChild(CD.ui[k].card);});
+      if(PROPOSTA.obs){var ob=document.getElementById('cdObs');ob.textContent=String(PROPOSTA.obs);ob.style.display='block';}
+      var temEntrada=entradas.length>0;
+      document.getElementById('cdSecEntrada').style.display=(temEntrada||PROPOSTA.obs)?'':'none';
+      if(!temEntrada)document.querySelector('#cdSecEntrada .planos-header').style.display='none';
+      document.getElementById('cdSecTl').style.display=temEntrada?'':'none';
+      // extras
+      var ordem=CD_GRUPOS_ORDEM.filter(function(g){return grupos[g];}).concat(Object.keys(grupos).filter(function(g){return CD_GRUPOS_ORDEM.indexOf(g)<0;}));
+      var boxG=document.getElementById('cdGrupos');
+      ordem.forEach(function(g){
+        var gr=cdEl('div','cd-group');gr.appendChild(cdEl('h3','cd-gt',CD_GRUPOS_NOME[g]||g));
+        var grid=cdEl('div','cd-grid');
+        grupos[g].forEach(function(k){var c=cdBuildCard(CD.items[k],k);CD.ui[k]=c.ui;grid.appendChild(c.node);});
+        gr.appendChild(grid);boxG.appendChild(gr);
+      });
+      document.getElementById('cdSecExtras').style.display=ordem.length?'':'none';
+      document.getElementById('cdGo').addEventListener('click',cdQuero);
+      document.getElementById('cdRoot').classList.add('show');
+      document.getElementById('cdBar').classList.add('show');
+      cdRecalc(true);
+      startTimer();
+      registrarAcesso();
+    }
+
+    function cdTotais(){
+      var t={m:0,mDe:0,u:0,uDe:0,linhas:[],n:0};
+      CD.items.forEach(function(x,k){
+        var s=CD.sel[k];if(!s.on)return;
+        var v=cdNum(x.valor);if(v==null)return;
+        var d=x.de?cdNum(x.de):null;if(d==null||d<=v)d=v;
+        t.n++;
+        if(x.unidade==='mensal'){t.m+=v;t.mDe+=d;t.linhas.push('• '+x.nome+' (R$ '+cdFmt(v)+'/mês)');}
+        else if(x.unidade==='unidade'){t.u+=v*s.q;t.uDe+=d*s.q;t.linhas.push('• '+s.q+'x '+x.nome+' (R$ '+cdFmt(v*s.q)+')');}
+        else{t.u+=v;t.uDe+=d;t.linhas.push('• '+x.nome+' (R$ '+cdFmt(v)+')');}
+      });
+      return t;
+    }
+
+    var _cdUltimo='';
+    function cdRecalc(inicial){
+      CD.items.forEach(function(x,k){
+        var s=CD.sel[k],ui=CD.ui[k];if(!ui)return;
+        ui.card.classList.toggle('on',s.on);
+        ui.btn.classList.toggle('on',s.on);
+        ui.btn.setAttribute('aria-pressed',s.on?'true':'false');
+        ui.btn.textContent=s.on?'✓ No seu pacote':(x.grupo==='entrada'?'Incluir no meu pacote':'Adicionar ao pacote');
+        if(ui.q){ui.q.classList.toggle('show',s.on);ui.out.textContent=String(s.q);}
+      });
+      var t=cdTotais();
+      function pinta(idV,idDe,idBox,v,de){
+        var elV=document.getElementById(idV),elD=document.getElementById(idDe);
+        elV.textContent=v>0?'R$ '+cdFmt(v):'—';
+        document.getElementById(idBox).classList.toggle('zero',!(v>0));
+        if(de>v){elD.textContent='R$ '+cdFmt(de);elD.style.display='inline';}else{elD.style.display='none';}
+      }
+      pinta('cdTotMV','cdTotMDe','cdTotM',t.m,t.mDe);
+      pinta('cdTotUV','cdTotUDe','cdTotU',t.u,t.uDe);
+      var go=document.getElementById('cdGo');
+      go.disabled=t.n===0;
+      go.textContent=t.n===0?'Escolha ao menos um item':'Quero este pacote';
+      var chave=t.m+'|'+t.u;
+      if(!inicial&&chave!==_cdUltimo){
+        ['cdTotM','cdTotU'].forEach(function(id){var e=document.getElementById(id);e.classList.remove('cd-bump');void e.offsetWidth;e.classList.add('cd-bump');});
+      }
+      _cdUltimo=chave;
+    }
+
+    function cdQuero(){
+      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      var t=cdTotais();if(!t.n)return;
+      var BR={timeZone:'America/Sao_Paulo'},dt=new Date(PROPOSTA.expira);
+      var ate=dt.toLocaleDateString('pt-BR',BR)+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
+      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote:\n'+t.linhas.join('\n')+
+        '\n\nTotal mensal: R$ '+cdFmt(t.m)+'\nTotal único: R$ '+cdFmt(t.u)+
+        '\nProposta válida até '+ate+'.\nPodemos avançar?';
+      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
+      var url='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
+      var w=window.open(url,'_blank');
+      if(!w)window.location.href=url;
     }
 
     loadProposta();

@@ -13,7 +13,9 @@
       while (b.length % 4) b += '=';
       var bin = atob(b), u = new Uint8Array(bin.length);
       for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-      return JSON.parse(new TextDecoder('utf-8').decode(u));
+      var dd = JSON.parse(new TextDecoder('utf-8').decode(u));
+      // cardapio: os textos dos e-mails automaticos ainda falam de "pacotes", entao nao oferece o envio
+      return dd && dd.tipo === 'cardapio' ? null : dd;
     } catch (e) { return null; }
   }
   var ROTULO = { ativa: 'Sequência ativa', fechada: 'Fechada (e-mails parados)', descadastrada: 'Cliente pediu para sair', teste: 'Teste (sem lembretes)' };

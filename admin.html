@@ -90,6 +90,23 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .hist-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 .loading{text-align:center;padding:20px;font-size:13px;color:var(--gray);}
 .empty{text-align:center;padding:24px;font-size:13px;color:var(--gray);}
+/* ===== Tipo Cardapio (novo) ===== */
+.cd-seg-row{display:flex;gap:8px;flex-wrap:wrap;}
+.cd-seg{flex:1;min-width:56px;padding:9px 6px;border-radius:9px;border:1.5px solid var(--brl);background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:background .2s,color .2s,border-color .2s;text-align:center;}
+.cd-seg.on{background:var(--br);color:#F4EADD;border-color:var(--br);}
+.cd-row{flex-wrap:wrap;}
+.cd-name{flex:1 1 120px;min-width:0;font-size:13px;color:var(--gray);overflow-wrap:anywhere;}
+.cd-name.off{text-decoration:line-through;opacity:0.4;}
+.cd-meta{display:block;font-size:11px;color:var(--gray2);}
+.cd-flag{opacity:0.45;}
+.cd-flag.on{opacity:1;color:var(--br);font-weight:700;}
+.cd-ed{width:100%;padding:10px;margin:4px 0 6px;border:1.5px solid var(--brl);border-radius:10px;background:rgba(255,255,255,0.7);}
+.cd-ed .field{margin-bottom:10px;}
+.cd-ed .inp{height:38px;font-size:13px;}
+.cd-ta{height:auto;min-height:74px;padding:10px 12px;resize:vertical;line-height:1.5;}
+.cd-hint{font-size:11px;color:var(--gray2);margin-top:4px;}
+.cd-count{font-size:11px;color:var(--gray2);margin:2px 0 10px;}
+@media (prefers-reduced-motion:reduce){.cd-seg,.items-arrow{transition:none;}}
 </style>
 </head>
 <body>
@@ -106,6 +123,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
   <div class="card">
     <div class="card-title">Nova proposta</div>
     <div class="card-sub">Preencha e gere o link exclusivo para o cliente.</div>
+    <div class="field" id="tipoField"><label class="label">Tipo de proposta</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="tpPlanos">Planos (atual)</button><button type="button" class="cd-seg" id="tpCardapio">Cardápio</button></div></div>
     <div class="field"><label class="label">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
     <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"></div>
     <div class="field">
@@ -125,6 +143,15 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
       <div class="items-body" id="ib2"><div id="il2"></div><div class="add-row"><input class="add-inp" type="text" id="iadd2" placeholder="Adicionar incluso…"><button class="add-btn" id="addI2">+</button></div><div class="sec-sep">Não incluso</div><div id="nil2"></div><div class="add-row"><input class="add-inp" type="text" id="niadd2" placeholder="Adicionar não incluso…"><button class="add-btn" id="addNI2">+</button></div></div>
       <div class="items-toggle" id="itog3"><span class="items-toggle-label">3º Pacote — Itens</span><span class="items-arrow" id="ia3">›</span></div>
       <div class="items-body" id="ib3"><div id="il3"></div><div class="add-row"><input class="add-inp" type="text" id="iadd3" placeholder="Adicionar incluso…"><button class="add-btn" id="addI3">+</button></div><div class="sec-sep">Não incluso</div><div id="nil3"></div><div class="add-row"><input class="add-inp" type="text" id="niadd3" placeholder="Adicionar não incluso…"><button class="add-btn" id="addNI3">+</button></div></div>
+    </div>
+    <div id="cdBlock" style="display:none;">
+      <div class="field">
+        <label class="label">Catálogo do cardápio</label>
+        <div class="cd-count" id="cdCount"></div>
+        <div id="cdGroups"></div>
+      </div>
+      <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Ex: Valores combinados na reunião de hoje."></textarea></div>
+      <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do catálogo.</div></div>
     </div>
     <div class="field">
       <label class="label">Validade do link</label>
@@ -271,6 +298,7 @@ function encerrarTodas() {
 }
 
 function gerarLink() {
+  if (window.CD_ATIVO) { return gerarCardapio(); } // tipo Cardapio: ver bloco de script abaixo
   var nome = document.getElementById('fNome').value.trim();
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var ck1 = document.getElementById('ck1').checked;
@@ -566,6 +594,251 @@ function copiarLinkCurto() {
     var b = document.getElementById('btnCopyShort'); b.textContent='Copiado!'; b.classList.add('ok');
     setTimeout(function(){ b.textContent='Copiar link curto'; b.classList.remove('ok'); }, 2000);
   });
+}
+</script>
+<script>
+// ===== Tipo de proposta: CARDAPIO (novo). O tipo "Planos" continua exatamente como antes. =====
+window.CD_ATIVO = false;
+var CD_GRUPOS = [
+  {k:'entrada', t:'Plano de entrada'},
+  {k:'extras', t:'Extras de captação'},
+  {k:'artes', t:'Artes e design'},
+  {k:'avulsos', t:'Avulsos de captação'}
+];
+var CD_UN = {mensal:'por mês', unico:'único', unidade:'por unidade'};
+function cdItem(id, grupo, nome, valor, un, extra) {
+  var o = {id:id, grupo:grupo, nome:nome, desc:'', valor:valor, de:'', unidade:un, exibir:true, preSelecionado:false, recomendado:false, ed:false};
+  if (extra) { for (var k in extra) o[k] = extra[k]; }
+  return o;
+}
+// Catalogo inicial: valores sugeridos (nao oficiais). Tudo editavel no painel.
+var cdS = [
+  cdItem('entrada','entrada','Plano de entrada','990','mensal',{
+    desc:'Rotina mensal de captação e edição simples.', preSelecionado:true,
+    inclui:['1 captação por mês de até 2 h','3 vídeos de até 1 min ou 4 de até 30 s','Legenda pronta para cada vídeo','Tabela mensal de postagem por WhatsApp','Grupo com o videomaker em horário comercial','Edição simples com 1 ajuste por vídeo'],
+    naoInclui:['Drone','Horário adicional','Vídeo adicional','Gestão de perfil (quem posta é o cliente)'],
+    condicoes:['Mínimo de 3 meses','Pagamento antecipado até o dia 5']
+  }),
+  cdItem('hora','extras','Hora adicional de captação','290','unidade',{desc:'Inclui 2 vídeos de 30 s.'}),
+  cdItem('v30','extras','Vídeo extra de 30 s','150','unidade'),
+  cdItem('v60','extras','Vídeo extra de 1 min','220','unidade'),
+  cdItem('rev','extras','Revisão extra','60','unidade'),
+  cdItem('post','artes','Post de arte','90','unidade'),
+  cdItem('data','artes','Data sazonal','90','unidade'),
+  cdItem('pack3','artes','Pack 3 datas sazonais','240','unico'),
+  cdItem('car_c','artes','Carrossel até 7 lâminas (briefing do cliente)','250','unidade'),
+  cdItem('car_n','artes','Carrossel até 7 lâminas (briefing nosso)','290','unidade'),
+  cdItem('st_c','artes','Sequência de stories até 5 telas (briefing do cliente)','120','unidade'),
+  cdItem('st_n','artes','Sequência de stories até 5 telas (briefing nosso)','140','unidade'),
+  cdItem('cap_c','artes','Capas de destaque, set de 5 (briefing do cliente)','120','unico'),
+  cdItem('cap_n','artes','Capas de destaque, set de 5 (briefing nosso)','140','unico'),
+  cdItem('art2m','artes','Pacote 2 artes por mês','150','mensal'),
+  cdItem('cal','artes','Calendário anual de 12 datas','900','unico'),
+  cdItem('vc1','avulsos','Vídeos captados até 1 h','470','unico'),
+  cdItem('vc2','avulsos','Vídeos captados até 2 h','567','unico'),
+  cdItem('vc3','avulsos','Vídeos captados até 3 h','649','unico'),
+  cdItem('cb1','avulsos','Cobertura até 1 h','440','unico'),
+  cdItem('cb2','avulsos','Cobertura até 2 h','527','unico'),
+  cdItem('cb3','avulsos','Cobertura até 3 h','625','unico'),
+  cdItem('ft1','avulsos','Ensaio de fotos 1 h','490','unico'),
+  cdItem('ft2','avulsos','Ensaio de fotos 2 h','750','unico'),
+  cdItem('ed5','avulsos','Edição até 5 vídeos','690','unico'),
+  cdItem('ed10','avulsos','Edição até 10 vídeos','1.099','unico'),
+  cdItem('ed14','avulsos','Edição até 14 vídeos','1.299','unico')
+];
+var cdAberto = {entrada:true};
+
+// "1.099" / "1099" / "1.099,50" -> numero (ou null)
+function cdNum(s) {
+  s = String(s == null ? '' : s).replace(/[^\d.,]/g, '');
+  if (!s) return null;
+  if (s.indexOf(',') > -1) s = s.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  var n = parseFloat(s);
+  return isFinite(n) ? n : null;
+}
+function cdFmt(n) { return n.toLocaleString('pt-BR', {minimumFractionDigits: (n % 1 ? 2 : 0), maximumFractionDigits: 2}); }
+
+function cdRow(it, i) {
+  var v = cdNum(it.valor);
+  var meta = (v == null ? 'sem valor' : 'R$ ' + cdFmt(v)) + (it.de ? ' (de R$ ' + esc(it.de) + ')' : '') + ' · ' + CD_UN[it.unidade];
+  var h = '<div class="item-row cd-row">';
+  h += '<input type="checkbox"' + (it.exibir ? ' checked' : '') + ' data-cd-ck="' + i + '" title="Exibir no link">';
+  h += '<span class="cd-name' + (it.exibir ? '' : ' off') + '">' + esc(it.nome) + '<span class="cd-meta">' + meta + '</span></span>';
+  h += '<button type="button" class="ibtn cd-flag' + (it.preSelecionado ? ' on' : '') + '" data-cd-pre="' + i + '" title="Já vem marcado para o cliente">pré</button>';
+  h += '<button type="button" class="ibtn cd-flag' + (it.recomendado ? ' on' : '') + '" data-cd-rec="' + i + '" title="Selo Recomendado">★</button>';
+  h += '<button type="button" class="ibtn" data-cd-mv="' + i + '" data-cd-d="-1">↑</button>';
+  h += '<button type="button" class="ibtn" data-cd-mv="' + i + '" data-cd-d="1">↓</button>';
+  h += '<button type="button" class="ibtn" data-cd-ed="' + i + '">✏️</button>';
+  h += '</div>';
+  if (it.ed) {
+    h += '<div class="cd-ed" id="cded' + i + '" data-un="' + esc(it.unidade) + '">';
+    h += '<div class="field"><label class="label">Nome</label><input class="inp" type="text" id="cdn' + i + '" value="' + esc(it.nome) + '"></div>';
+    h += '<div class="field"><label class="label">Descrição curta</label><input class="inp" type="text" id="cdd' + i + '" value="' + esc(it.desc) + '"></div>';
+    h += '<div class="de-para"><div><div class="de-para-label">Valor (R$)</div><input class="inp" type="text" id="cdv' + i + '" value="' + esc(it.valor) + '"></div><div><div class="de-para-label">De (opcional)</div><input class="inp" type="text" id="cdo' + i + '" value="' + esc(it.de) + '"></div></div>';
+    h += '<div class="field"><label class="label">Cobrança</label><div class="cd-seg-row">';
+    ['mensal','unico','unidade'].forEach(function(u) { h += '<button type="button" class="cd-seg' + (it.unidade === u ? ' on' : '') + '" data-cd-un="' + u + '" data-cd-i="' + i + '">' + CD_UN[u] + '</button>'; });
+    h += '</div></div>';
+    if (it.grupo === 'entrada') {
+      h += '<div class="field"><label class="label">O que inclui (um por linha)</label><textarea class="inp cd-ta" id="cdinc' + i + '">' + esc((it.inclui || []).join('\n')) + '</textarea></div>';
+      h += '<div class="field"><label class="label">Não inclui (um por linha)</label><textarea class="inp cd-ta" id="cdnao' + i + '">' + esc((it.naoInclui || []).join('\n')) + '</textarea></div>';
+      h += '<div class="field"><label class="label">Condições (um por linha)</label><textarea class="inp cd-ta" id="cdcon' + i + '">' + esc((it.condicoes || []).join('\n')) + '</textarea></div>';
+    }
+    h += '<button type="button" class="btn-out" data-cd-save="' + i + '">✔ Salvar item</button>';
+    h += '</div>';
+  }
+  return h;
+}
+
+function cdRender() {
+  var h = '';
+  CD_GRUPOS.forEach(function(g) {
+    var open = !!cdAberto[g.k];
+    h += '<div class="items-toggle" data-cd-tog="' + g.k + '"><span class="items-toggle-label">' + esc(g.t) + '</span><span class="items-arrow' + (open ? ' open' : '') + '">›</span></div>';
+    h += '<div class="items-body' + (open ? ' show' : '') + '">';
+    cdS.forEach(function(it, i) { if (it.grupo === g.k) h += cdRow(it, i); });
+    h += '<div class="add-row"><input class="add-inp" type="text" id="cdadd_' + g.k + '" placeholder="Adicionar item…"><button type="button" class="add-btn" data-cd-add="' + g.k + '">+</button></div>';
+    h += '</div>';
+  });
+  document.getElementById('cdGroups').innerHTML = h;
+  var vis = cdS.filter(function(x) { return x.exibir; }).length;
+  document.getElementById('cdCount').textContent = vis + ' de ' + cdS.length + ' itens visíveis. "pré" = já vem marcado. ★ = selo Recomendado (um por grupo).';
+}
+
+function cdTipo(card) {
+  window.CD_ATIVO = card;
+  document.getElementById('tpPlanos').classList.toggle('on', !card);
+  document.getElementById('tpCardapio').classList.toggle('on', card);
+  [document.getElementById('divCk1').parentNode, document.getElementById('fld1'), document.getElementById('fld2'), document.getElementById('fld3'), document.getElementById('itog1').parentNode].forEach(function(el) {
+    el.style.display = card ? 'none' : '';
+  });
+  document.getElementById('cdBlock').style.display = card ? 'block' : 'none';
+  if (card) cdRender();
+}
+document.getElementById('tpPlanos').addEventListener('click', function() { cdTipo(false); });
+document.getElementById('tpCardapio').addEventListener('click', function() { cdTipo(true); });
+
+function cdLinhas(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.split('\n').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+}
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (!t || !t.dataset) return;
+  var i;
+  if (t.closest && t.closest('[data-cd-tog]')) {
+    var k = t.closest('[data-cd-tog]').dataset.cdTog; cdAberto[k] = !cdAberto[k]; cdRender(); return;
+  }
+  if (t.dataset.cdCk !== undefined) { cdS[+t.dataset.cdCk].exibir = t.checked; cdRender(); return; }
+  if (t.dataset.cdPre !== undefined || t.dataset.cdRec !== undefined) {
+    var campo = t.dataset.cdPre !== undefined ? 'preSelecionado' : 'recomendado';
+    i = +(t.dataset.cdPre !== undefined ? t.dataset.cdPre : t.dataset.cdRec);
+    var ligar = !cdS[i][campo];
+    cdS.forEach(function(x) { if (x.grupo === cdS[i].grupo) x[campo] = false; }); // um por grupo
+    cdS[i][campo] = ligar;
+    cdRender(); return;
+  }
+  if (t.dataset.cdMv !== undefined) {
+    i = +t.dataset.cdMv; var d = +t.dataset.cdD, j = i + d;
+    while (j >= 0 && j < cdS.length && cdS[j].grupo !== cdS[i].grupo) j += d; // vizinho do mesmo grupo
+    if (j >= 0 && j < cdS.length) { var tmp = cdS[i]; cdS[i] = cdS[j]; cdS[j] = tmp; }
+    cdRender(); return;
+  }
+  if (t.dataset.cdEd !== undefined) { cdS[+t.dataset.cdEd].ed = true; cdRender(); return; }
+  if (t.dataset.cdUn !== undefined) {
+    var box = document.getElementById('cded' + t.dataset.cdI);
+    box.dataset.un = t.dataset.cdUn;
+    box.querySelectorAll('.cd-seg').forEach(function(b) { b.classList.toggle('on', b.dataset.cdUn === t.dataset.cdUn); });
+    return;
+  }
+  if (t.dataset.cdSave !== undefined) {
+    i = +t.dataset.cdSave; var it = cdS[i];
+    var nome = document.getElementById('cdn' + i).value.trim();
+    if (nome) it.nome = nome;
+    it.desc = document.getElementById('cdd' + i).value.trim();
+    it.valor = document.getElementById('cdv' + i).value.trim();
+    it.de = document.getElementById('cdo' + i).value.trim();
+    it.unidade = document.getElementById('cded' + i).dataset.un || it.unidade;
+    if (it.grupo === 'entrada') { it.inclui = cdLinhas('cdinc' + i); it.naoInclui = cdLinhas('cdnao' + i); it.condicoes = cdLinhas('cdcon' + i); }
+    it.ed = false; cdRender(); return;
+  }
+  if (t.dataset.cdAdd !== undefined) {
+    var g = t.dataset.cdAdd, inp = document.getElementById('cdadd_' + g), nm = inp.value.trim();
+    if (!nm) return;
+    var novo = cdItem('n' + Date.now().toString(36), g, nm, '', 'unico'); novo.ed = true;
+    // entra no fim do proprio grupo
+    var ult = -1; cdS.forEach(function(x, n) { if (x.grupo === g) ult = n; });
+    cdS.splice(ult + 1, 0, novo); cdAberto[g] = true; cdRender();
+    setTimeout(function() { var el = document.getElementById('cdv' + (ult + 1)); if (el) el.focus(); }, 30);
+  }
+});
+
+// comprime o JSON (deflate) so quando o link ficaria longo. Prefixo "z~" (nunca aparece em base64url).
+function cdComprimir(data) {
+  var cs = new CompressionStream('deflate-raw');
+  var w = cs.writable.getWriter();
+  w.write(new TextEncoder().encode(JSON.stringify(data))); w.close();
+  return new Response(cs.readable).arrayBuffer().then(function(buf) {
+    var b = new Uint8Array(buf), bin = '';
+    for (var n = 0; n < b.length; n++) bin += String.fromCharCode(b[n]);
+    return 'z~' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_');
+  });
+}
+
+function gerarCardapio() {
+  var nome = document.getElementById('fNome').value.trim();
+  if (!nome) { alert('Preencha o nome do cliente.'); return; }
+  var em = (document.getElementById('fEmail').value || '').trim();
+  if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
+  var vis = cdS.filter(function(x) { return x.exibir; });
+  if (!vis.length) { alert('Deixe ao menos 1 item visível no cardápio.'); return; }
+  for (var n = 0; n < vis.length; n++) { if (cdNum(vis[n].valor) == null) { alert('Preencha o valor de: ' + vis[n].nome); return; } }
+  var vEnt = document.getElementById('cdVEntrada').value.trim();
+  if (vEnt && cdNum(vEnt) == null) { alert('Valor do plano de entrada inválido.'); return; }
+  var ent = vis.filter(function(x) { return x.grupo === 'entrada'; });
+  var alvo = ent.filter(function(x) { return x.preSelecionado; })[0] || ent[0];
+  if (vEnt && !alvo) { alert('O plano de entrada está oculto. Marque-o como visível ou limpe o valor especial.'); return; }
+  var itens = vis.map(function(x) {
+    var o = {id:x.id, nome:x.nome, valor:(x === alvo && vEnt) ? vEnt : x.valor, unidade:x.unidade, grupo:x.grupo};
+    if (x.desc) o.desc = x.desc;
+    if (x.de) o.de = x.de;
+    if (x.preSelecionado) o.preSelecionado = true;
+    if (x.recomendado) o.recomendado = true;
+    if (x.grupo === 'entrada') {
+      if (x.inclui && x.inclui.length) o.inclui = x.inclui;
+      if (x.naoInclui && x.naoInclui.length) o.naoInclui = x.naoInclui;
+      if (x.condicoes && x.condicoes.length) o.condicoes = x.condicoes;
+    }
+    return o;
+  });
+  var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
+  var lh = btoa(unescape(encodeURIComponent(String(expira) + nome))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
+  var data = {tipo:'cardapio', nome:nome, expira:expira, itensCardapio:itens, lh:lh};
+  var obs = document.getElementById('cdObs').value.trim();
+  if (obs) data.obs = obs;
+  if (em) data.em = em;
+  var v1 = alvo ? String((vEnt || alvo.valor)).slice(0, 20) : '';
+  var btn = document.getElementById('btnGerar');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  var enc = encode(data);
+  var pronto = (enc.length > 4500 && window.CompressionStream) ? cdComprimir(data).catch(function() { return enc; }) : Promise.resolve(enc);
+  pronto.then(function(encoded) {
+    var link = window.location.origin + '/proposta.html?d=' + encoded;
+    if (link.length > 12000) throw new Error('longo');
+    return sha256hex(encoded).then(function(h) {
+      return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[true,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
+    }).then(function(r) {
+      if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
+      document.getElementById('resultUrl').textContent = link;
+      document.getElementById('result').classList.add('show');
+      document.getElementById('shortWrap').style.display = 'none';
+      document.getElementById('btnCopy').textContent = 'Copiar link';
+      carregarHistorico();
+    });
+  }).catch(function(e) {
+    if (e.message === 'longo') alert('O cardápio ficou grande demais para um link. Oculte alguns itens ou encurte as descrições.');
+    else if (e.message !== 'sessao') alert('Erro de conexão. A proposta não foi salva.');
+  }).then(function() { btn.disabled = false; btn.textContent = 'Gerar link →'; });
 }
 </script>
 <script src="/admin-email.js"></script>
