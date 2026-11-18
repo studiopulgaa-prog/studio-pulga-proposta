@@ -120,6 +120,8 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .tg button{border:none;background:none;font-family:'Outfit',sans-serif;cursor:pointer;color:var(--br);}
 .tg-t{padding:7px 8px 7px 12px;font-size:12px;font-weight:600;text-align:left;}
 .tg-x{padding:7px 8px;font-size:13px;line-height:1;border-left:1px solid var(--brl)!important;}
+.tg-x:disabled{opacity:0.3;cursor:default;}
+@media (max-width:600px){.ibtn{min-width:34px;min-height:34px;font-size:15px;padding:6px;}.btn-sair{padding:12px 10px;}.hist-del{min-width:36px;min-height:36px;font-size:20px;}.tg-t,.tg-x{padding-top:10px;padding-bottom:10px;}}
 .tg-add{display:flex;gap:6px;margin-bottom:6px;}
 .tg-add input{flex:1;}
 .pad-fold{border:1.5px solid var(--brl);border-radius:10px;margin-bottom:10px;overflow:hidden;}
@@ -354,15 +356,21 @@ function gerarLink() {
   var lh = btoa(nome + String(expira)).replace(/[^a-zA-Z0-9]/g,'').slice(0,24);
   var data = {nome:nome, v1:v1, v2:v2, v3:v3, vo1:vo1, vo2:vo2, vo3:vo3, expira:expira, planos:[ck1,ck2,ck3], itens:itens, naoIncluso:naoIncluso, lh:lh};
   if (em) data.em = em;
-  var encoded = encode(data);
-  var link = window.location.origin + '/proposta.html?d=' + encoded;
+  data.mo = PL_MODELO;   // modelo (arq/loja): a página do cliente cita no pedido
   var btn = document.getElementById('btnGerar');
   btn.disabled = true; btn.textContent = 'Salvando…';
+  var enc0 = encode(data), encoded, link;
+  // link compacto (deflate, prefixo "z~") por padrao, igual ao cardapio; sem suporte do navegador, cai no formato antigo
+  var pronto = window.CompressionStream ? cdComprimir(data).catch(function(){ return enc0; }) : Promise.resolve(enc0);
   // o link so vale depois de salvo no banco (com a assinatura dele)
-  sha256hex(encoded).then(function(h){
+  pronto.then(function(e2){
+    encoded = e2; link = window.location.origin + '/proposta.html?d=' + encoded;
+    return sha256hex(encoded);
+  }).then(function(h){
     return adm('criar', {proposta:{cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
   }).then(function(r){
     if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro||'erro')); return; }
+    window.SP_ULTIMO = {link:link, data:data};   // o e-mail do admin usa isto quando o link é compacto
     document.getElementById('resultUrl').textContent = link;
     document.getElementById('result').classList.add('show');
     document.getElementById('shortWrap').style.display = 'none';
@@ -982,7 +990,7 @@ function c3Render() {
     var G = c3S.pg;
     b.appendChild(c2e('div', 'cd-hint', 'Só informa. Nada é cobrado automaticamente: hoje o fechamento passa por uma confirmação enviada pelo WhatsApp. Textos em branco usam a frase padrão.'));
     b.appendChild(c2Campo('Máximo de parcelas no cartão', G, 'max', {ph:'12', max:2, hint:'Aparece só no texto "Parcele em até Nx". Nenhum valor de parcela é calculado.'}));
-    b.appendChild(c2Campo('Texto: Avulsos (antes da frase do cartão)', G, 'av', {ta:true, max:300, ph:'Pix ou boleto à vista.'}));
+    b.appendChild(c2Campo('Texto extra: Avulsos (opcional, antes do bloco do cartão)', G, 'av', {ta:true, max:300, ph:'Vazio: mostra só o bloco do cartão.'}));
     b.appendChild(c2Campo('Texto: Recorrente', G, 'rc', {ta:true, max:300, ph:'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'}));
     b.appendChild(c2Campo('Título: Milão sem cartão de crédito', G, 'm1', {max:120, ph:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'}));
     b.appendChild(c2Campo('Título: Milão no cartão de crédito', G, 'm2', {max:120, ph:'Cartão de crédito'}));
@@ -1157,11 +1165,17 @@ function tagBox(cont, st, onChange) {
       var tg = c2e('span', 'tg' + (L[0] === 'nao' ? ' no' : '') + (it.a ? '' : ' off'));
       var b = c2e('button', 'tg-t', it.t); b.type = 'button'; b.setAttribute('aria-pressed', it.a ? 'true' : 'false'); b.title = 'Toque para ligar ou desligar';
       b.addEventListener('click', function() { it.a = !it.a; ch(); });
+      var up = c2e('button', 'tg-x', '‹'); up.type = 'button'; up.title = 'Subir (mover para antes)'; up.setAttribute('aria-label', 'Subir "' + it.t + '"');
+      up.disabled = i === 0;
+      up.addEventListener('click', function() { if (i > 0) { arr.splice(i, 1); arr.splice(i - 1, 0, it); ch(); } });
+      var dn = c2e('button', 'tg-x', '›'); dn.type = 'button'; dn.title = 'Descer (mover para depois)'; dn.setAttribute('aria-label', 'Descer "' + it.t + '"');
+      dn.disabled = i === arr.length - 1;
+      dn.addEventListener('click', function() { if (i < arr.length - 1) { arr.splice(i, 1); arr.splice(i + 1, 0, it); ch(); } });
       var m = c2e('button', 'tg-x', '⇄'); m.type = 'button'; m.title = 'Mover para ' + L[3]; m.setAttribute('aria-label', 'Mover "' + it.t + '" para ' + L[3]);
       m.addEventListener('click', function() { arr.splice(i, 1); outro.push(it); ch(); });
       var x = c2e('button', 'tg-x', '×'); x.type = 'button'; x.title = 'Remover'; x.setAttribute('aria-label', 'Remover "' + it.t + '"');
       x.addEventListener('click', function() { arr.splice(i, 1); ch(); });
-      tg.appendChild(b); tg.appendChild(m); tg.appendChild(x); w.appendChild(tg);
+      tg.appendChild(b); tg.appendChild(up); tg.appendChild(dn); tg.appendChild(m); tg.appendChild(x); w.appendChild(tg);
     });
     cont.appendChild(w);
     var ad = c2e('div', 'tg-add'); var inp = c2e('input', 'inp'); inp.type = 'text'; inp.placeholder = 'Adicionar em "' + L[1].toLowerCase() + '"…'; inp.maxLength = 120;

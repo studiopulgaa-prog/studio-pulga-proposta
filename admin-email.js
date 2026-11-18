@@ -9,6 +9,8 @@
   function decodeLink(link) {
     try {
       var d = new URL(link).searchParams.get('d');
+      // link compacto (z~): os dados vêm do que o admin acabou de gerar
+      if (d.slice(0, 2) === 'z~') { var u0 = window.SP_ULTIMO; return u0 && u0.link === link && u0.data && u0.data.tipo !== 'cardapio' ? u0.data : null; }
       var b = d.replace(/-/g, '+').replace(/_/g, '/');
       while (b.length % 4) b += '=';
       var bin = atob(b), u = new Uint8Array(bin.length);

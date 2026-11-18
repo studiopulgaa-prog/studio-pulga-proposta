@@ -80,6 +80,12 @@
     .plano-cta{display:block;padding:14px 20px;border-radius:11px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;text-align:center;margin-bottom:22px;background:var(--br);color:#F4EADD;border:none;}
     .plano-cta:hover{background:#5A2210;letter-spacing:0.02em;}
     .plano-cta:hover::after{content:' → WhatsApp';}
+    .pl-extra{max-width:560px;margin:36px auto 0;text-align:center;}
+    .pl-pg{padding:16px 18px;border:1.5px solid rgba(110,44,20,0.25);border-radius:14px;text-align:left;}
+    .pl-pg-t{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
+    .pl-pg p{font-size:14px;line-height:1.5;color:var(--br);margin:0;}
+    .pl-duv{display:inline-block;margin-top:16px;padding:13px 26px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font:600 14px 'Outfit',sans-serif;cursor:pointer;}
+    .pl-duv:focus-visible{outline:2px solid #FFB347;outline-offset:2px;}
     .plano.destaque .plano-cta{background:#F4EADD;color:var(--br);}
     .divider{height:1px;background:var(--border);margin:22px 0;}
     .plano.destaque .divider{background:rgba(244,234,221,0.15);}
@@ -466,6 +472,7 @@
     .c3-fin-cc{margin-top:10px;font-size:13px;line-height:1.45;color:var(--gray);}
     .c3-fin-cc p{margin:2px 0 0;font-weight:400;}
     .c3-fin-n{font-size:12px;line-height:1.45;color:var(--gray);margin:12px 0 0;}
+    .c3-fin-duv{display:block;width:100%;margin-top:10px;padding:11px 16px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font:600 13px 'Outfit',sans-serif;cursor:pointer;}
     .c3-fin-e{font-size:13px;font-weight:700;color:#B3261E;margin-top:8px;min-height:16px;}
     .c3-fin-b .c3-conf-bt{margin-top:14px;}
     .c3-mi-ctl{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
@@ -690,6 +697,7 @@
       if(PROPOSTA.tipo==='cardapio'){if(PROPOSTA.v===3)renderCardapio3();else if(PROPOSTA.v===2||Array.isArray(PROPOSTA.caminhos))renderCardapio2();else renderCardapio();return;}
       // Nome
       document.getElementById('heroName').textContent='Olá, '+PROPOSTA.nome+'.';
+      plExtras();
 
       // Valores
       document.getElementById('v1').textContent=PROPOSTA.v1||'2.690';
@@ -824,19 +832,92 @@
       }catch(e){}
     }
 
+    // Planos de gestao: "Escolher Plano X" abre a tela de confirmacao (resumo, nome, e-mail, telefone).
+    // "Enviar pedido" abre o WhatsApp preenchido e, se houver e-mail, dispara /api/enviar-proposta (como antes).
+    var PL_PG='Cobrança mensal no cartão (recorrente), Pix ou boleto. Hoje o fechamento passa por uma confirmação enviada pelo WhatsApp.';
+    var PL_NOMES={1:'1º Pacote — Pensado na sua marca',2:'2º Pacote — Sua gestão',3:'3º Pacote — O mais completo'};
+    var PL_MODELOS={arq:'Arquiteto',loja:'Loja'};
+    function plModelo(){var m=PROPOSTA&&PROPOSTA.mo;return (typeof m==='string'&&PL_MODELOS.hasOwnProperty(m))?PL_MODELOS[m]:'';}
+    function plExtras(){
+      if(document.getElementById('plExtra'))return;
+      var g=document.querySelector('.planos-grid');if(!g)return;
+      var bx=cdEl('div','pl-extra');bx.id='plExtra';
+      var pg=cdEl('div','pl-pg');pg.appendChild(cdEl('div','pl-pg-t','Formas de pagamento'));pg.appendChild(cdEl('p',null,PL_PG));bx.appendChild(pg);
+      var dv=cdEl('button','pl-duv','Tirar dúvidas no WhatsApp');dv.type='button';dv.id='plDuv';
+      dv.addEventListener('click',function(){plAbreZap('Olá! Vi a proposta e queria tirar uma dúvida sobre os planos.');});
+      bx.appendChild(dv);
+      g.parentNode.insertBefore(bx,g.nextSibling);
+    }
+    function plAbreZap(msg){
+      var url='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
+      var w=window.open(url,'_blank');
+      if(!w)window.location.href=url;
+    }
     function fecharPlano(e,num){
       e.preventDefault();
-      var nomes={1:'1º Pacote — Pensado na sua marca',2:'2º Pacote — Sua gestão',3:'3º Pacote — O mais completo'};
-      var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
-      var msg='Olá! Gostaria de fechar o '+nomes[num]+' (R$'+vals[num]+'/mês). Podemos avançar?';
-      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
-      var email=(PROPOSTA.em||'').trim();
-      if(!/^\S+@\S+\.\S+$/.test(email)){email=(window.prompt('Quer receber esta proposta por e-mail? Digite seu e-mail ou deixe em branco para ir direto ao WhatsApp.')||'').trim();}
-      if(/^\S+@\S+\.\S+$/.test(email)){
-        try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',email:email,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
+      if(PROPOSTA&&PROPOSTA.expira&&Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      plFinaliza(num);
+    }
+    function plFinaliza(num){
+      var box=document.getElementById('plFin');
+      if(!box){
+        box=cdEl('div','c3-conf');box.id='plFin';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','plFinT');box.hidden=true;
+        var bb=cdEl('div','c3-conf-b c3-fin-b');bb.id='plFinB';box.appendChild(bb);document.body.appendChild(box);
       }
-      var w=window.open('https://wa.me/5513996057099?text='+encodeURIComponent(msg),'_blank');
-      if(!w)window.location.href='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
+      var b=document.getElementById('plFinB'),ant=document.activeElement;
+      var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3};
+      b.textContent='';
+      var h=cdEl('h2',null,'Confirme seu pedido');h.id='plFinT';b.appendChild(h);
+      b.appendChild(cdEl('div','c3-fin-g','Plano escolhido'));
+      var l1=cdEl('div','c3-fin-l');l1.appendChild(cdEl('span',null,PL_NOMES[num]));b.appendChild(l1);
+      var mo=plModelo();if(mo){var lm=cdEl('div','c3-fin-l');lm.appendChild(cdEl('span',null,'Modelo: '+mo));b.appendChild(lm);}
+      var r1=cdEl('div','c3-fin-t');r1.appendChild(cdEl('span',null,'Valor mensal'));r1.appendChild(cdEl('span',null,'R$ '+vals[num]));b.appendChild(r1);
+      b.appendChild(cdEl('p','c3-fin-n',PL_PG));
+      function campo(rot,tipo,id,val,ac){
+        var lb=cdEl('label','c3-fin-f',rot);lb.setAttribute('for',id);b.appendChild(lb);
+        var i=document.createElement('input');i.type=tipo;i.id=id;i.value=val||'';i.maxLength=120;i.autocomplete=ac;if(tipo==='tel')i.inputMode='tel';b.appendChild(i);return i;
+      }
+      var fn=campo('Nome','text','plFinNome',PROPOSTA.nome,'name');
+      var fe=campo('E-mail','email','plFinEmail',(PROPOSTA.em||'').trim(),'email');
+      var ft=campo('Telefone','tel','plFinTel','','tel');
+      b.appendChild(cdEl('p','c3-fin-n','O botão abre o WhatsApp com tudo preenchido.'));
+      var er=cdEl('div','c3-fin-e');er.setAttribute('role','alert');b.appendChild(er);
+      var bt=cdEl('div','c3-conf-bt');
+      var ok=cdEl('button',null,'Enviar pedido');ok.type='button';var no=cdEl('button',null,'Voltar');no.type='button';
+      bt.appendChild(ok);bt.appendChild(no);b.appendChild(bt);
+      var dv=cdEl('button','c3-fin-duv','Tirar dúvidas no WhatsApp');dv.type='button';
+      dv.addEventListener('click',function(){plAbreZap('Olá! Vi a proposta e queria tirar uma dúvida sobre os planos.');});
+      b.appendChild(dv);
+      function fecha(){box.hidden=true;document.removeEventListener('keydown',esc,true);document.body.style.overflow='';if(ant&&ant.focus)ant.focus();}
+      function esc(e){if(e.key==='Escape')fecha();}
+      no.onclick=fecha;
+      ok.onclick=function(){
+        var nome=fn.value.trim(),em=fe.value.trim(),tel=ft.value.trim();
+        if(!nome){er.textContent='Informe o seu nome.';fn.focus();return;}
+        if(em&&!/^\S+@\S+\.\S+$/.test(em)){er.textContent='Confira o e-mail.';fe.focus();return;}
+        if(tel&&tel.replace(/\D/g,'').length<10){er.textContent='Confira o telefone (com DDD).';ft.focus();return;}
+        if(Date.now()>PROPOSTA.expira){fecha();document.getElementById('expiredScreen').classList.add('show');return;}
+        fecha();
+        enviarPedidoPlano(num,{nome:nome,email:em,tel:tel});
+      };
+      document.addEventListener('keydown',esc,true);
+      document.body.style.overflow='hidden';
+      box.hidden=false;b.scrollTop=0;ok.focus({preventScroll:true});
+    }
+    // Ponto unico do fechamento dos Planos: hoje abre o WhatsApp; no futuro pode virar um checkout.
+    function enviarPedidoPlano(num,d){
+      var vals={1:PROPOSTA.v1,2:PROPOSTA.v2,3:PROPOSTA.v3},mo=plModelo();
+      var dt=new Date(PROPOSTA.expira);
+      var ate=dt.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
+      var msg='Olá! Sou '+(d.nome||PROPOSTA.nome)+'. Quero fechar o '+PL_NOMES[num]+' (R$'+vals[num]+'/mês)'+(mo?', modelo '+mo:'')+'.';
+      if(d.email)msg+='\nE-mail: '+d.email;
+      if(d.tel)msg+='\nTelefone: '+d.tel;
+      msg+='\nProposta válida até '+ate+'.\nPodemos avançar?';
+      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
+      if(/^\S+@\S+\.\S+$/.test(d.email||'')){
+        try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',email:d.email,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
+      }
+      plAbreZap(msg);
     }
 
     // ===== Tipo CARDAPIO (novo) =====
@@ -1725,7 +1806,7 @@
       var g=C3.pg||(C3.pg=c3PgCfg());
       bx.appendChild(cdEl('div','c3-pg-t','Formas de pagamento'));
       if(C3.tab==='avulsos'){
-        bx.appendChild(cdEl('p','c3-pg-p',g.av||'Pix ou boleto à vista.'));
+        if(g.av)bx.appendChild(cdEl('p','c3-pg-p',g.av));
         var ct=cdEl('p','c3-pg-p',null);ct.appendChild(cdEl('b',null,'Cartão de crédito'));bx.appendChild(ct);
         bx.appendChild(cdEl('p','c3-pg-p',c3PgBanco()));
         bx.appendChild(cdEl('p','c3-pg-p',C3_PG_PIX));
