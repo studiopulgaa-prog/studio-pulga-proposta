@@ -107,6 +107,25 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .cd-hint{font-size:11px;color:var(--gray2);margin-top:4px;}
 .cd-count{font-size:11px;color:var(--gray2);margin:2px 0 10px;}
 @media (prefers-reduced-motion:reduce){.cd-seg,.items-arrow{transition:none;}}
+.at-row{display:flex;gap:8px;margin-bottom:14px;}
+.at-row .cd-seg{padding:13px 8px;font-size:14px;}
+.st-row{display:flex;gap:6px;margin-bottom:16px;border-bottom:1.5px solid var(--brl);}
+.st-b{flex:1;padding:10px 4px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-1.5px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;}
+.st-b.on{color:var(--br);border-bottom-color:var(--br);}
+.tg-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tg{display:inline-flex;align-items:center;border-radius:20px;border:1.5px solid var(--br);background:rgba(110,44,20,0.08);overflow:hidden;}
+.tg.no{border-style:dashed;background:rgba(0,0,0,0.04);}
+.tg.off{opacity:0.4;}
+.tg.off .tg-t{text-decoration:line-through;}
+.tg button{border:none;background:none;font-family:'Outfit',sans-serif;cursor:pointer;color:var(--br);}
+.tg-t{padding:7px 8px 7px 12px;font-size:12px;font-weight:600;text-align:left;}
+.tg-x{padding:7px 8px;font-size:13px;line-height:1;border-left:1px solid var(--brl)!important;}
+.tg-add{display:flex;gap:6px;margin-bottom:6px;}
+.tg-add input{flex:1;}
+.pad-fold{border:1.5px solid var(--brl);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.pad-fold>.items-toggle{margin:0;border:none;}
+.pad-ok{font-size:12px;color:#2e7d32;margin-top:8px;min-height:16px;}
+.hist-tipo{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);}
 </style>
 </head>
 <body>
@@ -120,12 +139,15 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 </div>
 <div class="admin" id="adminWrap">
   <div class="hdr"><div class="hdr-logo">STUDIO PULGA</div><button class="btn-sair" id="btnSair">Sair</button></div>
-  <div class="card">
-    <div class="card-title">Nova proposta</div>
+  <div class="at-row" role="tablist" aria-label="Área"><button type="button" class="cd-seg on" id="atPl" role="tab">Planos de gestão</button><button type="button" class="cd-seg" id="atCd" role="tab">Cardápio</button></div>
+  <div class="st-row" role="tablist" aria-label="Seção"><button type="button" class="st-b on" id="stNova" role="tab">Nova proposta</button><button type="button" class="st-b" id="stPad" role="tab">Padrões</button><button type="button" class="st-b" id="stHist" role="tab">Histórico</button></div>
+  <div class="card" id="secNova">
+    <div class="card-title" id="novaTit">Nova proposta</div>
     <div class="card-sub">Preencha e gere o link exclusivo para o cliente.</div>
-    <div class="field" id="tipoField"><label class="label">Tipo de proposta</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="tpPlanos">Planos (atual)</button><button type="button" class="cd-seg" id="tpCardapio">Cardápio</button></div></div>
+    <div class="field" id="tipoField" style="display:none;"><label class="label">Tipo de proposta</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="tpPlanos">Planos (atual)</button><button type="button" class="cd-seg" id="tpCardapio">Cardápio</button></div></div>
     <div class="field"><label class="label">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
     <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"></div>
+    <div class="field" id="fModelo"><label class="label">Modelo</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="mdArq">Arquiteto</button><button type="button" class="cd-seg" id="mdLoja">Loja</button></div><div class="cd-hint">Os valores e itens abaixo vêm dos Padrões do modelo. Você pode ajustar só para este cliente.</div></div>
     <div class="field">
       <label class="label">Planos a exibir</label>
       <div class="plano-ck on" id="divCk1"><input type="checkbox" id="ck1" checked><span class="plano-ck-label">1º Pacote</span></div>
@@ -138,18 +160,14 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     <div class="field">
       <label class="label">Personalizar itens</label>
       <div class="items-toggle" id="itog1"><span class="items-toggle-label">1º Pacote — Itens</span><span class="items-arrow" id="ia1">›</span></div>
-      <div class="items-body" id="ib1"><div id="il1"></div><div class="add-row"><input class="add-inp" type="text" id="iadd1" placeholder="Adicionar incluso…"><button class="add-btn" id="addI1">+</button></div><div class="sec-sep">Não incluso</div><div id="nil1"></div><div class="add-row"><input class="add-inp" type="text" id="niadd1" placeholder="Adicionar não incluso…"><button class="add-btn" id="addNI1">+</button></div></div>
+      <div class="items-body" id="ib1"><div id="tb1"></div></div>
       <div class="items-toggle" id="itog2"><span class="items-toggle-label">2º Pacote — Itens</span><span class="items-arrow" id="ia2">›</span></div>
-      <div class="items-body" id="ib2"><div id="il2"></div><div class="add-row"><input class="add-inp" type="text" id="iadd2" placeholder="Adicionar incluso…"><button class="add-btn" id="addI2">+</button></div><div class="sec-sep">Não incluso</div><div id="nil2"></div><div class="add-row"><input class="add-inp" type="text" id="niadd2" placeholder="Adicionar não incluso…"><button class="add-btn" id="addNI2">+</button></div></div>
+      <div class="items-body" id="ib2"><div id="tb2"></div></div>
       <div class="items-toggle" id="itog3"><span class="items-toggle-label">3º Pacote — Itens</span><span class="items-arrow" id="ia3">›</span></div>
-      <div class="items-body" id="ib3"><div id="il3"></div><div class="add-row"><input class="add-inp" type="text" id="iadd3" placeholder="Adicionar incluso…"><button class="add-btn" id="addI3">+</button></div><div class="sec-sep">Não incluso</div><div id="nil3"></div><div class="add-row"><input class="add-inp" type="text" id="niadd3" placeholder="Adicionar não incluso…"><button class="add-btn" id="addNI3">+</button></div></div>
+      <div class="items-body" id="ib3"><div id="tb3"></div></div>
     </div>
     <div id="cdBlock" style="display:none;">
-      <div class="field">
-        <label class="label">Abas do cardápio</label>
-        <div class="cd-count" id="cdCount"></div>
-        <div id="cdCaminhos"></div>
-      </div>
+      <div class="field"><label class="label">Abas deste link</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck on" id="nvDivMi"><input type="checkbox" id="nvMi" checked><span class="plano-ck-label">Especial Milão</span></div></div>
       <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
       <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
       <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
@@ -179,8 +197,21 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
       </div>
     </div>
   </div>
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
+  <div class="card" id="secPad" style="display:none;">
+    <div class="card-title" id="padTit">Padrões</div>
+    <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos neste navegador.</div>
+    <div id="padPl"></div>
+    <div id="padCd" style="display:none;">
+      <div class="field">
+        <label class="label">Abas do cardápio</label>
+        <div class="cd-count" id="cdCount"></div>
+        <div id="cdCaminhos"></div>
+      </div>
+      <div id="padCdBtns"></div>
+    </div>
+  </div>
+  <div class="card" id="secHist" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title" id="histTit">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
     <div id="histLista"><div class="loading">Carregando…</div></div>
   </div>
 </div>
@@ -336,6 +367,7 @@ function gerarLink() {
     document.getElementById('result').classList.add('show');
     document.getElementById('shortWrap').style.display = 'none';
     document.getElementById('btnCopy').textContent = 'Copiar link';
+    histLocal(r.id, {tipo:'pl', link:link, form:{modelo:PL_MODELO, nome:nome, v:[v1,v2,v3], vo:[vo1,vo2,vo3], ck:[ck1,ck2,ck3], iS:iS, niS:niS}});
     carregarHistorico();
   }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
   .then(function(){ btn.disabled = false; btn.textContent = 'Gerar link →'; });
@@ -352,8 +384,11 @@ function carregarHistorico() {
 }
 
 function renderHistorico(lista) {
-  var h = '';
+  var h = '', mostrados = 0, LH = histGet().m;
   lista.forEach(function(p, i) {
+    var area = areaDe(p);
+    if (area !== (AREA === 'cd' ? 'cd' : 'pl')) return;
+    mostrados++;
     var dt = new Date(p.criado_em);
     var ds = dt.toLocaleDateString('pt-BR') + ' às ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     var pl = p.planos || [true,true,true];
@@ -366,15 +401,19 @@ function renderHistorico(lista) {
     h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Excluir">×</button></div>';
     h += '</div>';
     h += '<div class="hist-body" id="hb' + i + '">';
-    if (p.v1) h += '<div class="hist-info"><strong>1º Pacote</strong>R$ ' + esc(p.v1) + '</div>';
-    if (p.v2) h += '<div class="hist-info"><strong>2º Pacote</strong>R$ ' + esc(p.v2) + '</div>';
-    if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
+    if (area === 'cd') {
+      if (p.v1) h += '<div class="hist-info"><strong>Plano de entrada</strong>R$ ' + esc(p.v1) + '</div>';
+    } else {
+      if (p.v1) h += '<div class="hist-info"><strong>1º Pacote</strong>R$ ' + esc(p.v1) + '</div>';
+      if (p.v2) h += '<div class="hist-info"><strong>2º Pacote</strong>R$ ' + esc(p.v2) + '</div>';
+      if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
+    }
     h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
-    h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions"><button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Encerrar</button></div>';
+    if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
+    h += '<div class="hist-actions">' + (LH[p.id] && LH[p.id].link ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button></div>';
     h += '</div></div>';
   });
-  document.getElementById('histLista').innerHTML = h;
+  document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
 }
 
 // EVENT DELEGATION — zero onclick inline
@@ -407,8 +446,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Itens toggle
   [1,2,3].forEach(function(n){
     document.getElementById('itog'+n).addEventListener('click', function(){ toggleItems(n); });
-    document.getElementById('addI'+n).addEventListener('click', function(){ addItem(n-1); });
-    document.getElementById('addNI'+n).addEventListener('click', function(){ addNI(n-1); });
   });
 
   // Gerar link
@@ -471,20 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }).catch(function(){});
     }
     // Duplicar proposta
-    if (t.dataset.dup !== undefined) {
-      var p = _lista[+t.dataset.dup];
-      if (!p) return;
-      document.getElementById('fNome').value = p.cliente;
-      document.getElementById('fEmail').value = '';
-      document.getElementById('fV1').value = p.v1||'';
-      document.getElementById('fV2').value = p.v2||'';
-      document.getElementById('fV3').value = p.v3||'';
-      document.getElementById('fVO1').value = '';
-      document.getElementById('fVO2').value = '';
-      document.getElementById('fVO3').value = '';
-      window.scrollTo({top:0, behavior:'smooth'});
-      setTimeout(function(){ document.getElementById('fNome').focus(); document.getElementById('fNome').select(); }, 400);
-    }
+    if (t.dataset.dup !== undefined) { duplicarProposta(+t.dataset.dup); }
   });
 
   // Enter nas edições inline
@@ -554,7 +578,7 @@ function toggleItems(n) {
   var b = document.getElementById('ib'+n), a = document.getElementById('ia'+n);
   var s = b.classList.toggle('show');
   a.classList.toggle('open', s);
-  if (s) { renderI(n-1); renderNI(n-1); }
+  if (s) tagBox(document.getElementById('tb'+n), {inc:iS[n-1], nao:niS[n-1]});
 }
 function addItem(p) {
   var v = document.getElementById('iadd'+(p+1)).value.trim();
@@ -621,6 +645,17 @@ function S(id, foto, titulo, ex) {
   return o;
 }
 // Valores de referencia (editaveis). Nada aqui e promessa de prazo ou resultado.
+function c3Load() {
+  var d = c3Defaults();
+  try {
+    var sv = JSON.parse(localStorage.getItem('sp_pad_cd') || 'null');
+    if (sv && sv.av && sv.rc && sv.mi) {
+      ['aba','av','rc','fr','tt'].forEach(function(k) { if (sv[k] != null) d[k] = sv[k]; });
+      d.mi = Object.assign(d.mi, sv.mi); d.pg = Object.assign(d.pg, sv.pg || {});
+    }
+  } catch (e) {}
+  return d;
+}
 function c3Defaults() {
   var hr = function(v) { return I('Hora adicional', v, 'unidade', {rot:'por hora'}); };
   return {
@@ -643,7 +678,7 @@ function c3Defaults() {
       S('e','servico-edicao-notebook','Edição',{
         ops:[I('Até 5 vídeos',760,'unico',{desc:'No período contratado.'}),I('Até 10 vídeos',1210,'unico',{desc:'No período contratado.'}),I('Até 14 vídeos',1430,'unico',{desc:'No período contratado.'})],
         extras:[I('Vídeo adicional',130,'unidade',{rot:'por vídeo'})]}),
-      S('a','servico-artes-colagem','Artes e design',{apoio:'Valores por unidade.', modo:'varios',
+      S('a','olhar-06-materiais-mao','Artes e design',{apoio:'Valores por unidade.', modo:'varios',
         ops:[I('Post de arte',140,'unidade',{rot:'por unidade'}),I('Data sazonal',140,'unidade',{rot:'por unidade'}),I('Pack 3 datas sazonais',360,'unidade',{rot:'por pack'}),
              I('Carrossel até 7 lâminas',250,'unidade',{rot:'por unidade',g:'car'}),I('Carrossel até 7 lâminas, com briefing nosso',290,'unidade',{rot:'por unidade',g:'car'}),
              I('Sequência de stories até 5 telas',120,'unidade',{rot:'por unidade',g:'sto'}),I('Sequência de stories até 5 telas, com briefing nosso',140,'unidade',{rot:'por unidade',g:'sto'}),
@@ -661,18 +696,22 @@ function c3Defaults() {
         inclui:['1 captação por mês de até 2 h','3 vídeos de até 1 min ou 4 de até 30 s','Legenda pronta para cada vídeo','Tabela mensal de postagem por WhatsApp','Grupo com o videomaker em horário comercial','Edição simples com 1 ajuste por vídeo','Quem posta é o cliente'],
         nao:['Drone','Horário adicional','Vídeo adicional','Gestão de perfil'],
         comb:['Mínimo de 3 meses','Pagamento antecipado até o dia 5'],
-        ops:[I('Plano de entrada',990,'mensal',{pre:true,tag:'Ponto de partida'})],
+        ops:[I('Plano de entrada',990,'mensal',{tag:'Ponto de partida'})],
         extras:[I('Hora adicional de captação, com 2 vídeos de 30 s',290,'unidade',{rot:'por hora'}),I('Vídeo extra de 30 s',150,'unidade',{rot:'por vídeo'}),I('Vídeo extra de 1 min',220,'unidade',{rot:'por vídeo'}),
                 I('Revisão extra',60,'unidade',{rot:'por revisão'}),I('Pacote 2 artes por mês',150,'mensal'),I('Calendário anual de 12 datas',900,'unico')]}),
       gal:C3_GAL_TXT,
       difs:[{t:'Identidade cool e autoral',d:''},{t:'Equipe completa',d:'Filmmaker mobile, editor de vídeo e foto e social media.'},{t:'Rotina combinada',d:'Agenda, tabela de postagem e grupo com o videomaker.'}]},
     mi:{on:true, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
       oqt:'Milão, com a gente.',
-      oque:'O Studio estará lá e cobrirá 1 dia inteiro de captação com você, da manhã à noite. Nos demais dias, você pode ter stories todos os dias, como adicional.',
-      total:'3120', inicio:'11', fim:'4', data:'', vagas:'', cal:'2027-04', ida:'', volta:'', sdia:'147'}
+      oque:'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.',
+      total:'3120', inicio:'11', fim:'4', data:'', vagas:'', sdia:'147',
+      stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.', stc:'Quero consultar stories por toda a viagem'},
+    pg:{n:'10', j:'0', av:'', rc:'', m1:'', m2:''},
+    fr:'Após essa data os valores podem mudar.',
+    tt:true
   };
 }
-var c3S = c3Defaults();
+var c3S = c3Load();
 var c2Aberto = {};   // blocos abertos no editor
 var c2ItAberto = {}; // itens abertos
 var CD_UN = {mensal:'Mensal', unico:'Único', unidade:'Por unidade'};
@@ -686,18 +725,7 @@ function cdNum(s) {
   return isFinite(n) ? n : null;
 }
 
-function cdTipo(card) {
-  window.CD_ATIVO = card;
-  document.getElementById('tpPlanos').classList.toggle('on', !card);
-  document.getElementById('tpCardapio').classList.toggle('on', card);
-  [document.getElementById('divCk1').parentNode, document.getElementById('fld1'), document.getElementById('fld2'), document.getElementById('fld3'), document.getElementById('itog1').parentNode].forEach(function(el) {
-    el.style.display = card ? 'none' : '';
-  });
-  document.getElementById('cdBlock').style.display = card ? 'block' : 'none';
-  if (card) c3Render();
-}
-document.getElementById('tpPlanos').addEventListener('click', function() { cdTipo(false); });
-document.getElementById('tpCardapio').addEventListener('click', function() { cdTipo(true); });
+function cdTipo(card) { areaSet(card ? 'cd' : 'pl'); }
 
 // ---- construtores de campo (DOM puro, sem innerHTML com dados) ----
 function c2e(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
@@ -845,8 +873,19 @@ function c3PathBody(body, P, key, defaultFn) {
   ff.appendChild(sel); body.appendChild(ff);
   body.appendChild(c2Campo('Para quem serve', P, 'para', {ta:true, max:260}));
   body.appendChild(c2Linhas('Conteúdos sugestivos', P, 'conteudos'));
-  body.appendChild(c2Linhas('O que inclui', P, 'inclui', 'Em branco: o bloco não aparece.'));
-  body.appendChild(c2Linhas('O que não inclui', P, 'nao', 'Em branco: o bloco não aparece.'));
+  if (key === 'rcp') {
+    if (!P._inc) P._inc = (P.inclui || []).map(function(t) { return {t:t, a:true}; });
+    if (!P._nao) P._nao = (P.nao || []).map(function(t) { return {t:t, a:true}; });
+    var tbw = c2e('div', 'field'); tbw.appendChild(c2e('label', 'label', 'Incluso e não incluso'));
+    var tbc = c2e('div'); tbw.appendChild(tbc); body.appendChild(tbw);
+    tagBox(tbc, {inc:P._inc, nao:P._nao}, function() {
+      P.inclui = P._inc.filter(function(x) { return x.a; }).map(function(x) { return x.t; });
+      P.nao = P._nao.filter(function(x) { return x.a; }).map(function(x) { return x.t; });
+    });
+  } else {
+    body.appendChild(c2Linhas('O que inclui', P, 'inclui', 'Em branco: o bloco não aparece.'));
+    body.appendChild(c2Linhas('O que não inclui', P, 'nao', 'Em branco: o bloco não aparece.'));
+  }
   body.appendChild(c2Linhas('Combinados deste item', P, 'comb', 'Em branco nos avulsos: usa os combinados gerais.'));
   body.appendChild(c2Campo('Vídeo curto em loop (URL https, opcional)', P, 'video', {ph:'https://...'}));
   var fm = c2e('div', 'field'); fm.appendChild(c2e('label', 'label', 'Opções de preço'));
@@ -911,6 +950,8 @@ function c3Render() {
     b.appendChild(c2Campo('Subtítulo', M, 'sub', {max:140}));
     b.appendChild(c2Campo('Título do bloco de texto', M, 'oqt', {max:60}));
     b.appendChild(c2Campo('Texto curto', M, 'oque', {ta:true, max:400}));
+    b.appendChild(c2Campo('Pergunta dos stories', M, 'stq', {max:140}));
+    b.appendChild(c2Campo('Texto da caixa de seleção dos stories', M, 'stc', {max:80, hint:'Marcada pelo cliente, entra uma linha na mensagem do WhatsApp. Não mostra preço.'}));
     b.appendChild(c2e('div', 'sec-sep', 'Valor e parcelas'));
     b.appendChild(c2e('div', 'cd-hint', 'O destaque ("R$ 520/mês, de novembro a abril...") e a calculadora "Quando você entra" são gerados daqui. Valor total em branco: não aparecem.'));
     b.appendChild(c2Campo('Valor total (R$)', M, 'total', {ph:'Ex: 3120', max:12}));
@@ -925,12 +966,28 @@ function c3Render() {
     });
     b.appendChild(c2Campo('Data do evento (opcional)', M, 'data', {max:40}));
     b.appendChild(c2Campo('Vagas (opcional)', M, 'vagas', {max:40}));
-    b.appendChild(c2e('div', 'sec-sep', 'Stories nos outros dias'));
-    b.appendChild(c2e('div', 'cd-hint', 'Enquanto a data de ida e a de volta estiverem vazias, o calendário aparece só para ver, com o aviso "Informaremos a data disponível...". Preenchidas, só os dias da viagem ficam clicáveis.'));
-    b.appendChild(c2Campo('Mês e ano do calendário', M, 'cal', {ph:'AAAA-MM  (ex: 2027-04)', max:7}));
-    b.appendChild(c2Campo('Data de ida', M, 'ida', {ph:'AAAA-MM-DD', max:10}));
-    b.appendChild(c2Campo('Data de volta', M, 'volta', {ph:'AAAA-MM-DD', max:10}));
-    b.appendChild(c2Campo('Stories por dia, Milão (R$)', M, 'sdia', {ph:'Ex: 147', max:12}));
+    b.appendChild(c2e('div', 'sec-sep', 'Valor interno'));
+    b.appendChild(c2Campo('Stories por dia, Milão (R$)', M, 'sdia', {ph:'Ex: 147', max:12, hint:'Só para você. Não aparece para o cliente e não entra no link.'}));
+  });
+  // ---- PAGAMENTO
+  c3Fold(cont, 'pg', 'Formas de pagamento (informativo)', null, function(b) {
+    var G = c3S.pg;
+    b.appendChild(c2e('div', 'cd-hint', 'Só informa. Nada é cobrado automaticamente: o fechamento é combinado pelo WhatsApp. Textos em branco usam a frase padrão.'));
+    b.appendChild(c2Campo('Máximo de parcelas no cartão de crédito', G, 'n', {ph:'10', max:2}));
+    b.appendChild(c2Campo('Acréscimo do cartão (%)', G, 'j', {ph:'0', max:5, hint:'Soma ao total do Milão no cartão. 0 = sem acréscimo.'}));
+    b.appendChild(c2Campo('Texto: Avulsos', G, 'av', {ta:true, max:300, ph:'Pix ou boleto à vista. Cartão de crédito em até N vezes.'}));
+    b.appendChild(c2Campo('Texto: Recorrente', G, 'rc', {ta:true, max:300, ph:'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'}));
+    b.appendChild(c2Campo('Título: Milão sem cartão de crédito', G, 'm1', {max:120, ph:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'}));
+    b.appendChild(c2Campo('Título: Milão no cartão de crédito', G, 'm2', {max:120, ph:'Cartão de crédito'}));
+  });
+  // ---- OUTROS
+  c3Fold(cont, 'ou', 'Outros ajustes', null, function(b) {
+    var f = c2e('div', 'plano-ck' + (c3S.tt ? ' on' : '')); var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!c3S.tt;
+    f.appendChild(ck); f.appendChild(c2e('span', 'plano-ck-label', 'Mostrar "a confirmar" no TikTok'));
+    var tg = function(e) { if (e && e.target !== ck) ck.checked = !ck.checked; c3S.tt = ck.checked; f.classList.toggle('on', ck.checked); };
+    f.addEventListener('click', tg); ck.addEventListener('click', function(e) { e.stopPropagation(); tg(null); });
+    b.appendChild(f);
+    b.appendChild(c2Campo('Frase abaixo do contador', c3S, 'fr', {max:160, hint:'Em branco: a frase não aparece.'}));
   });
   var n = [c3S.av.on, c3S.rc.on, c3S.mi.on].filter(Boolean).length;
   document.getElementById('cdCount').textContent = n + ' de 3 abas ligadas. Os textos e valores são de referência e podem ser editados.';
@@ -982,7 +1039,7 @@ function gerarCardapio() {
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
-  var S3 = c3S, abas = [];
+  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:c3S.av.on && document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:c3S.rc.on && document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, {on:c3S.mi.on && document.getElementById('nvMi').checked})}), abas = [];
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
   if (!abas.length) { alert('Ligue ao menos 1 aba.'); return; }
   var vEnt = document.getElementById('cdVEntrada').value.trim();
@@ -994,7 +1051,14 @@ function gerarCardapio() {
     var sv = S3.av.servicos.filter(function(P) { return P.on; });
     if (!sv.length) { alert('A aba Avulsos está ligada sem nenhum serviço ligado.'); return; }
     var lista = [];
-    for (var i = 0; i < sv.length; i++) { var r = c3Out(sv[i]); if (r.erro) { alert(r.erro); return; } lista.push(r.c); }
+    for (var i = 0; i < sv.length; i++) {
+      var r = c3Out(sv[i]); if (r.erro) { alert(r.erro); return; }
+      if (r.c.id === 't' && !c3S.tt) {  // TikTok: sem o rótulo "a confirmar"
+        if (r.c.apoio) r.c.apoio = r.c.apoio.replace(/,?\s*a confirmar/i, '');
+        r.c.ops.concat(r.c.extras).forEach(function(x) { if (/^a confirmar$/i.test(x.nota || '')) delete x.nota; });
+      }
+      lista.push(r.c);
+    }
     data.av = {servicos:lista};
     if (S3.av.comb.length) data.av.comb = S3.av.comb;
   }
@@ -1017,16 +1081,15 @@ function gerarCardapio() {
     if (mTot && cdNum(mTot) == null) { alert('Valor total do Milão inválido.'); return; }
     var mSd = String(M.sdia || '').trim();
     if (mSd && cdNum(mSd) == null) { alert('Valor de stories por dia (Milão) inválido.'); return; }
-    var mCal = String(M.cal || '').trim();
-    if (mCal && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mCal)) { alert('Mês e ano do calendário do Milão: use AAAA-MM (ex: 2027-04).'); return; }
-    var mIda = String(M.ida || '').trim(), mVol = String(M.volta || '').trim();
-    var rD = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-    if ((mIda && !rD.test(mIda)) || (mVol && !rD.test(mVol))) { alert('Datas de ida e volta do Milão: use AAAA-MM-DD.'); return; }
-    if ((mIda && !mVol) || (!mIda && mVol)) { alert('Preencha as duas datas (ida e volta) do Milão, ou deixe as duas em branco.'); return; }
-    if (mIda && mVol && mIda > mVol) { alert('A data de ida do Milão vem depois da volta.'); return; }
-    ['titulo','sub','oqt','oque','total','inicio','fim','data','vagas','cal','ida','volta','sdia'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
+    ['titulo','sub','oqt','oque','stq','stc','total','inicio','fim','data','vagas'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
     data.mi = mi;
   }
+  var PG = c3S.pg || {}, pn = parseInt(PG.n, 10), pj = cdNum(PG.j);
+  if (!(pn >= 1 && pn <= 24)) { alert('Parcelas máximas no cartão: use um número de 1 a 24.'); return; }
+  if (PG.j !== '' && PG.j != null && (pj == null || pj < 0 || pj > 30)) { alert('Acréscimo do cartão (%): use um valor de 0 a 30.'); return; }
+  data.pg = {n:pn, j:(pj || 0)};
+  ['av','rc','m1','m2'].forEach(function(k) { var v = String(PG[k] || '').trim(); if (v) data.pg[k] = v.slice(0, 300); });
+  data.fr = String(c3S.fr == null ? '' : c3S.fr).trim().slice(0, 160);
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var lh = btoa(unescape(encodeURIComponent(String(expira) + nome))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
   data.expira = expira; data.lh = lh;
@@ -1042,13 +1105,14 @@ function gerarCardapio() {
     var link = window.location.origin + '/proposta.html?d=' + encoded;
     if (link.length > 12000) throw new Error('longo');
     return sha256hex(encoded).then(function(h) {
-      return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[true,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
+      return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
     }).then(function(r) {
       if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
       document.getElementById('resultUrl').textContent = link;
       document.getElementById('result').classList.add('show');
       document.getElementById('shortWrap').style.display = 'none';
       document.getElementById('btnCopy').textContent = 'Copiar link';
+      histLocal(r.id, {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:c3S}});
       carregarHistorico();
     });
   }).catch(function(e) {
@@ -1056,6 +1120,200 @@ function gerarCardapio() {
     else if (e.message !== 'sessao') alert('Erro de conexão. A proposta não foi salva.');
   }).then(function() { btn.disabled = false; btn.textContent = 'Gerar link →'; });
 }
+</script>
+<script>
+// ===== Admin em duas areas: "Planos de gestão" e "Cardápio" (cada uma com Nova proposta, Padrões e Histórico) =====
+var AREA = 'pl', SUB = 'nova', PL_MODELO = 'arq', PAD_M = 'arq', PAD_ABERTO = {};
+function $(id) { return document.getElementById(id); }
+function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+function copia(o) { return JSON.parse(JSON.stringify(o)); }
+
+// ---- etiquetas de incluso / nao incluso: toque liga/desliga, ⇄ move de lista, × remove
+function tagBox(cont, st, onChange) {
+  cont.textContent = '';
+  var ch = function() { if (onChange) onChange(); tagBox(cont, st, onChange); };
+  [['inc', 'Incluso', 'nao', 'Não incluso'], ['nao', 'Não incluso', 'inc', 'Incluso']].forEach(function(L) {
+    var arr = st[L[0]], outro = st[L[2]];
+    cont.appendChild(c2e('div', 'sec-sep', L[1]));
+    var w = c2e('div', 'tg-wrap');
+    arr.forEach(function(it, i) {
+      var tg = c2e('span', 'tg' + (L[0] === 'nao' ? ' no' : '') + (it.a ? '' : ' off'));
+      var b = c2e('button', 'tg-t', it.t); b.type = 'button'; b.setAttribute('aria-pressed', it.a ? 'true' : 'false'); b.title = 'Toque para ligar ou desligar';
+      b.addEventListener('click', function() { it.a = !it.a; ch(); });
+      var m = c2e('button', 'tg-x', '⇄'); m.type = 'button'; m.title = 'Mover para ' + L[3]; m.setAttribute('aria-label', 'Mover "' + it.t + '" para ' + L[3]);
+      m.addEventListener('click', function() { arr.splice(i, 1); outro.push(it); ch(); });
+      var x = c2e('button', 'tg-x', '×'); x.type = 'button'; x.title = 'Remover'; x.setAttribute('aria-label', 'Remover "' + it.t + '"');
+      x.addEventListener('click', function() { arr.splice(i, 1); ch(); });
+      tg.appendChild(b); tg.appendChild(m); tg.appendChild(x); w.appendChild(tg);
+    });
+    cont.appendChild(w);
+    var ad = c2e('div', 'tg-add'); var inp = c2e('input', 'inp'); inp.type = 'text'; inp.placeholder = 'Adicionar em "' + L[1].toLowerCase() + '"…'; inp.maxLength = 120;
+    var bt = c2e('button', 'btn-out', '+'); bt.type = 'button';
+    var add = function() { var v = inp.value.trim(); if (!v) return; arr.push({t:v, a:true}); ch(); };
+    bt.addEventListener('click', add); inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+    ad.appendChild(inp); ad.appendChild(bt); cont.appendChild(ad);
+  });
+}
+
+// ---- padroes dos Planos de gestao (por modelo)
+var PL_FAB = function() {
+  var mk = function(nome, de, por, inc, nao) { return {nome:nome, desc:'Gestão de conteúdo com captação direcionada, roteiros, contato com o cliente, Trello e Drive.', de:de, por:por, inc:inc.map(function(t) { return {t:t, a:true}; }), nao:nao.map(function(t) { return {t:t, a:true}; })}; };
+  var m = function(v) { return [0, 1, 2].map(function(i) { return mk((i + 1) + 'º Pacote', '', v[i], ITENS_DEF[i], NI_DEF[i]); }); };
+  return {arq:m(['2.690', '2.990', '3.290']), loja:m(['2.990', '3.690', '4.390'])};
+};
+var PAD_PL = (function() {
+  var f = PL_FAB(), sv = lsGet('sp_pad_pl', null);
+  if (sv && sv.arq && sv.loja && sv.arq.length === 3 && sv.loja.length === 3) return sv;
+  return f;
+})();
+function modeloAplica(m) {
+  PL_MODELO = m;
+  $('mdArq').classList.toggle('on', m === 'arq'); $('mdLoja').classList.toggle('on', m === 'loja');
+  PAD_PL[m].forEach(function(p, i) {
+    $('fV' + (i + 1)).value = p.por || ''; $('fVO' + (i + 1)).value = p.de || '';
+    iS[i] = copia(p.inc); niS[i] = copia(p.nao);
+    if ($('ib' + (i + 1)).classList.contains('show')) tagBox($('tb' + (i + 1)), {inc:iS[i], nao:niS[i]});
+  });
+}
+function padFold(cont, key, titulo, build) {
+  var w = c2e('div', 'pad-fold');
+  var tg = c2e('div', 'items-toggle'); tg.appendChild(c2e('span', 'items-toggle-label', titulo)); tg.appendChild(c2e('span', 'items-arrow' + (PAD_ABERTO[key] ? ' open' : ''), '›'));
+  tg.addEventListener('click', function() { PAD_ABERTO[key] = !PAD_ABERTO[key]; padPlRender(); });
+  w.appendChild(tg);
+  if (PAD_ABERTO[key]) { var b = c2e('div', 'items-body show'); b.style.margin = '0'; b.style.border = 'none'; build(b); w.appendChild(b); }
+  cont.appendChild(w);
+}
+function padPlRender() {
+  var c = $('padPl'); c.textContent = '';
+  var r = c2e('div', 'cd-seg-row'); r.style.marginBottom = '14px';
+  [['arq', 'Arquiteto'], ['loja', 'Loja']].forEach(function(o) {
+    var b = c2e('button', 'cd-seg' + (PAD_M === o[0] ? ' on' : ''), o[1]); b.type = 'button';
+    b.addEventListener('click', function() { PAD_M = o[0]; padPlRender(); }); r.appendChild(b);
+  });
+  c.appendChild(r);
+  c.appendChild(c2e('div', 'cd-hint', 'Planos de gestão: captação direcionada, roteiros, contato com o cliente, Trello e Drive. Nome e descrição ficam só aqui no admin; a página do cliente continua mostrando o que já mostrava. Os valores e os itens vão para o link.'));
+  PAD_PL[PAD_M].forEach(function(p, i) {
+    padFold(c, PAD_M + i, 'Plano ' + (i + 1) + ' · ' + (p.nome || '(sem nome)') + ' · R$ ' + (p.por || '—'), function(b) {
+      b.appendChild(c2Campo('Nome do plano', p, 'nome', {max:60}));
+      b.appendChild(c2Campo('Descrição', p, 'desc', {ta:true, max:300}));
+      var g = c2e('div', 'de-para');
+      var f1 = c2Campo('De (R$, opcional)', p, 'de', {max:12, ph:'Ex: 4.500'}), f2 = c2Campo('Por (R$)', p, 'por', {max:12, ph:'Ex: 2.690'});
+      g.appendChild(f1); g.appendChild(f2); b.appendChild(g);
+      var tb = c2e('div'); b.appendChild(tb); tagBox(tb, p);
+      var ap = c2e('button', 'btn-out', 'Aplicar a todos os planos'); ap.type = 'button'; ap.style.cssText = 'margin-top:10px;width:100%;';
+      ap.addEventListener('click', function() {
+        if (!confirm('Copiar o incluso e o não incluso do Plano ' + (i + 1) + ' para os outros dois planos de ' + (PAD_M === 'arq' ? 'Arquiteto' : 'Loja') + '?')) return;
+        PAD_PL[PAD_M].forEach(function(q, j) { if (j !== i) { q.inc = copia(p.inc); q.nao = copia(p.nao); } });
+        padPlRender();
+      });
+      b.appendChild(ap);
+    });
+  });
+  var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
+  var ok = c2e('div', 'pad-ok');
+  sv.addEventListener('click', function() {
+    ok.textContent = lsSet('sp_pad_pl', PAD_PL) ? 'Padrão salvo neste navegador. Vale para as próximas propostas.' : 'Não foi possível salvar neste navegador.';
+    modeloAplica(PL_MODELO);
+  });
+  var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
+  rs.addEventListener('click', function() { if (confirm('Voltar os dois modelos aos valores de fábrica? (Só vale depois de salvar.)')) { PAD_PL = PL_FAB(); padPlRender(); } });
+  c.appendChild(sv); c.appendChild(ok); c.appendChild(rs);
+}
+function padCdBotoes() {
+  var c = $('padCdBtns'); c.textContent = '';
+  var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
+  var ok = c2e('div', 'pad-ok');
+  sv.addEventListener('click', function() { ok.textContent = lsSet('sp_pad_cd', c3S) ? 'Padrão salvo neste navegador. Vale para as próximas propostas.' : 'Não foi possível salvar neste navegador.'; });
+  var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
+  rs.addEventListener('click', function() { if (confirm('Voltar o cardápio aos valores de fábrica? (Só vale depois de salvar.)')) { c3S = c3Defaults(); c3Render(); } });
+  c.appendChild(sv); c.appendChild(ok); c.appendChild(rs);
+}
+
+// ---- areas e secoes
+function areaSet(a) {
+  AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
+  $('atPl').classList.toggle('on', !card); $('atCd').classList.toggle('on', card);
+  [$('divCk1').parentNode, $('fld1'), $('fld2'), $('fld3'), $('itog1').parentNode, $('fModelo')].forEach(function(el) { el.style.display = card ? 'none' : ''; });
+  $('cdBlock').style.display = card ? 'block' : 'none';
+  $('padPl').style.display = card ? 'none' : ''; $('padCd').style.display = card ? '' : 'none';
+  $('novaTit').textContent = 'Nova proposta · ' + (card ? 'Cardápio' : 'Planos de gestão');
+  $('padTit').textContent = 'Padrões · ' + (card ? 'Cardápio' : 'Planos de gestão');
+  $('histTit').textContent = 'Histórico · ' + (card ? 'Cardápio' : 'Planos de gestão');
+  $('result').classList.remove('show');
+  subSet(SUB);
+  if (_lista.length) renderHistorico(_lista);
+}
+function subSet(s) {
+  SUB = s;
+  [['nova', 'secNova', 'stNova'], ['pad', 'secPad', 'stPad'], ['hist', 'secHist', 'stHist']].forEach(function(x) {
+    $(x[1]).style.display = s === x[0] ? '' : 'none'; $(x[2]).classList.toggle('on', s === x[0]);
+  });
+  if (s === 'pad') { if (AREA === 'cd') { c3Render(); padCdBotoes(); } else padPlRender(); }
+  if (s === 'hist') carregarHistorico();
+}
+
+// ---- copia local dos dados de cada proposta (para Duplicar e Copiar link); o servidor guarda so o resumo
+function histGet() { return lsGet('sp_hist', {order:[], m:{}}); }
+function histLocal(id, obj) {
+  if (!id) return;
+  var h = histGet(); if (h.order.indexOf(id) < 0) h.order.push(id); h.m[id] = obj;
+  while (h.order.length > 40) { delete h.m[h.order.shift()]; }
+  var n = 0;
+  while (!lsSet('sp_hist', h) && h.order.length > 1 && n++ < 40) { delete h.m[h.order.shift()]; }
+}
+function areaDe(p) {
+  var L = histGet().m[p.id]; if (L) return L.tipo;
+  var pl = p.planos || [true, true, true];
+  return (!pl[0] && !pl[1] && !pl[2]) ? 'cd' : 'pl';
+}
+function duplicarProposta(i) {
+  var p = _lista[i]; if (!p) return;
+  var L = histGet().m[p.id], a = areaDe(p);
+  areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
+  $('fNome').value = p.cliente; $('fEmail').value = '';
+  if (a === 'pl') {
+    var f = L && L.form;
+    if (f) {
+      modeloAplica(f.modelo || 'arq');
+      for (var n = 1; n <= 3; n++) { $('fV' + n).value = f.v[n - 1] || ''; $('fVO' + n).value = f.vo[n - 1] || ''; $('ck' + n).checked = !!f.ck[n - 1]; togglePlano(n, true); }
+      iS = copia(f.iS); niS = copia(f.niS);
+      for (var k = 1; k <= 3; k++) if ($('ib' + k).classList.contains('show')) tagBox($('tb' + k), {inc:iS[k - 1], nao:niS[k - 1]});
+    } else {
+      $('fV1').value = p.v1 || ''; $('fV2').value = p.v2 || ''; $('fV3').value = p.v3 || '';
+      $('fVO1').value = ''; $('fVO2').value = ''; $('fVO3').value = '';
+    }
+  } else if (L && L.form) {
+    var g = L.form;
+    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); if (!c3S.pg) c3S.pg = c3Defaults().pg; }
+    ['nvAv', 'nvRc', 'nvMi'].forEach(function(id, j) { $(id).checked = !!(g.nv || [true, true, true])[j]; });
+    $('cdVEntrada').value = g.vEnt || ''; $('cdObs').value = g.obs || ''; $('cdVidAbertura').value = g.vid || '';
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+  setTimeout(function() { $('fNome').focus(); $('fNome').select(); }, 400);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  $('atPl').addEventListener('click', function() { areaSet('pl'); });
+  $('atCd').addEventListener('click', function() { areaSet('cd'); });
+  $('stNova').addEventListener('click', function() { subSet('nova'); });
+  $('stPad').addEventListener('click', function() { subSet('pad'); });
+  $('stHist').addEventListener('click', function() { subSet('hist'); });
+  $('mdArq').addEventListener('click', function() { modeloAplica('arq'); });
+  $('mdLoja').addEventListener('click', function() { modeloAplica('loja'); });
+  [['nvDivAv', 'nvAv'], ['nvDivRc', 'nvRc'], ['nvDivMi', 'nvMi']].forEach(function(x) {
+    var d = $(x[0]), k = $(x[1]);
+    d.addEventListener('click', function() { k.checked = !k.checked; d.classList.toggle('on', k.checked); });
+    k.addEventListener('click', function(e) { e.stopPropagation(); d.classList.toggle('on', k.checked); });
+  });
+  modeloAplica('arq');
+  document.addEventListener('click', function(e) {
+    var t = e.target; if (!t.dataset || t.dataset.cp === undefined) return;
+    var p = _lista[+t.dataset.cp], L = p && histGet().m[p.id]; if (!L || !L.link) return;
+    var ok = function() { t.textContent = 'Copiado ✓'; setTimeout(function() { t.textContent = 'Copiar link'; }, 1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText(L.link).then(ok).catch(function() {});
+  });
+});
 </script>
 <script src="/admin-email.js"></script>
 </body>

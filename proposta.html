@@ -400,6 +400,15 @@
     .c3-mi-m.on{background:#F2E8D8;color:var(--mi-g);border-color:#F2E8D8;}
     .c3-mi-m:focus-visible,.c3-mi-d:focus-visible,.c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
     .c3-mi-res{min-height:56px;}
+    .c3-mi-pgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px;margin-top:6px;}
+    .c3-mi-pg{border:1px solid rgba(242,232,216,0.4);border-radius:16px;padding:18px;}
+    .c3-mi-pgt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;line-height:1.2;margin-bottom:10px;}
+    .c3-mi-pgl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;margin-bottom:10px;}
+    .c3-mi-pgn{font-size:13px;line-height:1.5;opacity:0.85;margin:12px 0 0;}
+    .c3-mi-chk{display:flex;align-items:flex-start;gap:12px;margin-top:6px;padding:14px 16px;border:1px solid currentColor;border-radius:14px;cursor:pointer;font-weight:600;line-height:1.4;}
+    .c3-mi-chk input{width:22px;height:22px;flex:0 0 22px;margin:0;accent-color:#6E2C14;cursor:pointer;}
+    .timer-bar.has-note{flex-wrap:wrap;row-gap:0;}
+    .timer-note{flex:0 0 100%;font-size:10px;line-height:1.2;color:rgba(244,234,221,0.65);text-align:right;margin-top:-2px;}
     .c3-mi-r1{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(28px,7vw,44px);letter-spacing:-0.03em;line-height:1.05;}
     .c3-mi-r2{font-size:14px;line-height:1.5;font-weight:400;margin-top:4px;opacity:0.9;}
     .c3-mi-aviso{margin:14px 0;padding:12px 14px;border:2px dashed rgba(242,232,216,0.65);border-radius:12px;font-size:14px;line-height:1.5;font-weight:600;}
@@ -419,7 +428,10 @@
     @media(min-width:820px){.c3-mi-oq .c3-mi-in{grid-template-columns:minmax(0,1fr) 300px;gap:44px;}.c3-mi-fig{width:100%;}}
     .c3-rlw{min-height:0;overflow:hidden;}
     .c3-rlw .c2-rl{max-height:30vh;}
-    .c3-pay{margin-top:12px;padding-top:10px;border-top:1px solid rgba(244,234,221,0.18);opacity:0.55;}
+    .c3-pg{margin-top:12px;padding-top:10px;border-top:1px solid rgba(244,234,221,0.18);}
+    .c3-pg-t{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.7);margin-bottom:6px;}
+    .c3-pg-p{font-size:12px;line-height:1.5;color:#F4EADD;margin:0 0 4px;}
+    .c3-pg-n{font-size:11px;line-height:1.45;color:rgba(244,234,221,0.7);margin:0;}
     .c3-pay-t{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.7);margin-bottom:6px;}
     .c3-pay-t small{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px;}
     .c3-pay-o{display:flex;flex-wrap:wrap;gap:6px;}
@@ -529,7 +541,7 @@
       <aside class="c2-recibo" id="c2Recibo" aria-label="Seu pacote">
         <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="c2-rl-w"><div class="c3-rlw"><div class="c2-rl" id="c2Rl"></div>
-          <div class="c3-pay" aria-disabled="true"><div class="c3-pay-t">Forma de pagamento <small>em breve</small></div><div class="c3-pay-o"><button type="button" disabled>Cartão recorrente</button><button type="button" disabled>Pix</button><button type="button" disabled>Boleto</button><button type="button" disabled>Cartão parcelado à vista</button></div></div>
+          <div class="c3-pg" id="c3Pg"></div>
         </div></div>
         <div class="c2-tots">
           <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v zero" id="c2TotM"><span class="cd-tot-de" id="c2TotMDe" style="display:none;"></span><span id="c2TotMV">—</span></div></div>
@@ -1078,12 +1090,10 @@
     function c3Tem(mod){
       var r=false;
       C2.it.forEach(function(o,k){if(C2.sel[k]&&C2.sel[k].on&&C2.paths[o.p]&&C2.paths[o.p].mod===mod)r=true;});
-      if(mod==='rc'&&(C3.mi.mes>=0||C3.mi.dias.length))r=true;
       return r;
     }
     function c3Limpa(mod){
       C2.it.forEach(function(o,k){if(C2.paths[o.p]&&C2.paths[o.p].mod===mod){C2.sel[k].on=false;C2.sel[k].q=1;}});
-      if(mod==='rc'){C3.mi.mes=-1;C3.mi.dias=[];}
     }
     function c3ModoTxt(){return c3Tem('av')?'Avulsos':(c3Tem('rc')?'Recorrente':'');}
     function c3Confirma(txt,ok){
@@ -1200,7 +1210,10 @@
 
     function c2Totais(){
       var t={m:0,mDe:0,u:0,uDe:0,n:0,g:[]};
+      // cada aba tem o seu proprio resumo: so entram itens da aba aberta
+      var tb=C3.tabs.length?C3.tab:'';var want=tb==='avulsos'?'av':(tb==='recorrente'?'rc':'');
       C2.paths.forEach(function(P,pi){
+        if(tb&&P.mod!==want)return;
         var g={titulo:P.titulo,l:[]};
         C2.it.forEach(function(o,k){
           if(o.p!==pi||!C2.sel[k].on)return;
@@ -1219,16 +1232,13 @@
         if(g.l.length)t.g.push(g);
       });
       var M=C3.mi;
-      if(M.cfg){
+      if(M.cfg&&(!tb||tb==='milao')){
         var gm={titulo:'Especial Milão',l:[]};
         if(M.mes>=0&&M.cfg.total){
           var pc=c3Parc(M.mes);t.n++;t.m+=pc.p;t.mDe+=pc.p;
           gm.l.push({t:'Parcela: '+pc.n+'x R$ '+cdFmt(pc.p)+' (entrada em '+C3_MESF[M.cfg.meses[M.mes]]+', total R$ '+cdFmt(M.cfg.total)+')',val:'R$ '+cdFmt(pc.p)+'/mês',de:null,mensal:true});
         }
-        if(M.dias.length&&M.cfg.sdia){
-          var sub=M.dias.length*M.cfg.sdia;t.n++;t.u+=sub;t.uDe+=sub;
-          gm.l.push({t:'Stories nos outros dias: '+M.dias.map(function(d){return c3Dd(d,M.cfg);}).join(', '),val:'R$ '+cdFmt(sub),de:null});
-        }
+        if(M.st){t.n++;gm.l.push({t:'Quero consultar stories por toda a viagem',val:'',de:null});}
         if(gm.l.length)t.g.push(gm);
       }
       return t;
@@ -1273,11 +1283,12 @@
           v.appendChild(document.createTextNode(l.val));r.appendChild(v);rl.appendChild(r);
         });
       });
-      var mt=C3.tabs.length?c3ModoTxt():'';
+      var mt=C3.tabs.length?C3_NOMES[C3.tab]:'';
       document.getElementById('c2RcN').textContent=t.n?((mt?mt+' · ':'')+t.n+(t.n===1?' item':' itens')):'';
       var recb=document.getElementById('c2Recibo');
       if(C3.tabs.length)recb.classList.toggle('c3-hide',C3.tab==='milao'&&!t.n);
       if(C3.miRender)C3.miRender();
+      c3PgRec();
       function de(idDe,idBox,v,d){
         var e=document.getElementById(idDe);
         document.getElementById(idBox).classList.toggle('zero',!(v>0));
@@ -1296,8 +1307,8 @@
       var ate=dt.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
       var ls=[];
       t.g.forEach(function(g){ls.push('*'+g.titulo+'*');g.l.forEach(function(l){ls.push('• '+l.t+' ('+l.val+')');});});
-      var mt=C3.tabs.length?c3ModoTxt():'';
-      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote'+(mt?' (modo '+mt+')':'')+':\n'+ls.join('\n')+
+      var mt=C3.tabs.length?C3_NOMES[C3.tab]:'';
+      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote'+(mt?' (aba '+mt+')':'')+':\n'+ls.join('\n')+
         '\n\nTotal mensal: R$ '+cdFmt(t.m)+'\nTotal único: R$ '+cdFmt(t.u)+
         '\nProposta válida até '+ate+'.\nPodemos avançar?';
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
@@ -1374,7 +1385,7 @@
     }
 
     // ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) =====
-    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[],mi:{cfg:null,mes:-1,dias:[]},miRender:null};
+    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[],mi:{cfg:null,mes:-1,st:false},pg:null,miRender:null};
     var C3_NOMES={avulsos:'Avulsos',recorrente:'Recorrente',milao:'Especial Milão'};
     var C3_GAL=[
       {src:'/img/assets-proposta/olhar-01-maquete.webp',leg:'Maquete'},
@@ -1587,6 +1598,27 @@
     // parcela = total / meses restantes ate o mes final (o total e sempre o mesmo)
     function c3Parc(i){var c=C3.mi.cfg,n=c.meses.length-i;return {p:Math.round(c.total/n*100)/100,n:n};}
 
+    function c3PgCfg(){
+      var g=(PROPOSTA&&PROPOSTA.pg&&typeof PROPOSTA.pg==='object')?PROPOSTA.pg:{};
+      var n=parseInt(g.n,10);if(!(n>=1&&n<=24))n=10;
+      var j=cdNum(g.j);if(j==null||j<0||j>30)j=0;
+      var f=function(k){return String(g[k]==null?'':g[k]).trim().slice(0,300);};
+      return {n:n,j:j,av:f('av'),rc:f('rc'),m1:f('m1'),m2:f('m2')};
+    }
+    function c3PgRec(){
+      var bx=document.getElementById('c3Pg');if(!bx)return;
+      bx.textContent='';
+      if(!C3.tabs.length||C3.tab==='milao'){bx.style.display='none';return;}
+      bx.style.display='';
+      var g=C3.pg||(C3.pg=c3PgCfg());
+      var txt=C3.tab==='avulsos'
+        ?(g.av||('Pix ou boleto à vista. Cartão de crédito em até '+g.n+' vezes'+(g.j>0?' (com acréscimo de '+cdFmt(g.j)+'% do cartão)':'')+'.'))
+        :(g.rc||'Cobrança mensal no cartão (recorrente), ou Pix e boleto.');
+      bx.appendChild(cdEl('div','c3-pg-t','Formas de pagamento'));
+      bx.appendChild(cdEl('p','c3-pg-p',txt));
+      bx.appendChild(cdEl('p','c3-pg-n','O pagamento é combinado com a gente pelo WhatsApp, no fechamento.'));
+    }
+
     function c3Milao(pane,M){
       M=M||{};
       var cfg=c3Cfg(M);C3.mi.cfg=cfg;
@@ -1607,7 +1639,13 @@
       var o=bloco('c3-mi-oq c2-reveal');
       var ot=cdEl('div','c3-mi-oqt');
       ot.appendChild(cdEl('div','c3-mi-t',T('oqt')||'Milão, com a gente.'));
-      ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'O Studio estará lá e cobrirá 1 dia inteiro de captação com você, da manhã à noite. Nos demais dias, você pode ter stories todos os dias, como adicional.'));
+      ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.'));
+      ot.appendChild(cdEl('p','c3-mi-p',T('stq')||'Quer stories durante toda a viagem? Você também pode ter essa opção.'));
+      var lb=cdEl('label','c3-mi-chk');
+      var ck=document.createElement('input');ck.type='checkbox';ck.id='c3MiSt';
+      lb.appendChild(ck);lb.appendChild(cdEl('span',null,T('stc')||'Quero consultar stories por toda a viagem'));
+      ck.addEventListener('change',function(){C3.mi.st=ck.checked;c2Recalc();});
+      ot.appendChild(lb);
       if(cfg.total&&cfg.meses.length){
         var n=cfg.meses.length,pm=Math.round(cfg.total/n*100)/100;
         ot.appendChild(cdEl('div','c3-mi-dest','R$ '+cdFmt(pm)+'/mês, de '+C3_MESF[cfg.meses[0]]+' a '+C3_MESF[cfg.meses[n-1]]+' ('+n+(n===1?' parcela':' parcelas')+', R$ '+cdFmt(cfg.total)+')'));
@@ -1615,21 +1653,24 @@
       o.appendChild(ot);
       var fg=cdEl('figure','c3-mi-fig');var im2=c2Img('milao-rua-italia',false);if(im2){fg.appendChild(im2);o.appendChild(fg);}
       var reps=[];
-      // calculadora: quando voce entra
+      reps.push(function(){ck.checked=!!C3.mi.st;});
+      // formas de pagamento: duas situacoes lado a lado (informativo; o fechamento e pelo WhatsApp)
       if(cfg.total&&cfg.meses.length){
-        var cb=bloco('c3-mi-lv c2-reveal');cb.appendChild(cdEl('div','c3-mi-t','Quando você entra'));
+        var pg=C3.pg||(C3.pg=c3PgCfg());
+        var cb=bloco('c3-mi-lv c2-reveal');cb.appendChild(cdEl('div','c3-mi-t','Formas de pagamento'));
+        var gr2=cdEl('div','c3-mi-pgs');
+        var A=cdEl('div','c3-mi-pg');
+        A.appendChild(cdEl('div','c3-mi-pgt',pg.m1||'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'));
+        A.appendChild(cdEl('div','c3-mi-pgl','Quando você entra'));
         var ms=cdEl('div','c3-mi-ms');ms.setAttribute('role','group');ms.setAttribute('aria-label','Mês de entrada');
         var btns=[];
         cfg.meses.forEach(function(mm,i){
           var b=cdEl('button','c3-mi-m',C3_MES[mm]);b.type='button';b.setAttribute('aria-pressed','false');b.setAttribute('aria-label',C3_MESF[mm]);
-          b.addEventListener('click',function(){
-            var go=function(){C3.mi.mes=C3.mi.mes===i?-1:i;c2Recalc();};
-            if(C3.mi.mes!==i)c3Troca('rc',go);else go();
-          });
+          b.addEventListener('click',function(){C3.mi.mes=C3.mi.mes===i?-1:i;c2Recalc();});
           ms.appendChild(b);btns.push(b);
         });
-        cb.appendChild(ms);
-        var res=cdEl('div','c3-mi-res');cb.appendChild(res);
+        A.appendChild(ms);
+        var res=cdEl('div','c3-mi-res');A.appendChild(res);
         reps.push(function(){
           btns.forEach(function(b,i){var on=C3.mi.mes===i;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
           res.textContent='';
@@ -1639,47 +1680,17 @@
             res.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(cfg.total)+' · entrada em '+C3_MESF[cfg.meses[C3.mi.mes]]));
           }else res.appendChild(cdEl('div','c3-mi-r2','Escolha o mês em que você entra.'));
         });
-      }
-      // stories nos outros dias (calendario do mes vindo do admin)
-      if(cfg.cal&&cfg.sdia){
-        var sb=bloco('c3-mi-cm c2-reveal');sb.appendChild(cdEl('div','c3-mi-t','Stories nos outros dias'));
-        sb.appendChild(cdEl('p','c3-mi-p','Stories todos os dias, como adicional: R$ '+cdFmt(cfg.sdia)+' por dia escolhido.'));
-        var aberto=!!(cfg.ida&&cfg.volta&&cfg.ida<=cfg.volta);
-        if(!aberto)sb.appendChild(cdEl('div','c3-mi-aviso','Informaremos a data disponível para a captação em '+C3_MESF[cfg.cal.m]+'.'));
-        var cal=cdEl('div','c3-mi-cal');
-        cal.appendChild(cdEl('div','c3-mi-cal-t',C3_MESF[cfg.cal.m]+' '+cfg.cal.y));
-        var hd=cdEl('div','c3-mi-cal-h');['D','S','T','Q','Q','S','S'].forEach(function(l){hd.appendChild(cdEl('span',null,l));});cal.appendChild(hd);
-        var gr=cdEl('div','c3-mi-cal-g');
-        var first=new Date(cfg.cal.y,cfg.cal.m,1).getDay(),dim=new Date(cfg.cal.y,cfg.cal.m+1,0).getDate();
-        for(var e=0;e<first;e++)gr.appendChild(cdEl('span','c3-mi-d vz'));
-        var dbt={};
-        for(var d=1;d<=dim;d++){
-          (function(d){
-            var dt=new Date(cfg.cal.y,cfg.cal.m,d),b=cdEl('button','c3-mi-d',String(d));b.type='button';
-            var ok=aberto&&dt>=cfg.ida&&dt<=cfg.volta;
-            if(!ok){b.disabled=true;}
-            else{b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){
-              var i=C3.mi.dias.indexOf(d);
-              if(i>-1){C3.mi.dias.splice(i,1);c2Recalc();return;}
-              c3Troca('rc',function(){C3.mi.dias.push(d);C3.mi.dias.sort(function(a,b2){return a-b2;});c2Recalc();});
-            });}
-            dbt[d]=b;gr.appendChild(b);
-          })(d);
-        }
-        cal.appendChild(gr);sb.appendChild(cal);
-        var inf=cdEl('div','c3-mi-cinf');sb.appendChild(inf);
-        reps.push(function(){
-          Object.keys(dbt).forEach(function(d){var on=C3.mi.dias.indexOf(+d)>-1;dbt[d].classList.toggle('on',on);if(!dbt[d].disabled)dbt[d].setAttribute('aria-pressed',on?'true':'false');});
-          inf.textContent='';
-          if(!aberto)return;
-          var n=C3.mi.dias.length;
-          if(!n)inf.appendChild(cdEl('span',null,'Clique nos dias desejados.'));
-          else{
-            var b1=cdEl('b',null,n+(n===1?' dia: ':' dias: '));inf.appendChild(b1);
-            inf.appendChild(document.createTextNode(C3.mi.dias.map(function(d){return c3Dd(d,cfg);}).join(', ')));
-            inf.appendChild(cdEl('div','c3-mi-sub2','Subtotal R$ '+cdFmt(n*cfg.sdia)));
-          }
-        });
+        var B=cdEl('div','c3-mi-pg');
+        B.appendChild(cdEl('div','c3-mi-pgt',pg.m2||'Cartão de crédito'));
+        B.appendChild(cdEl('div','c3-mi-pgl','Total em até '+pg.n+' parcelas'));
+        var tcar=Math.round(cfg.total*(1+pg.j/100)*100)/100,pcar=Math.round(tcar/pg.n*100)/100;
+        var rb=cdEl('div','c3-mi-res');
+        rb.appendChild(cdEl('div','c3-mi-r1',pg.n+' × R$ '+cdFmt(pcar)));
+        rb.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(tcar)+(pg.j>0?' · inclui acréscimo de '+cdFmt(pg.j)+'% do cartão':'')));
+        B.appendChild(rb);
+        B.appendChild(cdEl('p','c3-mi-pgn','Se preferir, Pix ou boleto à vista também é possível.'));
+        gr2.appendChild(A);gr2.appendChild(B);cb.appendChild(gr2);
+        cb.appendChild(cdEl('p','c3-mi-pgn','O pagamento é combinado com a gente pelo WhatsApp, no fechamento.'));
       }
       // dados opcionais (so aparecem se preenchidos)
       var dados=[['Data do evento',T('data')],['Vagas',T('vagas')]].filter(function(p){return p[1];});
@@ -1698,12 +1709,6 @@
       C3.miRender=function(){reps.forEach(function(f){f();});};
     }
 
-    function c3AtivaRc(){
-      if(C3.lazyOk||c3Tem('av'))return;C3.lazyOk=true;
-      C2.it.forEach(function(o,k){if(C2.paths[o.p]&&C2.paths[o.p].lazy&&o.x.pre)C2.sel[k].on=true;});
-      c2Recalc();
-    }
-
     function c3Medidas(){
       var tb=document.querySelector('.timer-bar');var h=tb?tb.offsetHeight:48;C3.hdr=h;
       var tabs=document.getElementById('c3Tabs');
@@ -1719,7 +1724,6 @@
       document.querySelectorAll('#c3Root .c3-pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===id);});
       var mi=id==='milao';
       document.body.classList.toggle('c3-mi-on',mi);
-      if(id==='recorrente')c3AtivaRc();
       c2Recalc();
       var an=document.getElementById('c3Anchor'),tb=document.getElementById('c3Tabs');
       C3.fx.forEach(function(f){f();});
@@ -1736,6 +1740,8 @@
       var ft=document.querySelector('.footer-proposta');ft.parentNode.insertBefore(rt,ft);
       document.body.classList.add('c2-on');
       var P=PROPOSTA;
+      var fr=String(P.fr==null?'Após essa data os valores podem mudar.':P.fr).trim().slice(0,160);
+      if(fr){var tbr=document.querySelector('.timer-bar');if(tbr&&!document.getElementById('timerNote')){tbr.classList.add('has-note');var tn=cdEl('div','timer-note',fr);tn.id='timerNote';tbr.appendChild(tn);}}
       C3.tabs=[];if(P.av)C3.tabs.push('avulsos');if(P.rc)C3.tabs.push('recorrente');if(P.mi)C3.tabs.push('milao');
       c2Abertura();c2Strip('c2Strip1');
       var mf=document.getElementById('c3ManifPh'),mfi=c2Img('manifesto-camiseta-bone',false);if(mfi)mf.appendChild(mfi);else mf.style.display='none';
@@ -1759,9 +1765,8 @@
       rt.classList.add('show');
       c3Medidas();window.addEventListener('resize',c3Medidas);window.addEventListener('load',c3Medidas);setTimeout(c3Medidas,700);
       if(document.fonts&&document.fonts.ready)document.fonts.ready.then(c3Medidas);
-      // marcado inicial: se a aba inicial e a Recorrente, o plano ja entra marcado
+      // nada vem pre-marcado: o cliente escolhe
       c3Tab(ini);
-      if(ini==='recorrente')c3AtivaRc();
       // o recibo (barra no mobile) so aparece depois que a abertura sai da tela
       var rec=document.getElementById('c2Recibo');
       if('IntersectionObserver' in window){
