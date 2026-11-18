@@ -167,7 +167,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
       <div class="items-body" id="ib3"><div id="tb3"></div></div>
     </div>
     <div id="cdBlock" style="display:none;">
-      <div class="field"><label class="label">Abas deste link</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck on" id="nvDivMi"><input type="checkbox" id="nvMi" checked><span class="plano-ck-label">Especial Milão</span></div></div>
+      <div class="field"><label class="label">Abas que este cliente vê</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck" id="nvDivMi"><input type="checkbox" id="nvMi"><span class="plano-ck-label">Especial Milão</span></div><div class="cd-hint">Marque pelo menos uma. Com uma só aba, a barra de abas some e a página abre direto nela.</div></div>
       <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
       <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
       <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
@@ -651,7 +651,7 @@ function c3Load() {
     var sv = JSON.parse(localStorage.getItem('sp_pad_cd') || 'null');
     if (sv && sv.av && sv.rc && sv.mi) {
       ['aba','av','rc','fr','tt'].forEach(function(k) { if (sv[k] != null) d[k] = sv[k]; });
-      d.mi = Object.assign(d.mi, sv.mi); d.pg = Object.assign(d.pg, sv.pg || {});
+      d.mi = Object.assign(d.mi, sv.mi); d.pg = Object.assign(d.pg, {av:(sv.pg||{}).av||'', rc:(sv.pg||{}).rc||'', m1:(sv.pg||{}).m1||'', m2:(sv.pg||{}).m2||''});
     }
   } catch (e) {}
   return d;
@@ -701,12 +701,12 @@ function c3Defaults() {
                 I('Revisão extra',60,'unidade',{rot:'por revisão'}),I('Pacote 2 artes por mês',150,'mensal'),I('Calendário anual de 12 datas',900,'unico')]}),
       gal:C3_GAL_TXT,
       difs:[{t:'Identidade cool e autoral',d:''},{t:'Equipe completa',d:'Filmmaker mobile, editor de vídeo e foto e social media.'},{t:'Rotina combinada',d:'Agenda, tabela de postagem e grupo com o videomaker.'}]},
-    mi:{on:true, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
+    mi:{on:false, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
       oqt:'Milão, com a gente.',
       oque:'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.',
-      total:'3120', inicio:'11', fim:'4', data:'', vagas:'', sdia:'147',
-      stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.', stc:'Quero consultar stories por toda a viagem'},
-    pg:{n:'10', j:'0', av:'', rc:'', m1:'', m2:''},
+      total:'3120', inicio:'11', fim:'4', data:'', vagas:'', cal:'2027-04', ida:'2027-04-13', volta:'2027-04-20', sdia:'147', sv:false,
+      stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.'},
+    pg:{ex:'12', av:'', rc:'', m1:'', m2:''},
     fr:'Após essa data os valores podem mudar.',
     tt:true
   };
@@ -825,11 +825,11 @@ function c2Limpa(x) {
 // pasta recolhivel; onObj (opcional) mostra a chave liga/desliga
 function c3Fold(cont, key, texto, onObj, build) {
   var tg = c2e('div', 'items-toggle');
-  var lab = c2e('span', 'items-toggle-label', texto + (onObj && !onObj.on ? ' (desligado)' : ''));
+  var lab = c2e('span', 'items-toggle-label', texto + (onObj && !onObj.on ? ' (desligada por padrão)' : ''));
   var ar = c2e('span', 'items-arrow' + (c2Aberto[key] ? ' open' : ''), '›');
   var lw = c2e('span'); lw.style.cssText = 'display:flex;align-items:center;min-width:0;';
   if (onObj) {
-    var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!onObj.on; ck.title = 'Exibir no link';
+    var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!onObj.on; ck.title = 'Aba ligada por padrão nas novas propostas';
     ck.style.cssText = 'width:16px;height:16px;accent-color:#6E2C14;margin-right:10px;flex-shrink:0;';
     ck.addEventListener('click', function(e) { e.stopPropagation(); });
     ck.addEventListener('change', function() { onObj.on = ck.checked; c3Render(); });
@@ -951,7 +951,6 @@ function c3Render() {
     b.appendChild(c2Campo('Título do bloco de texto', M, 'oqt', {max:60}));
     b.appendChild(c2Campo('Texto curto', M, 'oque', {ta:true, max:400}));
     b.appendChild(c2Campo('Pergunta dos stories', M, 'stq', {max:140}));
-    b.appendChild(c2Campo('Texto da caixa de seleção dos stories', M, 'stc', {max:80, hint:'Marcada pelo cliente, entra uma linha na mensagem do WhatsApp. Não mostra preço.'}));
     b.appendChild(c2e('div', 'sec-sep', 'Valor e parcelas'));
     b.appendChild(c2e('div', 'cd-hint', 'O destaque ("R$ 520/mês, de novembro a abril...") e a calculadora "Quando você entra" são gerados daqui. Valor total em branco: não aparecem.'));
     b.appendChild(c2Campo('Valor total (R$)', M, 'total', {ph:'Ex: 3120', max:12}));
@@ -966,16 +965,24 @@ function c3Render() {
     });
     b.appendChild(c2Campo('Data do evento (opcional)', M, 'data', {max:40}));
     b.appendChild(c2Campo('Vagas (opcional)', M, 'vagas', {max:40}));
-    b.appendChild(c2e('div', 'sec-sep', 'Valor interno'));
-    b.appendChild(c2Campo('Stories por dia, Milão (R$)', M, 'sdia', {ph:'Ex: 147', max:12, hint:'Só para você. Não aparece para o cliente e não entra no link.'}));
+    b.appendChild(c2e('div', 'sec-sep', 'Datas e stories na viagem'));
+    b.appendChild(c2Campo('Mês do calendário (AAAA-MM)', M, 'cal', {ph:'2027-04', max:7}));
+    b.appendChild(c2Campo('Ida (AAAA-MM-DD)', M, 'ida', {ph:'2027-04-13', max:10, hint:'Só os dias entre ida e volta ficam clicáveis. Em branco: o cliente vê o aviso de data a informar.'}));
+    b.appendChild(c2Campo('Volta (AAAA-MM-DD)', M, 'volta', {ph:'2027-04-20', max:10}));
+    b.appendChild(c2Campo('Stories por dia, Milão (R$)', M, 'sdia', {ph:'Ex: 147', max:12}));
+    var fv = c2e('div', 'plano-ck' + (M.sv ? ' on' : '')); var kv = c2e('input'); kv.type = 'checkbox'; kv.checked = !!M.sv;
+    fv.appendChild(kv); fv.appendChild(c2e('span', 'plano-ck-label', 'Exibir valor por dia ao cliente'));
+    var tv = function(e) { if (e && e.target !== kv) kv.checked = !kv.checked; M.sv = kv.checked; fv.classList.toggle('on', kv.checked); };
+    fv.addEventListener('click', tv); kv.addEventListener('click', function(e) { e.stopPropagation(); tv(null); });
+    b.appendChild(fv);
+    b.appendChild(c2e('div', 'cd-hint', 'Desligado (padrão): o cliente não vê preço e a escolha dos dias só informa o pedido. Ligado: o valor por dia aparece e o total único soma os dias.'));
   });
   // ---- PAGAMENTO
   c3Fold(cont, 'pg', 'Formas de pagamento (informativo)', null, function(b) {
     var G = c3S.pg;
-    b.appendChild(c2e('div', 'cd-hint', 'Só informa. Nada é cobrado automaticamente: o fechamento é combinado pelo WhatsApp. Textos em branco usam a frase padrão.'));
-    b.appendChild(c2Campo('Máximo de parcelas no cartão de crédito', G, 'n', {ph:'10', max:2}));
-    b.appendChild(c2Campo('Acréscimo do cartão (%)', G, 'j', {ph:'0', max:5, hint:'Soma ao total do Milão no cartão. 0 = sem acréscimo.'}));
-    b.appendChild(c2Campo('Texto: Avulsos', G, 'av', {ta:true, max:300, ph:'Pix ou boleto à vista. Cartão de crédito em até N vezes.'}));
+    b.appendChild(c2e('div', 'cd-hint', 'Só informa. Nada é cobrado automaticamente: hoje o fechamento passa por uma confirmação enviada pelo WhatsApp. Textos em branco usam a frase padrão.'));
+    b.appendChild(c2Campo('Parcelas do exemplo do Milão no cartão', G, 'ex', {ph:'12', max:2, hint:'Só um exemplo calculado. O cliente parcela no número de vezes que o banco oferecer.'}));
+    b.appendChild(c2Campo('Texto: Avulsos (antes da frase do cartão)', G, 'av', {ta:true, max:300, ph:'Pix ou boleto à vista.'}));
     b.appendChild(c2Campo('Texto: Recorrente', G, 'rc', {ta:true, max:300, ph:'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'}));
     b.appendChild(c2Campo('Título: Milão sem cartão de crédito', G, 'm1', {max:120, ph:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'}));
     b.appendChild(c2Campo('Título: Milão no cartão de crédito', G, 'm2', {max:120, ph:'Cartão de crédito'}));
@@ -1039,7 +1046,8 @@ function gerarCardapio() {
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
-  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:c3S.av.on && document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:c3S.rc.on && document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, {on:c3S.mi.on && document.getElementById('nvMi').checked})}), abas = [];
+  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, {on:document.getElementById('nvMi').checked})}), abas = [];
+  if (!S3.av.on && !S3.rc.on && !S3.mi.on) { alert('Marque pelo menos uma aba para este cliente.'); return; }
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
   if (!abas.length) { alert('Ligue ao menos 1 aba.'); return; }
   var vEnt = document.getElementById('cdVEntrada').value.trim();
@@ -1081,14 +1089,22 @@ function gerarCardapio() {
     if (mTot && cdNum(mTot) == null) { alert('Valor total do Milão inválido.'); return; }
     var mSd = String(M.sdia || '').trim();
     if (mSd && cdNum(mSd) == null) { alert('Valor de stories por dia (Milão) inválido.'); return; }
-    ['titulo','sub','oqt','oque','stq','stc','total','inicio','fim','data','vagas'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
+    if (M.sv && !mSd) { alert('Para exibir o valor por dia, preencha "Stories por dia (Milão)".'); return; }
+    var mCal = String(M.cal || '').trim(), mIda = String(M.ida || '').trim(), mVol = String(M.volta || '').trim();
+    if (mCal && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mCal)) { alert('Mês do calendário do Milão: use o formato AAAA-MM (ex: 2027-04).'); return; }
+    var dOk = function(v) { return /^\d{4}-\d{2}-\d{2}$/.test(v) && !isNaN(new Date(v + 'T12:00:00')); };
+    if ((mIda || mVol) && (!dOk(mIda) || !dOk(mVol))) { alert('Datas de ida e volta do Milão: use AAAA-MM-DD (ex: 2027-04-13).'); return; }
+    if (mIda && mVol && mIda > mVol) { alert('A volta do Milão precisa ser depois da ida.'); return; }
+    if (mCal && mIda && (mIda.slice(0, 7) !== mCal || mVol.slice(0, 7) !== mCal)) { alert('Ida e volta do Milão precisam estar no mês do calendário (' + mCal + ').'); return; }
+    ['titulo','sub','oqt','oque','stq','total','inicio','fim','data','vagas','cal','ida','volta'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
+    if (M.sv && mSd) mi.sdia = mSd;   // sem "Exibir valor por dia", o valor fica só no admin
     data.mi = mi;
   }
-  var PG = c3S.pg || {}, pn = parseInt(PG.n, 10), pj = cdNum(PG.j);
-  if (!(pn >= 1 && pn <= 24)) { alert('Parcelas máximas no cartão: use um número de 1 a 24.'); return; }
-  if (PG.j !== '' && PG.j != null && (pj == null || pj < 0 || pj > 30)) { alert('Acréscimo do cartão (%): use um valor de 0 a 30.'); return; }
-  data.pg = {n:pn, j:(pj || 0)};
+  var PG = c3S.pg || {}, pe = parseInt(PG.ex, 10);
+  if (!(pe >= 2 && pe <= 24)) { alert('Parcelas do exemplo no cartão: use um número de 2 a 24.'); return; }
+  data.pg = {ex:pe};
   ['av','rc','m1','m2'].forEach(function(k) { var v = String(PG[k] || '').trim(); if (v) data.pg[k] = v.slice(0, 300); });
+  if (abas.length === 1) data.um = 1;
   data.fr = String(c3S.fr == null ? '' : c3S.fr).trim().slice(0, 160);
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var lh = btoa(unescape(encodeURIComponent(String(expira) + nome))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
@@ -1232,7 +1248,7 @@ function padCdBotoes() {
 
 // ---- areas e secoes
 function areaSet(a) {
-  AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
+  window.NV_DUP = false; AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
   $('atPl').classList.toggle('on', !card); $('atCd').classList.toggle('on', card);
   [$('divCk1').parentNode, $('fld1'), $('fld2'), $('fld3'), $('itog1').parentNode, $('fModelo')].forEach(function(el) { el.style.display = card ? 'none' : ''; });
   $('cdBlock').style.display = card ? 'block' : 'none';
@@ -1244,8 +1260,14 @@ function areaSet(a) {
   subSet(SUB);
   if (_lista.length) renderHistorico(_lista);
 }
+function nvSync() {
+  [['nvAv', 'nvDivAv', 'av'], ['nvRc', 'nvDivRc', 'rc'], ['nvMi', 'nvDivMi', 'mi']].forEach(function(x) {
+    $(x[0]).checked = !!c3S[x[2]].on; $(x[1]).classList.toggle('on', !!c3S[x[2]].on);
+  });
+}
 function subSet(s) {
   SUB = s;
+  if (s === 'nova' && AREA === 'cd' && !window.NV_DUP) nvSync();
   [['nova', 'secNova', 'stNova'], ['pad', 'secPad', 'stPad'], ['hist', 'secHist', 'stHist']].forEach(function(x) {
     $(x[1]).style.display = s === x[0] ? '' : 'none'; $(x[2]).classList.toggle('on', s === x[0]);
   });
@@ -1270,6 +1292,7 @@ function areaDe(p) {
 function duplicarProposta(i) {
   var p = _lista[i]; if (!p) return;
   var L = histGet().m[p.id], a = areaDe(p);
+  window.NV_DUP = false;
   areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
   $('fNome').value = p.cliente; $('fEmail').value = '';
   if (a === 'pl') {
@@ -1285,8 +1308,9 @@ function duplicarProposta(i) {
     }
   } else if (L && L.form) {
     var g = L.form;
-    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); if (!c3S.pg) c3S.pg = c3Defaults().pg; }
-    ['nvAv', 'nvRc', 'nvMi'].forEach(function(id, j) { $(id).checked = !!(g.nv || [true, true, true])[j]; });
+    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); var dd = c3Defaults(); c3S.mi = Object.assign(dd.mi, c3S.mi); c3S.pg = Object.assign(dd.pg, {av:(c3S.pg||{}).av||'', rc:(c3S.pg||{}).rc||'', m1:(c3S.pg||{}).m1||'', m2:(c3S.pg||{}).m2||''}); if (c3S.fr == null) c3S.fr = dd.fr; }
+    window.NV_DUP = true;
+    ['nvAv', 'nvRc', 'nvMi'].forEach(function(id, j) { var on = !!(g.nv || [true, true, false])[j]; $(id).checked = on; $(id.replace('nv', 'nvDiv')).classList.toggle('on', on); });
     $('cdVEntrada').value = g.vEnt || ''; $('cdObs').value = g.obs || ''; $('cdVidAbertura').value = g.vid || '';
   }
   window.scrollTo({top:0, behavior:'smooth'});
@@ -1306,7 +1330,7 @@ document.addEventListener('DOMContentLoaded', function() {
     d.addEventListener('click', function() { k.checked = !k.checked; d.classList.toggle('on', k.checked); });
     k.addEventListener('click', function(e) { e.stopPropagation(); d.classList.toggle('on', k.checked); });
   });
-  modeloAplica('arq');
+  modeloAplica('arq'); nvSync();
   document.addEventListener('click', function(e) {
     var t = e.target; if (!t.dataset || t.dataset.cp === undefined) return;
     var p = _lista[+t.dataset.cp], L = p && histGet().m[p.id]; if (!L || !L.link) return;

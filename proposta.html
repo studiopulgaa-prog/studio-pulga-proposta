@@ -120,7 +120,7 @@
     @media(min-width:960px){.cd-grid{grid-template-columns:repeat(3,1fr);}}
     .cd-card{position:relative;display:flex;flex-direction:column;background:rgba(255,255,255,0.8);border:1.5px solid var(--border);border-radius:20px;padding:26px 22px 22px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;}
     .cd-card.rec{padding-top:32px;}
-    .cd-card.on{border-color:var(--br);box-shadow:0 10px 30px rgba(110,44,20,0.12);}
+    .cd-card.on{border-color:var(--br);}
     @media(hover:hover){.cd-card:hover{transform:translateY(-4px);}}
     .cd-nome{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;line-height:1.2;margin-bottom:6px;overflow-wrap:anywhere;}
     .cd-desc{font-size:13px;color:var(--gray);line-height:1.6;font-weight:300;margin-bottom:10px;overflow-wrap:anywhere;}
@@ -230,7 +230,9 @@
     .c2-sub{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);margin:16px 0 8px;}
     .c2-rw{margin-bottom:8px;}
     .c2-row{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;font:inherit;color:var(--br);background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;transition:background .2s,border-color .2s;}
-    .c2-row.on{border-color:var(--br);background:rgba(110,44,20,0.06);}
+    .c2-row.on{border-color:var(--br);background:rgba(110,44,20,0.09);}
+    .c2-row,.c2-card,.cd-card,.c3-tab,.c3-chip,.c3-mi-m,.c3-mi-d,.cd-btn,.c2-rc-t{-webkit-tap-highlight-color:transparent;}
+    .c2-row:focus,.c2-card:focus{outline:none;box-shadow:none;}
     .c2-ind{flex:0 0 22px;height:22px;margin-top:1px;border:1.5px solid var(--gray2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:transparent;transition:background .2s,border-color .2s,color .2s;}
     .c2-ind.rd{border-radius:50%;}
     .c2-ind svg{width:12px;height:12px;}
@@ -375,13 +377,13 @@
     .c3-mi-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(26px,6vw,44px);letter-spacing:-0.03em;line-height:1.05;margin-bottom:20px;}
     .c3-mi-p{font-size:clamp(15px,2.2vw,18px);line-height:1.7;font-weight:400;}
     .c3-mi-ul{list-style:none;display:grid;gap:10px;}
-    .c3-mi-ul li{font-size:clamp(16px,2.4vw,20px);line-height:1.4;font-weight:600;padding:14px 16px;border:2px solid rgba(242,232,216,0.55);border-radius:14px;}
+    .c3-mi-ul li{font-size:clamp(16px,2.4vw,20px);line-height:1.4;font-weight:600;padding:14px 16px;border:1.5px solid rgba(242,232,216,0.55);border-radius:14px;}
     .c3-mi-st{display:grid;gap:12px;}
     .c3-mi-s{padding:16px 18px;border-radius:14px;background:#F2E8D8;color:var(--mi-b);}
     .c3-mi-s b{display:block;font-family:'League Spartan',sans-serif;font-weight:900;font-size:19px;letter-spacing:-0.02em;margin-bottom:4px;}
     .c3-mi-s span{font-size:14px;line-height:1.55;font-weight:400;}
     .c3-mi-vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px;}
-    .c3-mi-v{padding:16px 18px;border:2px solid var(--mi-b);border-radius:14px;min-width:0;}
+    .c3-mi-v{padding:16px 18px;border:1.5px solid var(--mi-b);border-radius:14px;min-width:0;}
     .c3-mi-v small{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
     .c3-mi-v b{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(20px,4.4vw,30px);letter-spacing:-0.02em;line-height:1.1;overflow-wrap:anywhere;}
     .c3-mi-go{display:inline-block;padding:16px 34px;border-radius:50px;border:none;background:var(--mi-b);color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
@@ -396,12 +398,12 @@
     .c3-mi-flag{position:absolute;z-index:3;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F2E8D8 33.33% 66.66%,#BF4630 66.66% 100%);}
     .c3-mi-dest{margin-top:20px;display:inline-block;padding:14px 18px;border-radius:14px;background:var(--mi-r);color:#F2E8D8;font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(17px,3.6vw,24px);letter-spacing:-0.02em;line-height:1.2;}
     .c3-mi-ms{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
-    .c3-mi-m{min-width:58px;padding:12px 16px;border-radius:50px;border:2px solid rgba(242,232,216,0.7);background:transparent;color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
+    .c3-mi-m{min-width:58px;padding:12px 16px;border-radius:50px;border:1.5px solid rgba(242,232,216,0.7);background:transparent;color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
     .c3-mi-m.on{background:#F2E8D8;color:var(--mi-g);border-color:#F2E8D8;}
     .c3-mi-m:focus-visible,.c3-mi-d:focus-visible,.c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
     .c3-mi-res{min-height:56px;}
     .c3-mi-pgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px;margin-top:6px;}
-    .c3-mi-pg{border:1px solid rgba(242,232,216,0.4);border-radius:16px;padding:18px;}
+    .c3-mi-pg{border:1.5px solid rgba(242,232,216,0.4);border-radius:16px;padding:18px;}
     .c3-mi-pgt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;line-height:1.2;margin-bottom:10px;}
     .c3-mi-pgl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;margin-bottom:10px;}
     .c3-mi-pgn{font-size:13px;line-height:1.5;opacity:0.85;margin:12px 0 0;}
@@ -411,7 +413,7 @@
     .timer-note{flex:0 0 100%;font-size:10px;line-height:1.2;color:rgba(244,234,221,0.65);text-align:right;margin-top:-2px;}
     .c3-mi-r1{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(28px,7vw,44px);letter-spacing:-0.03em;line-height:1.05;}
     .c3-mi-r2{font-size:14px;line-height:1.5;font-weight:400;margin-top:4px;opacity:0.9;}
-    .c3-mi-aviso{margin:14px 0;padding:12px 14px;border:2px dashed rgba(242,232,216,0.65);border-radius:12px;font-size:14px;line-height:1.5;font-weight:600;}
+    .c3-mi-aviso{margin:14px 0;padding:12px 14px;border:1.5px dashed rgba(242,232,216,0.65);border-radius:12px;font-size:14px;line-height:1.5;font-weight:600;}
     .c3-mi-cal{margin-top:16px;max-width:420px;background:#F2E8D8;color:var(--mi-b);border-radius:16px;padding:14px;}
     .c3-mi-cal-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;text-transform:capitalize;margin-bottom:8px;}
     .c3-mi-cal-h,.c3-mi-cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
@@ -445,6 +447,31 @@
     .c3-conf-bt button{flex:1;padding:13px 10px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font:700 14px 'Outfit',sans-serif;cursor:pointer;}
     .c3-conf-bt button:first-child{background:var(--br);color:#F4EADD;}
     .c3-conf-bt button:focus-visible{outline:2px solid #FFB347;outline-offset:2px;}
+    .c3-duv{flex:1 1 100%;margin-top:8px;padding:10px 16px;border-radius:50px;border:1.5px solid rgba(244,234,221,0.7);background:transparent;color:#F4EADD;font:600 13px 'Outfit',sans-serif;cursor:pointer;}
+    .c3-duv-f{display:inline-block;margin-top:16px;padding:11px 22px;border-radius:50px;border:1.5px solid rgba(244,234,221,0.7);background:transparent;color:#F4EADD;font:600 13px 'Outfit',sans-serif;cursor:pointer;}
+    @media(min-width:720px){.c3-duv{flex:0 0 auto;margin:0 0 0 8px;}}
+    @media(min-width:1000px){.c2-recibo .c3-duv{width:100%;margin:8px 0 0;}}
+    .c3-fin-b{max-width:440px;max-height:calc(100dvh - 40px);overflow-y:auto;}
+    .c3-fin-b h2{font-family:'League Spartan',sans-serif;font-weight:900;font-size:22px;margin:0 0 12px;}
+    .c3-fin-g{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);margin:12px 0 4px;}
+    .c3-fin-l{display:flex;justify-content:space-between;gap:10px;font-size:14px;line-height:1.4;padding:3px 0;}
+    .c3-fin-l b{white-space:nowrap;}
+    .c3-fin-t{display:flex;justify-content:space-between;font-weight:700;font-size:15px;padding:8px 0 0;border-top:1px solid var(--border);margin-top:10px;}
+    .c3-fin-b fieldset{border:none;margin:14px 0 0;padding:0;}
+    .c3-fin-b legend{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
+    .c3-fin-o{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;cursor:pointer;}
+    .c3-fin-o input{width:18px;height:18px;accent-color:#6E2C14;}
+    .c3-fin-b label.c3-fin-f{display:block;font-size:12px;font-weight:700;margin-top:10px;color:var(--gray);}
+    .c3-fin-b input[type=text],.c3-fin-b input[type=email],.c3-fin-b input[type=tel]{display:block;width:100%;margin-top:4px;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font:500 15px 'Outfit',sans-serif;color:var(--br);background:#fff;}
+    .c3-fin-n{font-size:12px;line-height:1.45;color:var(--gray);margin:12px 0 0;}
+    .c3-fin-e{font-size:13px;font-weight:700;color:#B3261E;margin-top:8px;min-height:16px;}
+    .c3-fin-b .c3-conf-bt{margin-top:14px;}
+    .c3-mi-ctl{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
+    .c3-mi-tod{padding:12px 18px;border-radius:50px;border:1.5px solid rgba(242,232,216,0.7);background:transparent;color:#F2E8D8;font:700 14px 'Outfit',sans-serif;cursor:pointer;}
+    .c3-mi-tod.on{background:#F2E8D8;color:var(--mi-g);border-color:#F2E8D8;}
+    .c3-mi-cm{padding-bottom:6px;}
+    .c3-mi-cinf{margin-top:12px;font-size:14px;line-height:1.5;font-weight:600;}
+    .c3-mi-sub2{margin-top:4px;font-weight:800;}
     .c3-mi-cta{background:var(--mi-r);color:#F2E8D8;text-align:center;}
     .c3-mi-cta .c3-mi-go{background:#F2E8D8;color:var(--mi-b);}
     /* aba Avulsos: chips com fade e arrasto; foto de baixa resolucao nao e ampliada */
@@ -547,10 +574,12 @@
           <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v zero" id="c2TotM"><span class="cd-tot-de" id="c2TotMDe" style="display:none;"></span><span id="c2TotMV">—</span></div></div>
           <div class="cd-tot"><div class="cd-tot-l">Total único</div><div class="cd-tot-v zero" id="c2TotU"><span class="cd-tot-de" id="c2TotUDe" style="display:none;"></span><span id="c2TotUV">—</span></div></div>
           <button type="button" class="cd-go" id="c2Go">Quero este pacote</button>
+          <button type="button" class="c3-duv" id="c3Duv">Tirar dúvidas no WhatsApp</button>
         </div>
       </aside>
     </div>
     <div class="c3-pane c3-mi" data-tab="milao" id="c3PMi" role="tabpanel"></div>
+    <div class="c3-conf" id="c3Fin" role="dialog" aria-modal="true" aria-labelledby="c3FinT" hidden><div class="c3-conf-b c3-fin-b" id="c3FinB"></div></div>
     <div class="c3-conf" id="c3Conf" role="alertdialog" aria-modal="true" aria-labelledby="c3ConfT" hidden><div class="c3-conf-b"><p id="c3ConfT"></p><div class="c3-conf-bt"><button type="button" id="c3ConfOk">Confirmar</button><button type="button" id="c3ConfNo">Cancelar</button></div></div></div>
   </div></template>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
@@ -1238,7 +1267,12 @@
           var pc=c3Parc(M.mes);t.n++;t.m+=pc.p;t.mDe+=pc.p;
           gm.l.push({t:'Parcela: '+pc.n+'x R$ '+cdFmt(pc.p)+' (entrada em '+C3_MESF[M.cfg.meses[M.mes]]+', total R$ '+cdFmt(M.cfg.total)+')',val:'R$ '+cdFmt(pc.p)+'/mês',de:null,mensal:true});
         }
-        if(M.st){t.n++;gm.l.push({t:'Quero consultar stories por toda a viagem',val:'',de:null});}
+        if(M.dias.length&&M.cfg.cal){
+          var lst=M.dias.map(function(d){return c3Dd(d,M.cfg);}).join(', ');
+          var sub=M.cfg.sdia?M.dias.length*M.cfg.sdia:0;
+          t.n++;if(sub){t.u+=sub;t.uDe+=sub;}
+          gm.l.push({t:'Stories na viagem: '+(M.todos?'todos os dias da viagem ('+lst+')':lst),val:sub?'R$ '+cdFmt(sub):'',de:null});
+        }
         if(gm.l.length)t.g.push(gm);
       }
       return t;
@@ -1300,21 +1334,91 @@
       go.textContent=t.n===0?'Escolha ao menos um item':'Quero este pacote';
     }
 
-    function c2Quero(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
-      var t=c2Totais();if(!t.n)return;
+    var C3_ZAP='5513996057099';
+    function c3AbreZap(msg){
+      var url='https://wa.me/'+C3_ZAP+'?text='+encodeURIComponent(msg);
+      var w=window.open(url,'_blank');
+      if(!w)window.location.href=url;
+    }
+    function c3Duvidas(){c3AbreZap('Olá! Vi a proposta e queria tirar uma dúvida sobre os planos.');}
+
+    // Ponto unico do fechamento. Hoje monta a mensagem e abre o WhatsApp; no futuro pode virar um checkout.
+    function finalizarPedido(d,t){
+      d=d||{};
       var dt=new Date(PROPOSTA.expira);
       var ate=dt.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
       var ls=[];
-      t.g.forEach(function(g){ls.push('*'+g.titulo+'*');g.l.forEach(function(l){ls.push('• '+l.t+' ('+l.val+')');});});
+      t.g.forEach(function(g){ls.push('*'+g.titulo+'*');g.l.forEach(function(l){ls.push('• '+l.t+(l.val?' ('+l.val+')':''));});});
       var mt=C3.tabs.length?C3_NOMES[C3.tab]:'';
-      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote'+(mt?' (aba '+mt+')':'')+':\n'+ls.join('\n')+
-        '\n\nTotal mensal: R$ '+cdFmt(t.m)+'\nTotal único: R$ '+cdFmt(t.u)+
-        '\nProposta válida até '+ate+'.\nPodemos avançar?';
+      var msg='Olá! Sou '+(d.nome||PROPOSTA.nome)+'. Quero este pacote'+(mt?' (aba '+mt+')':'')+':\n'+ls.join('\n')+
+        '\n'+(t.m?'\nTotal mensal: R$ '+cdFmt(t.m):'')+(t.u?'\nTotal único: R$ '+cdFmt(t.u):'');
+      if(d.pag)msg+='\nForma de pagamento de preferência: '+d.pag;
+      if(d.email)msg+='\nE-mail: '+d.email;
+      if(d.tel)msg+='\nTelefone: '+d.tel;
+      msg+='\nProposta válida até '+ate+'.\nPodemos avançar?';
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
-      var url='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
-      var w=window.open(url,'_blank');
-      if(!w)window.location.href=url;
+      c3AbreZap(msg);
+    }
+
+    function c3FormasPag(){
+      return C3.tab==='avulsos'?['Pix','Boleto','Cartão de crédito']
+        :C3.tab==='recorrente'?['Cartão recorrente','Pix','Boleto']
+        :['Pix, boleto ou cartão recorrente','Cartão de crédito'];
+    }
+    function c3Finaliza(t){
+      var box=document.getElementById('c3Fin'),b=document.getElementById('c3FinB');
+      if(!box){finalizarPedido({},t);return;}
+      var ant=document.activeElement;
+      b.textContent='';
+      var h=cdEl('h2',null,'Confirme seu pedido');h.id='c3FinT';b.appendChild(h);
+      t.g.forEach(function(g){
+        b.appendChild(cdEl('div','c3-fin-g',g.titulo));
+        g.l.forEach(function(l){var r=cdEl('div','c3-fin-l');r.appendChild(cdEl('span',null,l.t));if(l.val)r.appendChild(cdEl('b',null,l.val));b.appendChild(r);});
+      });
+      var r1=cdEl('div','c3-fin-t');r1.appendChild(cdEl('span',null,'Total mensal'));r1.appendChild(cdEl('span',null,t.m?'R$ '+cdFmt(t.m):'—'));b.appendChild(r1);
+      var r2=cdEl('div','c3-fin-l');r2.style.fontWeight='700';r2.appendChild(cdEl('span',null,'Total único'));r2.appendChild(cdEl('span',null,t.u?'R$ '+cdFmt(t.u):'—'));b.appendChild(r2);
+      var fs=cdEl('fieldset');fs.appendChild(cdEl('legend',null,'Forma de pagamento de preferência'));
+      var opcoes=['Ainda não sei'].concat(c3FormasPag());
+      opcoes.forEach(function(o,i){
+        var lb=cdEl('label','c3-fin-o');var rd=document.createElement('input');rd.type='radio';rd.name='c3Pag';rd.value=i===0?'':o;if(i===0)rd.checked=true;
+        lb.appendChild(rd);lb.appendChild(cdEl('span',null,o));fs.appendChild(lb);
+      });
+      b.appendChild(fs);
+      function campo(rot,tipo,id,val,ac){
+        var lb=cdEl('label','c3-fin-f',rot);lb.setAttribute('for',id);b.appendChild(lb);
+        var i=document.createElement('input');i.type=tipo;i.id=id;i.value=val||'';i.maxLength=120;i.autocomplete=ac;if(tipo==='tel')i.inputMode='tel';b.appendChild(i);return i;
+      }
+      var fn=campo('Nome','text','c3FinNome',PROPOSTA.nome,'name');
+      var fe=campo('E-mail','email','c3FinEmail','','email');
+      var ft=campo('Telefone','tel','c3FinTel','','tel');
+      b.appendChild(cdEl('p','c3-fin-n','O botão abre o WhatsApp com tudo preenchido. '+C3_PG_ZAP));
+      var er=cdEl('div','c3-fin-e');er.setAttribute('role','alert');b.appendChild(er);
+      var bt=cdEl('div','c3-conf-bt');
+      var ok=cdEl('button',null,'Enviar pedido');ok.type='button';var no=cdEl('button',null,'Voltar');no.type='button';
+      bt.appendChild(ok);bt.appendChild(no);b.appendChild(bt);
+      function fecha(){box.hidden=true;document.removeEventListener('keydown',esc,true);document.body.style.overflow='';if(ant&&ant.focus)ant.focus();}
+      function esc(e){if(e.key==='Escape')fecha();}
+      no.onclick=fecha;
+      ok.onclick=function(){
+        var nome=fn.value.trim(),em=fe.value.trim(),tel=ft.value.trim();
+        if(!nome){er.textContent='Informe o seu nome.';fn.focus();return;}
+        if(em&&!/^\S+@\S+\.\S+$/.test(em)){er.textContent='Confira o e-mail.';fe.focus();return;}
+        if(tel&&tel.replace(/\D/g,'').length<10){er.textContent='Confira o telefone (com DDD).';ft.focus();return;}
+        if(Date.now()>PROPOSTA.expira){fecha();document.getElementById('expiredScreen').classList.add('show');return;}
+        var sel=b.querySelector('input[name=c3Pag]:checked');
+        var tt=c2Totais();if(!tt.n){fecha();return;}
+        fecha();
+        finalizarPedido({nome:nome,email:em,tel:tel,pag:sel?sel.value:''},tt);
+      };
+      document.addEventListener('keydown',esc,true);
+      document.body.style.overflow='hidden';
+      box.hidden=false;b.scrollTop=0;ok.focus({preventScroll:true});
+    }
+    function c2Quero(){
+      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      var t=c2Totais();if(!t.n)return;
+      if(!C3.tabs.length){finalizarPedido({},t);return;}
+      c3Finaliza(t);
     }
 
     function c2Strip(id){
@@ -1385,7 +1489,7 @@
     }
 
     // ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) =====
-    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[],mi:{cfg:null,mes:-1,st:false},pg:null,miRender:null};
+    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[],mi:{cfg:null,mes:-1,dias:[],todos:false},pg:null,miRender:null};
     var C3_NOMES={avulsos:'Avulsos',recorrente:'Recorrente',milao:'Especial Milão'};
     var C3_GAL=[
       {src:'/img/assets-proposta/olhar-01-maquete.webp',leg:'Maquete'},
@@ -1581,6 +1685,7 @@
     var C3_MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
     var C3_MESF=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
     function c3Dd(d,cfg){return ('0'+d).slice(-2)+'/'+('0'+(cfg.cal.m+1)).slice(-2);}
+    function c3Dd(d,cfg){return ('0'+d).slice(-2)+'/'+('0'+(cfg.cal.m+1)).slice(-2);}
     function c3Cfg(M){
       var tot=cdNum(M.total),a=parseInt(M.inicio,10),b=parseInt(M.fim,10),sd=cdNum(M.sdia);
       var cfg={total:null,meses:[],sdia:(sd!=null&&sd>0)?sd:null,cal:null,ida:null,volta:null};
@@ -1598,12 +1703,13 @@
     // parcela = total / meses restantes ate o mes final (o total e sempre o mesmo)
     function c3Parc(i){var c=C3.mi.cfg,n=c.meses.length-i;return {p:Math.round(c.total/n*100)/100,n:n};}
 
+    var C3_PG_BANCO='Parcele no número de vezes que o seu banco oferecer, escolhendo na tela de pagamento.';
+    var C3_PG_ZAP='Hoje o fechamento passa por uma confirmação enviada pelo WhatsApp.';
     function c3PgCfg(){
       var g=(PROPOSTA&&PROPOSTA.pg&&typeof PROPOSTA.pg==='object')?PROPOSTA.pg:{};
-      var n=parseInt(g.n,10);if(!(n>=1&&n<=24))n=10;
-      var j=cdNum(g.j);if(j==null||j<0||j>30)j=0;
+      var n=parseInt(g.ex,10);if(!(n>=2&&n<=24))n=12;
       var f=function(k){return String(g[k]==null?'':g[k]).trim().slice(0,300);};
-      return {n:n,j:j,av:f('av'),rc:f('rc'),m1:f('m1'),m2:f('m2')};
+      return {ex:n,av:f('av'),rc:f('rc'),m1:f('m1'),m2:f('m2')};
     }
     function c3PgRec(){
       var bx=document.getElementById('c3Pg');if(!bx)return;
@@ -1611,12 +1717,12 @@
       if(!C3.tabs.length||C3.tab==='milao'){bx.style.display='none';return;}
       bx.style.display='';
       var g=C3.pg||(C3.pg=c3PgCfg());
-      var txt=C3.tab==='avulsos'
-        ?(g.av||('Pix ou boleto à vista. Cartão de crédito em até '+g.n+' vezes'+(g.j>0?' (com acréscimo de '+cdFmt(g.j)+'% do cartão)':'')+'.'))
-        :(g.rc||'Cobrança mensal no cartão (recorrente), ou Pix e boleto.');
       bx.appendChild(cdEl('div','c3-pg-t','Formas de pagamento'));
-      bx.appendChild(cdEl('p','c3-pg-p',txt));
-      bx.appendChild(cdEl('p','c3-pg-n','O pagamento é combinado com a gente pelo WhatsApp, no fechamento.'));
+      if(C3.tab==='avulsos'){
+        bx.appendChild(cdEl('p','c3-pg-p',g.av||'Pix ou boleto à vista.'));
+        bx.appendChild(cdEl('p','c3-pg-p','Cartão de crédito: '+C3_PG_BANCO.charAt(0).toLowerCase()+C3_PG_BANCO.slice(1)));
+      }else bx.appendChild(cdEl('p','c3-pg-p',g.rc||'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'));
+      bx.appendChild(cdEl('p','c3-pg-n',C3_PG_ZAP));
     }
 
     function c3Milao(pane,M){
@@ -1640,12 +1746,6 @@
       var ot=cdEl('div','c3-mi-oqt');
       ot.appendChild(cdEl('div','c3-mi-t',T('oqt')||'Milão, com a gente.'));
       ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.'));
-      ot.appendChild(cdEl('p','c3-mi-p',T('stq')||'Quer stories durante toda a viagem? Você também pode ter essa opção.'));
-      var lb=cdEl('label','c3-mi-chk');
-      var ck=document.createElement('input');ck.type='checkbox';ck.id='c3MiSt';
-      lb.appendChild(ck);lb.appendChild(cdEl('span',null,T('stc')||'Quero consultar stories por toda a viagem'));
-      ck.addEventListener('change',function(){C3.mi.st=ck.checked;c2Recalc();});
-      ot.appendChild(lb);
       if(cfg.total&&cfg.meses.length){
         var n=cfg.meses.length,pm=Math.round(cfg.total/n*100)/100;
         ot.appendChild(cdEl('div','c3-mi-dest','R$ '+cdFmt(pm)+'/mês, de '+C3_MESF[cfg.meses[0]]+' a '+C3_MESF[cfg.meses[n-1]]+' ('+n+(n===1?' parcela':' parcelas')+', R$ '+cdFmt(cfg.total)+')'));
@@ -1653,7 +1753,6 @@
       o.appendChild(ot);
       var fg=cdEl('figure','c3-mi-fig');var im2=c2Img('milao-rua-italia',false);if(im2){fg.appendChild(im2);o.appendChild(fg);}
       var reps=[];
-      reps.push(function(){ck.checked=!!C3.mi.st;});
       // formas de pagamento: duas situacoes lado a lado (informativo; o fechamento e pelo WhatsApp)
       if(cfg.total&&cfg.meses.length){
         var pg=C3.pg||(C3.pg=c3PgCfg());
@@ -1682,15 +1781,72 @@
         });
         var B=cdEl('div','c3-mi-pg');
         B.appendChild(cdEl('div','c3-mi-pgt',pg.m2||'Cartão de crédito'));
-        B.appendChild(cdEl('div','c3-mi-pgl','Total em até '+pg.n+' parcelas'));
-        var tcar=Math.round(cfg.total*(1+pg.j/100)*100)/100,pcar=Math.round(tcar/pg.n*100)/100;
+        var bp=cdEl('p','c3-mi-pgn',C3_PG_BANCO);bp.style.margin='0 0 10px';B.appendChild(bp);
+        var pex=Math.round(cfg.total/pg.ex*100)/100;
         var rb=cdEl('div','c3-mi-res');
-        rb.appendChild(cdEl('div','c3-mi-r1',pg.n+' × R$ '+cdFmt(pcar)));
-        rb.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(tcar)+(pg.j>0?' · inclui acréscimo de '+cdFmt(pg.j)+'% do cartão':'')));
+        rb.appendChild(cdEl('div','c3-mi-r2','Exemplo calculado'));
+        rb.appendChild(cdEl('div','c3-mi-r1',pg.ex+' × R$ '+cdFmt(pex)));
+        rb.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(cfg.total)+'. O número de parcelas disponível é o que o seu banco oferecer.'));
         B.appendChild(rb);
         B.appendChild(cdEl('p','c3-mi-pgn','Se preferir, Pix ou boleto à vista também é possível.'));
         gr2.appendChild(A);gr2.appendChild(B);cb.appendChild(gr2);
-        cb.appendChild(cdEl('p','c3-mi-pgn','O pagamento é combinado com a gente pelo WhatsApp, no fechamento.'));
+        cb.appendChild(cdEl('p','c3-mi-pgn',C3_PG_ZAP));
+      }
+      // Stories na viagem: todos os dias ou dias escolhidos (so os dias da viagem clicam)
+      var aberto=!!(cfg.cal&&cfg.ida&&cfg.volta&&cfg.ida<=cfg.volta);
+      if(cfg.cal){
+        var sb=bloco('c3-mi-cm c2-reveal');sb.appendChild(cdEl('div','c3-mi-t','Stories na viagem'));
+        sb.appendChild(cdEl('p','c3-mi-p',T('stq')||'Quer stories durante toda a viagem? Você também pode ter essa opção.'));
+        if(cfg.sdia)sb.appendChild(cdEl('p','c3-mi-p','Valor: R$ '+cdFmt(cfg.sdia)+' por dia escolhido.'));
+        var dias=[];
+        if(aberto){for(var q=new Date(cfg.ida);q<=cfg.volta;q.setDate(q.getDate()+1)){if(q.getMonth()===cfg.cal.m)dias.push(q.getDate());}}
+        else sb.appendChild(cdEl('div','c3-mi-aviso','Informaremos a data disponível para a captação em '+C3_MESF[cfg.cal.m]+'.'));
+        var tod=null;
+        if(aberto&&dias.length){
+          var ctl=cdEl('div','c3-mi-ctl');
+          tod=cdEl('button','c3-mi-tod','Todos os dias da viagem');tod.type='button';tod.setAttribute('aria-pressed','false');
+          tod.addEventListener('click',function(){
+            if(C3.mi.todos){C3.mi.todos=false;C3.mi.dias=[];}
+            else{C3.mi.todos=true;C3.mi.dias=dias.slice();}
+            c2Recalc();
+          });
+          ctl.appendChild(tod);sb.appendChild(ctl);
+        }
+        var cal=cdEl('div','c3-mi-cal');
+        cal.appendChild(cdEl('div','c3-mi-cal-t',C3_MESF[cfg.cal.m]+' '+cfg.cal.y));
+        var hd=cdEl('div','c3-mi-cal-h');['D','S','T','Q','Q','S','S'].forEach(function(l){hd.appendChild(cdEl('span',null,l));});cal.appendChild(hd);
+        var gr=cdEl('div','c3-mi-cal-g');
+        var first=new Date(cfg.cal.y,cfg.cal.m,1).getDay(),dim=new Date(cfg.cal.y,cfg.cal.m+1,0).getDate();
+        for(var e=0;e<first;e++)gr.appendChild(cdEl('span','c3-mi-d vz'));
+        var dbt={};
+        for(var d=1;d<=dim;d++){
+          (function(d){
+            var b=cdEl('button','c3-mi-d',String(d));b.type='button';
+            if(dias.indexOf(d)<0){b.disabled=true;}
+            else{b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){
+              var i=C3.mi.dias.indexOf(d);
+              if(i>-1)C3.mi.dias.splice(i,1);else{C3.mi.dias.push(d);C3.mi.dias.sort(function(x,y){return x-y;});}
+              C3.mi.todos=C3.mi.dias.length===dias.length;
+              c2Recalc();
+            });}
+            dbt[d]=b;gr.appendChild(b);
+          })(d);
+        }
+        cal.appendChild(gr);sb.appendChild(cal);
+        var inf=cdEl('div','c3-mi-cinf');sb.appendChild(inf);
+        reps.push(function(){
+          Object.keys(dbt).forEach(function(d){var on=C3.mi.dias.indexOf(+d)>-1;dbt[d].classList.toggle('on',on);if(!dbt[d].disabled)dbt[d].setAttribute('aria-pressed',on?'true':'false');});
+          if(tod){tod.classList.toggle('on',C3.mi.todos);tod.setAttribute('aria-pressed',C3.mi.todos?'true':'false');}
+          inf.textContent='';
+          if(!aberto)return;
+          var n=C3.mi.dias.length;
+          if(!n)inf.appendChild(cdEl('span',null,'Toque nos dias desejados ou em "Todos os dias da viagem".'));
+          else{
+            inf.appendChild(cdEl('b',null,n+(n===1?' dia: ':' dias: ')));
+            inf.appendChild(document.createTextNode(C3.mi.dias.map(function(d){return c3Dd(d,cfg);}).join(', ')));
+            if(cfg.sdia)inf.appendChild(cdEl('div','c3-mi-sub2','Subtotal R$ '+cdFmt(n*cfg.sdia)));
+          }
+        });
       }
       // dados opcionais (so aparecem se preenchidos)
       var dados=[['Data do evento',T('data')],['Vagas',T('vagas')]].filter(function(p){return p[1];});
@@ -1758,7 +1914,9 @@
         b.addEventListener('click',function(){c3Tab(id);});bx.appendChild(b);
       });
       var ini=C3.tabs.indexOf(P.aba)>-1?P.aba:(C3.tabs[0]||'');
-      if(!C3.tabs.length)document.getElementById('c3Tabs').style.display='none';
+      if(!C3.tabs.length||(P.um===1&&C3.tabs.length===1))document.getElementById('c3Tabs').style.display='none';
+      var dv=document.getElementById('c3Duv');if(dv)dv.addEventListener('click',c3Duvidas);
+      var ft=document.querySelector('.footer-proposta');if(ft&&!document.getElementById('c3DuvF')){var fb=cdEl('button','c3-duv-f','Tirar dúvidas no WhatsApp');fb.type='button';fb.id='c3DuvF';fb.addEventListener('click',c3Duvidas);ft.appendChild(document.createElement('br'));ft.appendChild(fb);}
       document.getElementById('c2Go').addEventListener('click',c2Quero);
       var rc=document.getElementById('c2RcT');
       rc.addEventListener('click',function(){var r=document.getElementById('c2Recibo');var o=!r.classList.contains('open');r.classList.toggle('open',o);rc.setAttribute('aria-expanded',o?'true':'false');});
