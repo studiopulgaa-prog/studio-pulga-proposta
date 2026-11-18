@@ -706,7 +706,7 @@ function c3Defaults() {
       oque:'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.',
       total:'3120', inicio:'11', fim:'4', data:'', vagas:'', cal:'2027-04', ida:'2027-04-13', volta:'2027-04-20', sdia:'147', sv:false,
       stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.'},
-    pg:{ex:'12', av:'', rc:'', m1:'', m2:''},
+    pg:{max:'12', av:'', rc:'', m1:'', m2:''},
     fr:'Após essa data os valores podem mudar.',
     tt:true
   };
@@ -981,7 +981,7 @@ function c3Render() {
   c3Fold(cont, 'pg', 'Formas de pagamento (informativo)', null, function(b) {
     var G = c3S.pg;
     b.appendChild(c2e('div', 'cd-hint', 'Só informa. Nada é cobrado automaticamente: hoje o fechamento passa por uma confirmação enviada pelo WhatsApp. Textos em branco usam a frase padrão.'));
-    b.appendChild(c2Campo('Parcelas do exemplo do Milão no cartão', G, 'ex', {ph:'12', max:2, hint:'Só um exemplo calculado. O cliente parcela no número de vezes que o banco oferecer.'}));
+    b.appendChild(c2Campo('Máximo de parcelas no cartão', G, 'max', {ph:'12', max:2, hint:'Aparece só no texto "Parcele em até Nx". Nenhum valor de parcela é calculado.'}));
     b.appendChild(c2Campo('Texto: Avulsos (antes da frase do cartão)', G, 'av', {ta:true, max:300, ph:'Pix ou boleto à vista.'}));
     b.appendChild(c2Campo('Texto: Recorrente', G, 'rc', {ta:true, max:300, ph:'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'}));
     b.appendChild(c2Campo('Título: Milão sem cartão de crédito', G, 'm1', {max:120, ph:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'}));
@@ -1100,9 +1100,9 @@ function gerarCardapio() {
     if (M.sv && mSd) mi.sdia = mSd;   // sem "Exibir valor por dia", o valor fica só no admin
     data.mi = mi;
   }
-  var PG = c3S.pg || {}, pe = parseInt(PG.ex, 10);
-  if (!(pe >= 2 && pe <= 24)) { alert('Parcelas do exemplo no cartão: use um número de 2 a 24.'); return; }
-  data.pg = {ex:pe};
+  var PG = c3S.pg || {}, pe = parseInt(PG.max, 10);
+  if (!(pe >= 2 && pe <= 24)) { alert('Máximo de parcelas no cartão: use um número de 2 a 24.'); return; }
+  data.pg = {max:pe};
   ['av','rc','m1','m2'].forEach(function(k) { var v = String(PG[k] || '').trim(); if (v) data.pg[k] = v.slice(0, 300); });
   if (abas.length === 1) data.um = 1;
   data.fr = String(c3S.fr == null ? '' : c3S.fr).trim().slice(0, 160);

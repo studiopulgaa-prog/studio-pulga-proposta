@@ -463,6 +463,8 @@
     .c3-fin-o input{width:18px;height:18px;accent-color:#6E2C14;}
     .c3-fin-b label.c3-fin-f{display:block;font-size:12px;font-weight:700;margin-top:10px;color:var(--gray);}
     .c3-fin-b input[type=text],.c3-fin-b input[type=email],.c3-fin-b input[type=tel]{display:block;width:100%;margin-top:4px;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font:500 15px 'Outfit',sans-serif;color:var(--br);background:#fff;}
+    .c3-fin-cc{margin-top:10px;font-size:13px;line-height:1.45;color:var(--gray);}
+    .c3-fin-cc p{margin:2px 0 0;font-weight:400;}
     .c3-fin-n{font-size:12px;line-height:1.45;color:var(--gray);margin:12px 0 0;}
     .c3-fin-e{font-size:13px;font-weight:700;color:#B3261E;margin-top:8px;min-height:16px;}
     .c3-fin-b .c3-conf-bt{margin-top:14px;}
@@ -1384,6 +1386,9 @@
         lb.appendChild(rd);lb.appendChild(cdEl('span',null,o));fs.appendChild(lb);
       });
       b.appendChild(fs);
+      if(C3.tab!=='recorrente'){
+        var cb2=cdEl('div','c3-fin-cc');cb2.appendChild(cdEl('b',null,'Cartão de crédito'));cb2.appendChild(cdEl('p',null,c3PgBanco()));cb2.appendChild(cdEl('p',null,C3_PG_PIX));b.appendChild(cb2);
+      }
       function campo(rot,tipo,id,val,ac){
         var lb=cdEl('label','c3-fin-f',rot);lb.setAttribute('for',id);b.appendChild(lb);
         var i=document.createElement('input');i.type=tipo;i.id=id;i.value=val||'';i.maxLength=120;i.autocomplete=ac;if(tipo==='tel')i.inputMode='tel';b.appendChild(i);return i;
@@ -1703,13 +1708,14 @@
     // parcela = total / meses restantes ate o mes final (o total e sempre o mesmo)
     function c3Parc(i){var c=C3.mi.cfg,n=c.meses.length-i;return {p:Math.round(c.total/n*100)/100,n:n};}
 
-    var C3_PG_BANCO='Parcele no número de vezes que o seu banco oferecer, escolhendo na tela de pagamento.';
+    var C3_PG_PIX='Se preferir, Pix ou boleto à vista também é possível.';
+    function c3PgMax(){var g=(PROPOSTA&&PROPOSTA.pg&&typeof PROPOSTA.pg==='object')?PROPOSTA.pg:{};var n=parseInt(g.max,10);return (n>=2&&n<=24)?n:12;}
+    function c3PgBanco(){return 'Parcele em até '+c3PgMax()+'x, escolhendo na tela de pagamento.';}
     var C3_PG_ZAP='Hoje o fechamento passa por uma confirmação enviada pelo WhatsApp.';
     function c3PgCfg(){
       var g=(PROPOSTA&&PROPOSTA.pg&&typeof PROPOSTA.pg==='object')?PROPOSTA.pg:{};
-      var n=parseInt(g.ex,10);if(!(n>=2&&n<=24))n=12;
       var f=function(k){return String(g[k]==null?'':g[k]).trim().slice(0,300);};
-      return {ex:n,av:f('av'),rc:f('rc'),m1:f('m1'),m2:f('m2')};
+      return {av:f('av'),rc:f('rc'),m1:f('m1'),m2:f('m2')};
     }
     function c3PgRec(){
       var bx=document.getElementById('c3Pg');if(!bx)return;
@@ -1720,7 +1726,9 @@
       bx.appendChild(cdEl('div','c3-pg-t','Formas de pagamento'));
       if(C3.tab==='avulsos'){
         bx.appendChild(cdEl('p','c3-pg-p',g.av||'Pix ou boleto à vista.'));
-        bx.appendChild(cdEl('p','c3-pg-p','Cartão de crédito: '+C3_PG_BANCO.charAt(0).toLowerCase()+C3_PG_BANCO.slice(1)));
+        var ct=cdEl('p','c3-pg-p',null);ct.appendChild(cdEl('b',null,'Cartão de crédito'));bx.appendChild(ct);
+        bx.appendChild(cdEl('p','c3-pg-p',c3PgBanco()));
+        bx.appendChild(cdEl('p','c3-pg-p',C3_PG_PIX));
       }else bx.appendChild(cdEl('p','c3-pg-p',g.rc||'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'));
       bx.appendChild(cdEl('p','c3-pg-n',C3_PG_ZAP));
     }
@@ -1781,14 +1789,8 @@
         });
         var B=cdEl('div','c3-mi-pg');
         B.appendChild(cdEl('div','c3-mi-pgt',pg.m2||'Cartão de crédito'));
-        var bp=cdEl('p','c3-mi-pgn',C3_PG_BANCO);bp.style.margin='0 0 10px';B.appendChild(bp);
-        var pex=Math.round(cfg.total/pg.ex*100)/100;
-        var rb=cdEl('div','c3-mi-res');
-        rb.appendChild(cdEl('div','c3-mi-r2','Exemplo calculado'));
-        rb.appendChild(cdEl('div','c3-mi-r1',pg.ex+' × R$ '+cdFmt(pex)));
-        rb.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(cfg.total)+'. O número de parcelas disponível é o que o seu banco oferecer.'));
-        B.appendChild(rb);
-        B.appendChild(cdEl('p','c3-mi-pgn','Se preferir, Pix ou boleto à vista também é possível.'));
+        var bp=cdEl('p','c3-mi-pgn',c3PgBanco());bp.style.margin='0';B.appendChild(bp);
+        B.appendChild(cdEl('p','c3-mi-pgn',C3_PG_PIX));
         gr2.appendChild(A);gr2.appendChild(B);cb.appendChild(gr2);
         cb.appendChild(cdEl('p','c3-mi-pgn',C3_PG_ZAP));
       }
