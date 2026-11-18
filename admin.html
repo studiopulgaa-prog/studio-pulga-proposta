@@ -151,7 +151,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
         <div id="cdCaminhos"></div>
       </div>
       <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
-      <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Ex: Valores combinados na reunião de hoje."></textarea></div>
+      <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
       <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
     </div>
     <div class="field">
@@ -600,7 +600,7 @@ function copiarLinkCurto() {
 <script>
 // ===== Tipo de proposta: CARDAPIO v3 (abas Avulsos | Recorrente | Especial Milao). O tipo "Planos" continua exatamente como antes. =====
 window.CD_ATIVO = false;
-var C2_FOTOS = [['casal-plantas','Casal e plantas'],['abajur-tablet','Abajur e tablet'],['obra-colher','Obra e colher'],['maos-tachinhas','Mãos e tachinhas'],['bone-vermelho','Boné vermelho']];
+var C2_FOTOS = [['servico-videos-camera','Vídeos captados (câmera)'],['servico-cobertura-evento','Cobertura (evento)'],['servico-fotografia-maos','Fotografia (mãos)'],['servico-edicao-notebook','Edição (notebook)'],['servico-stories-camiseta','Stories (camiseta)'],['servico-tiktok-casal','TikTok (casal)'],['servico-artes-colagem','Artes (colagem)'],['recorrente-poltrona','Recorrente (poltrona)'],['hero-1-notebook','Abertura 1 (notebook)'],['hero-2-obra','Abertura 2 (obra)'],['hero-3-janela-mar','Abertura 3 (janela e mar)'],['hero-4-sala','Abertura 4 (sala)']];
 var C2_COMB = [
   'Tolerância de até 20 minutos após o término do período contratado; depois disso, cobra-se hora adicional',
   'A diária conta a partir da chegada ao local, independente do início da gravação',
@@ -609,7 +609,7 @@ var C2_COMB = [
   'Serviços adicionais ou ajustes fora do escopo podem ser orçados à parte',
   'Vídeos de até 1 minuto; vídeo de 2 partes conta como individual'
 ];
-var C3_GAL_TXT = 'casal-plantas.jpg | Rotina em campo\nabajur-tablet.jpg | Detalhes do projeto\nobra-colher.jpg | Obra em andamento\nmaos-tachinhas.jpg | Mãos na massa\nbone-vermelho.jpg | Registro com identidade';
+var C3_GAL_TXT = ['olhar-01-maquete|Maquete','olhar-02-carrinho|Carrinho','olhar-03-obra-andaime|Obra e andaime','olhar-04-banco-almofada|Banco e almofada','olhar-05-cesta-revistas|Cesta de revistas','olhar-06-materiais-mao|Materiais na mão','olhar-07-cafe-janela|Café na janela','olhar-08-cafe-balcao|Café no balcão','olhar-09-casal-cafe|Casal no café','olhar-10-retrato-abajur|Retrato com abajur','olhar-11-casal-plantas|Casal e plantas'].map(function(x) { var q = x.split('|'); return 'assets-proposta/' + q[0] + '.webp | ' + q[1]; }).join('\n');
 function I(nome, valor, un, ex) {
   var o = {nome:nome, desc:'', valor:String(valor), de:'', unidade:un, rot:'', g:'', pre:false, tag:'', nota:''};
   if (ex) { for (var k in ex) o[k] = ex[k]; }
@@ -626,24 +626,24 @@ function c3Defaults() {
   return {
     aba:'avulsos',
     av:{on:true, comb:C2_COMB.slice(), servicos:[
-      S('v','obra-colher','Vídeos captados',{conteudos:['Depoimentos','Entrega de projeto ou obra','Feedbacks de clientes','Diário de obra','Institucionais'], inclui:['Captação e edição inclusas'],
-        ops:[I('Até 1 h',470,'unico',{desc:'Até 1 vídeo de 1 min'}),I('Até 2 h',567,'unico',{desc:'Até 2 vídeos de 1 min'}),I('Até 3 h',649,'unico',{desc:'Até 3 vídeos de 1 min'})],
-        extras:[hr(120),I('Vídeo adicional de até 1 min',100,'unidade',{rot:'por vídeo'})]}),
-      S('c','casal-plantas','Cobertura',{apoio:'Acompanhamento com gravação.', conteudos:['Stories','Backstage de obra, projeto ou ensaio','Rotina','Evento'],
-        ops:[I('Até 1 h',440,'unico',{desc:'Até 2 vídeos de 30 s'}),I('Até 2 h',527,'unico',{desc:'Até 5 vídeos de 30 s'}),I('Até 3 h',625,'unico',{desc:'Até 7 vídeos de 30 s'})],
-        extras:[hr(97),I('Vídeo adicional de até 30 s',57,'unidade',{rot:'por vídeo'})]}),
-      S('f','bone-vermelho','Fotografia',{
-        ops:[I('1 h de ensaio',490,'unico',{desc:'Apenas um local. Captação e edição de 20 fotos no período.'}),I('2 h de ensaio',750,'unico',{desc:'Até dois locais. Captação e edição de 30 fotos no período.'})]}),
-      S('s','abajur-tablet','Stories',{apoio:'Edição e entrega de vídeos para stories, a partir de vídeos enviados por você.',
-        ops:[I('Diária',97,'unico',{desc:'Valor integral. Postagem pelo cliente.'}),I('Semanal',526,'unico',{desc:'10% menor. Postagem pelo cliente.'}),I('Mensal',1497,'mensal',{desc:'40% menor. Postagem pelo Studio.'})]}),
-      S('t','maos-tachinhas','TikTok',{apoio:'Adicional de redes sociais. Mensal, a confirmar.',
-        ops:[I('Conta, conteúdos da agência e gestão',890,'mensal',{nota:'a confirmar',desc:'Criação de conta, conteúdos produzidos pela agência, postagens semanais, gerenciamento de conta e acompanhamento.'}),
-             I('Conta, conteúdos prontos e gestão',849,'mensal',{nota:'a confirmar',desc:'Criação de conta, conteúdos prontos, postagens semanais, gerenciamento e acompanhamento.'}),
-             I('Conteúdos prontos e gestão',750,'mensal',{nota:'a confirmar',desc:'Conteúdos prontos, postagens semanais, gerenciamento e acompanhamento.'})]}),
-      S('e','abajur-tablet','Edição',{
-        ops:[I('Até 5 vídeos',690,'unico',{desc:'No período contratado.'}),I('Até 10 vídeos',1099,'unico',{desc:'No período contratado.'}),I('Até 14 vídeos',1299,'unico',{desc:'No período contratado.'})],
-        extras:[I('Vídeo adicional',115,'unidade',{rot:'por vídeo'})]}),
-      S('a','maos-tachinhas','Artes e design',{apoio:'Valores por unidade.', modo:'varios',
+      S('v','servico-videos-camera','Vídeos captados',{conteudos:['Depoimentos','Entrega de projeto ou obra','Feedbacks de clientes','Diário de obra','Institucionais'], inclui:['Captação e edição inclusas'],
+        ops:[I('Até 1 h',520,'unico',{desc:'Até 1 vídeo de 1 min'}),I('Até 2 h',620,'unico',{desc:'Até 2 vídeos de 1 min'}),I('Até 3 h',710,'unico',{desc:'Até 3 vídeos de 1 min'})],
+        extras:[hr(130),I('Vídeo adicional de até 1 min',110,'unidade',{rot:'por vídeo'})]}),
+      S('c','servico-cobertura-evento','Cobertura',{apoio:'Acompanhamento com gravação.', conteudos:['Stories','Backstage de obra, projeto ou ensaio','Rotina','Evento'],
+        ops:[I('Até 1 h',480,'unico',{desc:'Até 2 vídeos de 30 s'}),I('Até 2 h',580,'unico',{desc:'Até 5 vídeos de 30 s'}),I('Até 3 h',690,'unico',{desc:'Até 7 vídeos de 30 s'})],
+        extras:[hr(110),I('Vídeo adicional de até 30 s',60,'unidade',{rot:'por vídeo'})]}),
+      S('f','servico-fotografia-maos','Fotografia',{
+        ops:[I('1 h de ensaio',540,'unico',{desc:'Apenas um local. Captação e edição de 20 fotos no período.'}),I('2 h de ensaio',830,'unico',{desc:'Até dois locais. Captação e edição de 30 fotos no período.'})]}),
+      S('s','servico-stories-camiseta','Stories',{apoio:'Edição e entrega de vídeos para stories, a partir de vídeos enviados por você.',
+        ops:[I('Diária',110,'unico',{desc:'Postagem pelo cliente.'}),I('Semanal',590,'unico',{desc:'Postagem pelo cliente.'}),I('Mensal',1720,'mensal',{desc:'Postagem pelo Studio.'})]}),
+      S('t','servico-tiktok-casal','TikTok',{apoio:'Adicional de redes sociais. Mensal, a confirmar.',
+        ops:[I('Conta, conteúdos da agência e gestão',980,'mensal',{nota:'a confirmar',desc:'Criação de conta, conteúdos produzidos pela agência, postagens semanais, gerenciamento de conta e acompanhamento.'}),
+             I('Conta, conteúdos prontos e gestão',930,'mensal',{nota:'a confirmar',desc:'Criação de conta, conteúdos prontos, postagens semanais, gerenciamento e acompanhamento.'}),
+             I('Conteúdos prontos e gestão',830,'mensal',{nota:'a confirmar',desc:'Conteúdos prontos, postagens semanais, gerenciamento e acompanhamento.'})]}),
+      S('e','servico-edicao-notebook','Edição',{
+        ops:[I('Até 5 vídeos',760,'unico',{desc:'No período contratado.'}),I('Até 10 vídeos',1210,'unico',{desc:'No período contratado.'}),I('Até 14 vídeos',1430,'unico',{desc:'No período contratado.'})],
+        extras:[I('Vídeo adicional',130,'unidade',{rot:'por vídeo'})]}),
+      S('a','servico-artes-colagem','Artes e design',{apoio:'Valores por unidade.', modo:'varios',
         ops:[I('Post de arte',90,'unidade',{rot:'por unidade'}),I('Data sazonal',90,'unidade',{rot:'por unidade'}),I('Pack 3 datas sazonais',240,'unidade',{rot:'por pack'}),
              I('Carrossel até 7 lâminas',250,'unidade',{rot:'por unidade',g:'car'}),I('Carrossel até 7 lâminas, com briefing nosso',290,'unidade',{rot:'por unidade',g:'car'}),
              I('Sequência de stories até 5 telas',120,'unidade',{rot:'por unidade',g:'sto'}),I('Sequência de stories até 5 telas, com briefing nosso',140,'unidade',{rot:'por unidade',g:'sto'}),
@@ -657,7 +657,7 @@ function c3Defaults() {
             {l:'Agenda fixa de captação',a:'Não incluso',r:'Incluso'},
             {l:'Edição com 1 ajuste por vídeo',a:'Não incluso',r:'Incluso'},
             {l:'Compromisso',a:'Nenhum',r:'Mínimo de 3 meses'}],
-      plano:S('p','abajur-tablet','Plano de entrada',{apoio:'R$ 990 por mês, com captação mensal e vídeos editados.', modo:'um',
+      plano:S('p','recorrente-poltrona','Plano de entrada',{apoio:'R$ 990 por mês, com captação mensal e vídeos editados.', modo:'um',
         inclui:['1 captação por mês de até 2 h','3 vídeos de até 1 min ou 4 de até 30 s','Legenda pronta para cada vídeo','Tabela mensal de postagem por WhatsApp','Grupo com o videomaker em horário comercial','Edição simples com 1 ajuste por vídeo','Quem posta é o cliente'],
         nao:['Drone','Horário adicional','Vídeo adicional','Gestão de perfil'],
         comb:['Mínimo de 3 meses','Pagamento antecipado até o dia 5'],
@@ -668,9 +668,7 @@ function c3Defaults() {
       difs:[{t:'Identidade cool e autoral',d:''},{t:'Equipe completa',d:'Filmmaker mobile, editor de vídeo e foto e social media.'},{t:'Rotina combinada',d:'Agenda, tabela de postagem e grupo com o videomaker.'}]},
     mi:{on:true, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
       oque:'Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.',
-      leva:['Captação de foto','Captação de vídeo','Edição','Acompanhamento presencial no evento','Preparação mensal até lá'],
-      etapas:[{t:'Até abril',d:'Mensalidades recorrentes e preparação mensal.'},{t:'A viagem',d:'O Studio acompanha e grava com você no evento.'},{t:'Depois',d:'Entrega dos conteúdos.'}],
-      mensal:'a definir', inicio:'a definir'}
+      leva:[], etapas:[], mensal:'', inicio:'', data:'', vagas:''}
   };
 }
 var c3S = c3Defaults();
@@ -900,7 +898,7 @@ function c3Render() {
     var ta = c2e('textarea', 'inp cd-ta'); ta.style.minHeight = '120px'; ta.value = c3S.rc.gal;
     ta.addEventListener('input', function() { c3S.rc.gal = ta.value; });
     fg.appendChild(ta);
-    fg.appendChild(c2e('div', 'cd-hint', 'Arquivo = nome em /img (ex.: casal-plantas.jpg). URL https de imagem ou de vídeo (.mp4) também vale. Sem mexer aqui, a página lê o arquivo /img/galeria.json, que dá para trocar sem mexer no código.'));
+    fg.appendChild(c2e('div', 'cd-hint', 'Arquivo = caminho dentro de /img (ex.: assets-proposta/olhar-01-maquete.webp). URL https de imagem ou de vídeo (.mp4) também vale. Sem mexer aqui, a página lê o arquivo /img/galeria.json, que dá para trocar sem mexer no código.'));
     b.appendChild(fg);
     b.appendChild(c2e('div', 'sec-sep', 'Diferenciais (3 a 4 cartões)'));
     c3Rows(b, c3S.rc.difs, [['t', 'Título', 70], ['d', 'Texto (opcional)', 140]], function() { return {t:'', d:''}; }, '+ Adicionar diferencial');
@@ -911,11 +909,14 @@ function c3Render() {
     b.appendChild(c2Campo('Título', M, 'titulo', {max:40}));
     b.appendChild(c2Campo('Subtítulo', M, 'sub', {max:140}));
     b.appendChild(c2Campo('O que é', M, 'oque', {ta:true, max:400}));
-    b.appendChild(c2Linhas('O que você leva', M, 'leva'));
-    b.appendChild(c2e('div', 'sec-sep', 'Como funciona até abril'));
+    b.appendChild(c2Linhas('O que está incluso', M, 'leva', 'Em branco: o bloco não aparece.'));
+    b.appendChild(c2e('div', 'sec-sep', 'Como funciona (em branco: não aparece)'));
     c3Rows(b, M.etapas, [['t', 'Etapa', 50], ['d', 'Texto', 140]], function() { return {t:'', d:''}; }, '+ Adicionar etapa');
-    b.appendChild(c2Campo('Mensalidade', M, 'mensal', {ph:'a definir', max:40}));
-    b.appendChild(c2Campo('Mês de início', M, 'inicio', {ph:'a definir', max:40}));
+    b.appendChild(c2e('div', 'cd-hint', 'Mensalidade, mês de início, data do evento e vagas só aparecem para o cliente quando preenchidos. Todos em branco: a aba mostra só o botão "Quero saber mais".'));
+    b.appendChild(c2Campo('Mensalidade', M, 'mensal', {ph:'Ex: R$ 0.000 por mês', max:40}));
+    b.appendChild(c2Campo('Mês de início', M, 'inicio', {max:40}));
+    b.appendChild(c2Campo('Data do evento', M, 'data', {max:40}));
+    b.appendChild(c2Campo('Vagas', M, 'vagas', {max:40}));
   });
   var n = [c3S.av.on, c3S.rc.on, c3S.mi.on].filter(Boolean).length;
   document.getElementById('cdCount').textContent = n + ' de 3 abas ligadas. Os textos e valores são de referência e podem ser editados.';
@@ -954,7 +955,7 @@ function c3Gal(txt) {
     var p = l.split('|'), a = (p[0] || '').trim(), leg = (p.slice(1).join('|') || '').trim();
     if (!a) return;
     var it = null;
-    if (/^[\w\-.]+\.(jpe?g|png|webp)$/i.test(a)) it = {src:'/img/' + a};
+    if (/^(?:[\w\-]+\/)?[\w\-.]+\.(jpe?g|png|webp)$/i.test(a)) it = {src:'/img/' + a};
     else if (/^https:\/\/\S+\.(mp4|webm|mov)(\?\S*)?$/i.test(a)) it = {video:a};
     else if (/^https:\/\/\S+$/i.test(a)) it = {src:a};
     if (it) { if (leg) it.leg = leg; out.push(it); }
@@ -998,7 +999,7 @@ function gerarCardapio() {
   } else if (vEnt) { alert('O valor especial vale para o plano da aba Recorrente, que está desligada. Ligue-a ou limpe o campo.'); return; }
   if (S3.mi.on) {
     var M = S3.mi, mi = {};
-    ['titulo','sub','oque','mensal','inicio'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
+    ['titulo','sub','oque','mensal','inicio','data','vagas'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
     if (M.leva.length) mi.leva = M.leva;
     var et = M.etapas.filter(function(x) { return String(x.t || '').trim(); }).map(function(x) { var o = {t:String(x.t).trim()}; if (String(x.d || '').trim()) o.d = String(x.d).trim(); return o; });
     if (et.length) mi.etapas = et;

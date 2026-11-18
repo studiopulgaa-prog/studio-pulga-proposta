@@ -1,0 +1,184 @@
+{
+ "hero-1-notebook": {
+  "arquivo": "hero-1-notebook.webp",
+  "original": "IMG_7095.JPG.jpeg",
+  "w": 1350,
+  "h": 1800,
+  "kb": 240
+ },
+ "hero-2-obra": {
+  "arquivo": "hero-2-obra.webp",
+  "original": "IMG_7094.JPG.jpeg",
+  "w": 1350,
+  "h": 1800,
+  "kb": 540
+ },
+ "hero-3-janela-mar": {
+  "arquivo": "hero-3-janela-mar.webp",
+  "original": "IMG_7088.JPG.jpeg",
+  "w": 1350,
+  "h": 1800,
+  "kb": 499
+ },
+ "hero-4-sala": {
+  "arquivo": "hero-4-sala.webp",
+  "original": "IMG_7097.JPG.jpeg",
+  "w": 1350,
+  "h": 1800,
+  "kb": 640
+ },
+ "servico-videos-camera": {
+  "arquivo": "servico-videos-camera.webp",
+  "original": "IMG_7102.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 67
+ },
+ "servico-cobertura-evento": {
+  "arquivo": "servico-cobertura-evento.webp",
+  "original": "IMG_7091.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 256
+ },
+ "servico-fotografia-maos": {
+  "arquivo": "servico-fotografia-maos.webp",
+  "original": "IMG_7089.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 190
+ },
+ "servico-edicao-notebook": {
+  "arquivo": "servico-edicao-notebook.webp",
+  "original": "IMG_7095.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 112
+ },
+ "servico-stories-camiseta": {
+  "arquivo": "servico-stories-camiseta.webp",
+  "original": "IMG_3038.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 26
+ },
+ "servico-tiktok-casal": {
+  "arquivo": "servico-tiktok-casal.webp",
+  "original": "IMG_3039.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 49
+ },
+ "servico-artes-colagem": {
+  "arquivo": "servico-artes-colagem.webp",
+  "original": "IMG_7086.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 289
+ },
+ "recorrente-poltrona": {
+  "arquivo": "recorrente-poltrona.webp",
+  "original": "IMG_7096.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 270
+ },
+ "manifesto-camiseta-bone": {
+  "arquivo": "manifesto-camiseta-bone.webp",
+  "original": "IMG_3037.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 24
+ },
+ "milao-hero-roma-forum": {
+  "arquivo": "milao-hero-roma-forum.webp",
+  "original": "IMG_7103.JPG.jpeg",
+  "w": 1350,
+  "h": 1800,
+  "kb": 692
+ },
+ "milao-rua-italia": {
+  "arquivo": "milao-rua-italia.webp",
+  "original": "IMG_7090.JPG.jpeg",
+  "w": 1050,
+  "h": 1400,
+  "kb": 305
+ },
+ "olhar-01-maquete": {
+  "arquivo": "olhar-01-maquete.webp",
+  "original": "IMG_7092.JPG.jpeg",
+  "w": 900,
+  "h": 1200,
+  "kb": 147
+ },
+ "olhar-02-carrinho": {
+  "arquivo": "olhar-02-carrinho.webp",
+  "original": "IMG_7093.JPG.jpeg",
+  "w": 900,
+  "h": 1200,
+  "kb": 79
+ },
+ "olhar-03-obra-andaime": {
+  "arquivo": "olhar-03-obra-andaime.webp",
+  "original": "IMG_7098.JPG.jpeg",
+  "w": 900,
+  "h": 1200,
+  "kb": 315
+ },
+ "olhar-04-banco-almofada": {
+  "arquivo": "olhar-04-banco-almofada.webp",
+  "original": "IMG_7099.JPG.jpeg",
+  "w": 900,
+  "h": 1200,
+  "kb": 157
+ },
+ "olhar-05-cesta-revistas": {
+  "arquivo": "olhar-05-cesta-revistas.webp",
+  "original": "IMG_7100.JPG.jpeg",
+  "w": 900,
+  "h": 1200,
+  "kb": 196
+ },
+ "olhar-06-materiais-mao": {
+  "arquivo": "olhar-06-materiais-mao.webp",
+  "original": "IMG_7085.JPG.jpeg",
+  "w": 871,
+  "h": 1200,
+  "kb": 184
+ },
+ "olhar-07-cafe-janela": {
+  "arquivo": "olhar-07-cafe-janela.webp",
+  "original": "IMG_3042.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 35
+ },
+ "olhar-08-cafe-balcao": {
+  "arquivo": "olhar-08-cafe-balcao.webp",
+  "original": "IMG_3041.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 31
+ },
+ "olhar-09-casal-cafe": {
+  "arquivo": "olhar-09-casal-cafe.webp",
+  "original": "IMG_3044.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 65
+ },
+ "olhar-10-retrato-abajur": {
+  "arquivo": "olhar-10-retrato-abajur.webp",
+  "original": "IMG_3043.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 24
+ },
+ "olhar-11-casal-plantas": {
+  "arquivo": "olhar-11-casal-plantas.webp",
+  "original": "IMG_3040.JPEG",
+  "w": 600,
+  "h": 900,
+  "kb": 46
+ }
+}

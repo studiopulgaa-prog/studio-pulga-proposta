@@ -1,7 +1,46 @@
 [
-  {"src": "/img/casal-plantas.jpg", "leg": "Rotina em campo"},
-  {"src": "/img/abajur-tablet.jpg", "leg": "Detalhes do projeto"},
-  {"src": "/img/obra-colher.jpg", "leg": "Obra em andamento"},
-  {"src": "/img/maos-tachinhas.jpg", "leg": "Mãos na massa"},
-  {"src": "/img/bone-vermelho.jpg", "leg": "Registro com identidade"}
+  {
+    "src": "/img/assets-proposta/olhar-01-maquete.webp",
+    "leg": "Maquete"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-02-carrinho.webp",
+    "leg": "Carrinho"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-03-obra-andaime.webp",
+    "leg": "Obra e andaime"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-04-banco-almofada.webp",
+    "leg": "Banco e almofada"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-05-cesta-revistas.webp",
+    "leg": "Cesta de revistas"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-06-materiais-mao.webp",
+    "leg": "Materiais na mão"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-07-cafe-janela.webp",
+    "leg": "Café na janela"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-08-cafe-balcao.webp",
+    "leg": "Café no balcão"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-09-casal-cafe.webp",
+    "leg": "Casal no café"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-10-retrato-abajur.webp",
+    "leg": "Retrato com abajur"
+  },
+  {
+    "src": "/img/assets-proposta/olhar-11-casal-plantas.webp",
+    "leg": "Casal e plantas"
+  }
 ]

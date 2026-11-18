@@ -261,7 +261,7 @@
     .c2-recibo .cd-tot-v{font-variant-numeric:tabular-nums;}
     @media(min-width:1024px){
       .c2-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:36px;padding-bottom:90px;}
-      .c2-recibo{position:sticky;top:72px;transform:none;align-self:start;margin-top:clamp(120px,10vw,170px);border-radius:20px;padding:22px;box-shadow:0 20px 50px rgba(110,44,20,0.2);}
+      .c2-recibo{position:sticky;top:var(--c3off,72px);transform:none;align-self:start;margin-top:clamp(120px,10vw,170px);border-radius:20px;padding:22px;box-shadow:0 20px 50px rgba(110,44,20,0.2);}
       .c2-rc-t{pointer-events:none;padding:0 0 10px;}
       .c2-rc-c{display:none;}
       .c2-rl-w{grid-template-rows:1fr;}
@@ -355,8 +355,6 @@
     .c3-mi-h{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(38px,10vw,96px);letter-spacing:-0.04em;line-height:0.98;overflow-wrap:anywhere;}
     .c3-mi-tri{display:block;width:clamp(120px,30vw,220px);height:6px;margin:20px 0 22px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F2E8D8 33.33% 66.66%,#BF4630 66.66% 100%);box-shadow:0 0 0 1px rgba(94,44,26,0.35);}
     .c3-mi-sub{font-size:clamp(16px,2.6vw,22px);line-height:1.5;font-weight:400;max-width:620px;}
-    .c3-mi-hero{background:var(--mi-r);color:#F2E8D8;}
-    .c3-mi-hero .c3-mi-tri{box-shadow:0 0 0 1px rgba(242,232,216,0.5);}
     .c3-mi-oq{background:var(--mi-bg);}
     .c3-mi-lv{background:var(--mi-g);color:#F2E8D8;}
     .c3-mi-cm{background:var(--mi-a);color:#F2E8D8;}
@@ -376,6 +374,32 @@
     .c3-mi-go{display:inline-block;padding:16px 34px;border-radius:50px;border:none;background:var(--mi-b);color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
     .c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
     body.c3-mi-on{padding-bottom:0!important;}
+    body.c3-mi-on #c2Open,body.c3-mi-on .c2-manif,body.c3-mi-on #c2Strip1,body.c3-mi-on .c3-apoio{display:none;}
+    .c3-mi-top{position:relative;min-height:min(80svh,680px);display:flex;align-items:flex-end;overflow:hidden;background:var(--mi-r);color:#F2E8D8;}
+    .c3-mi-ph{position:absolute;inset:0;}
+    .c3-mi-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;animation:c2kb 16s ease-in-out infinite alternate;}
+    .c3-mi-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(94,44,26,0.9),rgba(94,44,26,0.25) 55%,rgba(94,44,26,0.05));}
+    .c3-mi-top-in{position:relative;z-index:2;width:100%;max-width:880px;margin:0 auto;padding:clamp(40px,8vw,90px) clamp(22px,6vw,80px) clamp(34px,6vw,64px);}
+    .c3-mi-flag{position:absolute;z-index:3;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F2E8D8 33.33% 66.66%,#BF4630 66.66% 100%);}
+    .c3-mi-oq .c3-mi-in{display:grid;gap:26px;align-items:center;}
+    .c3-mi-fig{margin:0;width:min(100%,340px);aspect-ratio:3/4;border-radius:18px;overflow:hidden;background:var(--mi-b);justify-self:center;}
+    .c3-mi-fig img{width:100%;height:100%;object-fit:cover;display:block;}
+    @media(min-width:820px){.c3-mi-oq .c3-mi-in{grid-template-columns:minmax(0,1fr) 300px;gap:44px;}.c3-mi-fig{width:100%;}}
+    .c3-mi-cta{background:var(--mi-r);color:#F2E8D8;text-align:center;}
+    .c3-mi-cta .c3-mi-go{background:#F2E8D8;color:var(--mi-b);}
+    /* aba Avulsos: chips com fade e arrasto; foto de baixa resolucao nao e ampliada */
+    .c3-chips-w{position:relative;}
+    .c3-chips{cursor:grab;padding-right:44px;-webkit-overflow-scrolling:touch;}
+    .c3-chips.drag{cursor:grabbing;}
+    .c3-chips-w::before,.c3-chips-w::after{content:'';position:absolute;top:0;bottom:0;width:48px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:2;}
+    .c3-chips-w::after{right:0;background:linear-gradient(to left,#F4EADD 15%,rgba(244,234,221,0));}
+    .c3-chips-w::before{left:0;background:linear-gradient(to right,#F4EADD 15%,rgba(244,234,221,0));}
+    .c3-chips-w.fr::after,.c3-chips-w.fl::before{opacity:1;}
+    .c3-svc-ph.lo img{left:auto;right:0;width:min(100%,600px);}
+    .c3-manif{display:grid;gap:34px;justify-items:center;}
+    .c3-manif-ph{margin:0;width:min(78vw,280px);aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,#6E2C14,#B5683F);}
+    .c3-manif-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+    @media(min-width:900px){.c3-manif{grid-template-columns:minmax(0,1fr) 320px;gap:60px;align-items:center;justify-items:stretch;text-align:left;}.c3-manif .c2-mt{margin:0;}.c3-manif-ph{width:100%;}}
     @media (prefers-reduced-motion:reduce){
       .c3-pane.on{animation:none;}
       .c3-gal-tr{scroll-behavior:auto;}
@@ -443,7 +467,7 @@
   </div>
   <template id="c3Tpl"><div class="c2-root c3-root" id="c3Root">
     <section class="c2-open" id="c2Open"><div class="c2-slides" id="c2Slides"></div><div class="c2-veil"></div><div class="c2-open-in"><div class="c2-open-k">// o seu novo studio,</div><div class="c2-open-t" id="c2OpenT"></div></div></section>
-    <section class="c2-manif"><div class="c2-mk c2-reveal">// antes de tudo, você precisa saber:</div><div class="c2-mt c2-reveal" style="transition-delay:.15s">temos uma identidade <strong>COOL</strong> e <strong>AUTORAL</strong> e não abrimos mão dela.</div></section>
+    <section class="c2-manif c3-manif"><div class="c3-manif-t"><div class="c2-mk c2-reveal">// antes de tudo, você precisa saber:</div><div class="c2-mt c2-reveal" style="transition-delay:.15s">temos uma identidade <strong>COOL</strong> e <strong>AUTORAL</strong> e não abrimos mão dela.</div></div><figure class="c3-manif-ph c2-reveal" id="c3ManifPh"></figure></section>
     <div class="c2-strip" id="c2Strip1" aria-hidden="true"><div class="c2-strip-track"></div></div>
     <div class="c3-apoio c2-reveal">Precisa de algo pontual ou de constância no feed? Escolha como prefere começar.</div>
     <div class="c3-tabs" id="c3Tabs"><div class="c3-tabs-in" role="tablist" id="c3TabBtns"></div></div>
@@ -929,14 +953,21 @@
 
     // ===== Cardapio v2: apresentacao guiada (so para links com "v":2 / "caminhos") =====
     var C2={paths:[],it:[],sel:{},ui:{},cards:[],open:-1,reduce:false,tick:null};
-    var C2_FOTOS=['casal-plantas','abajur-tablet','obra-colher','maos-tachinhas','bone-vermelho'];
-    function c2Src(slug){return C2_FOTOS.indexOf(slug)>-1?'/img/'+slug+'.jpg':null;}
+    // fotos do manifest (img/assets-proposta/manifest.json): chave -> [largura, altura, object-position]
+    var AS_DIR='/img/assets-proposta/';
+    var ASSETS={'hero-1-notebook':[1350,1800,'50% 62%'],'hero-2-obra':[1350,1800,'50% 45%'],'hero-3-janela-mar':[1350,1800,'50% 50%'],'hero-4-sala':[1350,1800,'50% 50%'],'servico-videos-camera':[1050,1400,'50% 30%'],'servico-cobertura-evento':[1050,1400,'50% 45%'],'servico-fotografia-maos':[1050,1400,'50% 40%'],'servico-edicao-notebook':[1050,1400,'50% 62%'],'servico-stories-camiseta':[600,900,'50% 28%'],'servico-tiktok-casal':[600,900,'50% 45%'],'servico-artes-colagem':[1050,1400,'50% 60%'],'recorrente-poltrona':[1050,1400,'50% 62%'],'manifesto-camiseta-bone':[600,900,'50% 30%'],'milao-hero-roma-forum':[1350,1800,'50% 55%'],'milao-rua-italia':[1050,1400,'50% 50%'],'olhar-01-maquete':[900,1200,'50% 40%'],'olhar-02-carrinho':[900,1200,'50% 40%'],'olhar-03-obra-andaime':[900,1200,'50% 40%'],'olhar-04-banco-almofada':[900,1200,'50% 40%'],'olhar-05-cesta-revistas':[900,1200,'50% 40%'],'olhar-06-materiais-mao':[871,1200,'50% 40%'],'olhar-07-cafe-janela':[600,900,'50% 40%'],'olhar-08-cafe-balcao':[600,900,'50% 40%'],'olhar-09-casal-cafe':[600,900,'50% 40%'],'olhar-10-retrato-abajur':[600,900,'50% 40%'],'olhar-11-casal-plantas':[600,900,'50% 40%']};
+    var C2_HERO=['hero-1-notebook','hero-2-obra','hero-3-janela-mar','hero-4-sala'];
+    var C2_OLH=['olhar-01-maquete','olhar-02-carrinho','olhar-03-obra-andaime','olhar-04-banco-almofada','olhar-05-cesta-revistas','olhar-06-materiais-mao','olhar-07-cafe-janela','olhar-08-cafe-balcao','olhar-09-casal-cafe','olhar-10-retrato-abajur','olhar-11-casal-plantas'];
+    // nomes antigos (links ja enviados) apontam para as fotos novas
+    var C2_OLD={'casal-plantas':'olhar-11-casal-plantas','abajur-tablet':'olhar-10-retrato-abajur','obra-colher':'olhar-03-obra-andaime','maos-tachinhas':'olhar-06-materiais-mao','bone-vermelho':'manifesto-camiseta-bone'};
+    function c2Key(slug){slug=String(slug==null?'':slug);if(Object.prototype.hasOwnProperty.call(ASSETS,slug))return slug;return Object.prototype.hasOwnProperty.call(C2_OLD,slug)?C2_OLD[slug]:null;}
+    function c2Src(slug){var k=c2Key(slug);return k?AS_DIR+k+'.webp':null;}
     function c2Img(slug,eager){
-      var src=c2Src(slug);if(!src)return null;
-      var im=document.createElement('img');im.alt='';im.decoding='async';
+      var k=c2Key(slug);if(!k)return null;var a=ASSETS[k];
+      var im=document.createElement('img');im.alt='';im.decoding='async';im.width=a[0];im.height=a[1];im.style.objectPosition=a[2];
       if(!eager)im.loading='lazy';
       im.addEventListener('error',function(){if(im.parentNode)im.parentNode.removeChild(im);});
-      im.src=src;return im;
+      im.src=AS_DIR+k+'.webp';return im;
     }
     function c2Video(url){return (typeof url==='string'&&/^https:\/\//i.test(url.trim())&&url.length<600)?url.trim():null;}
     function c2Un(x){return x.unidade==='mensal'?'por mês':(x.unidade==='unidade'?(String(x.rot||'').trim()||'por unidade'):'valor único');}
@@ -1176,21 +1207,21 @@
 
     function c2Strip(id){
       var tr=document.querySelector('#'+id+' .c2-strip-track');
-      for(var r=0;r<2;r++){C2_FOTOS.forEach(function(s,i){
-        var d=cdEl('div','c2-tile');var im=c2Img(C2_FOTOS[(i+(id==='c2Strip2'?2:0))%5],false);if(im)d.appendChild(im);tr.appendChild(d);
+      for(var r=0;r<2;r++){C2_OLH.forEach(function(s,i){
+        var d=cdEl('div','c2-tile');var im=c2Img(C2_OLH[(i+(id==='c2Strip2'?5:0))%C2_OLH.length],false);if(im)d.appendChild(im);tr.appendChild(d);
       });}
     }
 
     function c2Abertura(){
       var box=document.getElementById('c2Slides');
-      C2_FOTOS.forEach(function(s,i){
+      C2_HERO.forEach(function(s,i){
         var d=cdEl('div','c2-slide'+(i===0?' on':''));var im=c2Img(s,i===0);if(im)d.appendChild(im);box.appendChild(d);
       });
       var vu=c2Video(PROPOSTA.video_abertura);
       if(vu&&!C2.reduce){
         var v=document.createElement('video');v.className='c2-vid';v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;
         v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
-        var p0=c2Src(C2_FOTOS[0]);if(p0)v.poster=p0;
+        var p0=c2Src(C2_HERO[0]);if(p0)v.poster=p0;
         v.addEventListener('error',function(){if(v.parentNode)v.parentNode.removeChild(v);});
         v.src=vu;box.appendChild(v);
         var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});
@@ -1242,18 +1273,24 @@
     }
 
     // ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) =====
-    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false};
+    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[]};
     var C3_NOMES={avulsos:'Avulsos',recorrente:'Recorrente',milao:'Especial Milão'};
     var C3_GAL=[
-      {src:'/img/casal-plantas.jpg',leg:'Rotina em campo'},
-      {src:'/img/abajur-tablet.jpg',leg:'Detalhes do projeto'},
-      {src:'/img/obra-colher.jpg',leg:'Obra em andamento'},
-      {src:'/img/maos-tachinhas.jpg',leg:'Mãos na massa'},
-      {src:'/img/bone-vermelho.jpg',leg:'Registro com identidade'}
+      {src:'/img/assets-proposta/olhar-01-maquete.webp',leg:'Maquete'},
+      {src:'/img/assets-proposta/olhar-02-carrinho.webp',leg:'Carrinho'},
+      {src:'/img/assets-proposta/olhar-03-obra-andaime.webp',leg:'Obra e andaime'},
+      {src:'/img/assets-proposta/olhar-04-banco-almofada.webp',leg:'Banco e almofada'},
+      {src:'/img/assets-proposta/olhar-05-cesta-revistas.webp',leg:'Cesta de revistas'},
+      {src:'/img/assets-proposta/olhar-06-materiais-mao.webp',leg:'Materiais na mão'},
+      {src:'/img/assets-proposta/olhar-07-cafe-janela.webp',leg:'Café na janela'},
+      {src:'/img/assets-proposta/olhar-08-cafe-balcao.webp',leg:'Café no balcão'},
+      {src:'/img/assets-proposta/olhar-09-casal-cafe.webp',leg:'Casal no café'},
+      {src:'/img/assets-proposta/olhar-10-retrato-abajur.webp',leg:'Retrato com abajur'},
+      {src:'/img/assets-proposta/olhar-11-casal-plantas.webp',leg:'Casal e plantas'}
     ];
     function c3Src(s){
       s=String(s==null?'':s).trim();
-      return (/^\/img\/[\w\-.]+\.(jpe?g|png|webp)$/i.test(s)||/^https:\/\/[^\s"'<>]{1,500}$/i.test(s))?s:null;
+      return (/^\/img\/(?:[\w\-]+\/)?[\w\-.]+\.(jpe?g|png|webp)$/i.test(s)||/^https:\/\/[^\s"'<>]{1,500}$/i.test(s))?s:null;
     }
     function c3Pic(src,eager){
       var s=c3Src(src);if(!s)return null;
@@ -1280,7 +1317,7 @@
     function c3Servico(P,pi,id){
       var sec=cdEl('section','c3-svc c2-reveal');sec.id=id;
       var ph=cdEl('div','c3-svc-ph');
-      var im=c3Pic('/img/'+P.foto+'.jpg',false);if(c2Src(P.foto)&&im)ph.appendChild(im);
+      var im=c2Img(P.foto,false);if(im){ph.appendChild(im);if(ASSETS[c2Key(P.foto)][0]<1000)ph.classList.add('lo');}
       c3Vid(ph,P.video,c2Src(P.foto));
       ph.appendChild(cdEl('h3','c3-svc-tt',P.titulo));
       var bd=cdEl('div','c3-svc-bd');
@@ -1375,7 +1412,7 @@
       pane.appendChild(cdEl('h3','c3-sh','Plano de entrada'));
       var pl=c2Norm(R.plano||{});pl.lazy=true;
       var pi=C2.paths.length;C2.paths.push({titulo:'Plano recorrente',lazy:true});
-      if(!pl.foto)pl.foto='abajur-tablet';
+      if(!pl.foto)pl.foto='recorrente-poltrona';
       pane.appendChild(c3Servico(pl,pi,'c3plano'));
       var gal=cdEl('div');
       pane.appendChild(cdEl('h3','c3-sh','Nosso olhar'));
@@ -1393,10 +1430,21 @@
       tl.appendChild(wrap);pane.appendChild(tl);
     }
 
+    // chips: fade na borda que tem mais conteudo e arrasto com o mouse (no toque a rolagem ja e nativa)
+    function c3ChipsFx(cw,tr){
+      function up(){var max=tr.scrollWidth-tr.clientWidth;cw.classList.toggle('fl',tr.scrollLeft>4);cw.classList.toggle('fr',max>4&&tr.scrollLeft<max-4);}
+      tr.addEventListener('scroll',up,{passive:true});window.addEventListener('resize',up);C3.fx.push(up);
+      var dn=false,x0=0,s0=0,moved=false;
+      tr.addEventListener('mousedown',function(e){dn=true;moved=false;x0=e.pageX;s0=tr.scrollLeft;tr.classList.add('drag');});
+      window.addEventListener('mouseup',function(){dn=false;tr.classList.remove('drag');});
+      window.addEventListener('mousemove',function(e){if(!dn)return;var dx=e.pageX-x0;if(Math.abs(dx)>3)moved=true;tr.scrollLeft=s0-dx;});
+      tr.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+      setTimeout(up,50);
+    }
     function c3Avulsos(pane,A){
       var sv=(Array.isArray(A.servicos)?A.servicos:[]).filter(function(S){return S&&S.on!==false&&S.titulo;});
-      var chips=cdEl('div','c3-chips');chips.setAttribute('role','navigation');chips.setAttribute('aria-label','Serviços');
-      pane.appendChild(chips);
+      var cw=cdEl('div','c3-chips-w'),chips=cdEl('div','c3-chips');chips.setAttribute('role','navigation');chips.setAttribute('aria-label','Serviços');
+      cw.appendChild(chips);pane.appendChild(cw);c3ChipsFx(cw,chips);
       var comum=cdLista(A.comb);
       sv.forEach(function(S,i){
         var P=c2Norm(S);if(!P.comb.length)P.comb=comum.slice();
@@ -1420,34 +1468,46 @@
 
     function c3Milao(pane,M){
       M=M||{};
-      var T=function(k,d){var v=String(M[k]==null?'':M[k]).trim();return v||d;};
+      var T=function(k){return String(M[k]==null?'':M[k]).trim();};
       function bloco(cls){var b=cdEl('section','c3-mi-b '+cls),i=cdEl('div','c3-mi-in');b.appendChild(i);pane.appendChild(b);return i;}
-      var h=bloco('c3-mi-hero');
-      h.appendChild(cdEl('div','c3-mi-k','// projeto recorrente'));
-      h.appendChild(cdEl('h2','c3-mi-h',T('titulo','Especial Milão')));
-      h.appendChild(cdEl('span','c3-mi-tri'));
-      h.appendChild(cdEl('p','c3-mi-sub',T('sub','Viaje com a gente ao evento de arquitetura de abril.')));
+      // topo proprio da aba: foto de abertura, titulo, subtitulo e detalhe tricolor
+      var top=cdEl('section','c3-mi-top');
+      var ph=cdEl('div','c3-mi-ph');var im=c2Img('milao-hero-roma-forum',false);if(im)ph.appendChild(im);
+      top.appendChild(ph);top.appendChild(cdEl('div','c3-mi-veil'));
+      var ti=cdEl('div','c3-mi-top-in');
+      ti.appendChild(cdEl('div','c3-mi-k','// projeto recorrente'));
+      ti.appendChild(cdEl('h2','c3-mi-h',T('titulo')||'Especial Milão'));
+      ti.appendChild(cdEl('span','c3-mi-tri'));
+      ti.appendChild(cdEl('p','c3-mi-sub',T('sub')||'Viaje com a gente ao evento de arquitetura de abril.'));
+      top.appendChild(ti);top.appendChild(cdEl('span','c3-mi-flag'));
+      pane.appendChild(top);
       var o=bloco('c3-mi-oq c2-reveal');
-      o.appendChild(cdEl('div','c3-mi-t','O que é'));
-      o.appendChild(cdEl('p','c3-mi-p',T('oque','Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.')));
-      var lv=cdLista(M.leva);if(!lv.length)lv=['Captação de foto','Captação de vídeo','Edição','Acompanhamento presencial no evento','Preparação mensal até lá'];
-      var l=bloco('c3-mi-lv c2-reveal');l.appendChild(cdEl('div','c3-mi-t','O que você leva'));
-      var ul=cdEl('ul','c3-mi-ul');lv.forEach(function(t){ul.appendChild(cdEl('li',null,t));});l.appendChild(ul);
+      var ot=cdEl('div','c3-mi-oqt');
+      ot.appendChild(cdEl('div','c3-mi-t','O que é'));
+      ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.'));
+      o.appendChild(ot);
+      var fg=cdEl('figure','c3-mi-fig');var im2=c2Img('milao-rua-italia',false);if(im2)fg.appendChild(im2);
+      if(im2)o.appendChild(fg);
+      var lv=cdLista(M.leva);
+      if(lv.length){var l=bloco('c3-mi-lv c2-reveal');l.appendChild(cdEl('div','c3-mi-t','O que está incluso'));
+        var ul=cdEl('ul','c3-mi-ul');lv.forEach(function(t){ul.appendChild(cdEl('li',null,t));});l.appendChild(ul);}
       var et=(Array.isArray(M.etapas)?M.etapas:[]).filter(function(e){return e&&e.t;});
-      if(!et.length)et=[{t:'Até abril',d:'Mensalidades recorrentes e preparação mensal.'},{t:'A viagem',d:'O Studio acompanha e grava com você no evento.'},{t:'Depois',d:'Entrega dos conteúdos.'}];
-      var c=bloco('c3-mi-cm c2-reveal');c.appendChild(cdEl('div','c3-mi-t','Como funciona até abril'));
-      var sd=cdEl('div','c3-mi-st');et.forEach(function(e){var s=cdEl('div','c3-mi-s');s.appendChild(cdEl('b',null,e.t));if(e.d)s.appendChild(cdEl('span',null,e.d));sd.appendChild(s);});c.appendChild(sd);
-      var v=bloco('c3-mi-vl c2-reveal');v.appendChild(cdEl('div','c3-mi-t','Valor'));
-      var vs=cdEl('div','c3-mi-vs');
-      [['Mensalidade',T('mensal','a definir')],['Mês de início',T('inicio','a definir')]].forEach(function(p){var d=cdEl('div','c3-mi-v');d.appendChild(cdEl('small',null,p[0]));d.appendChild(cdEl('b',null,p[1]));vs.appendChild(d);});
-      v.appendChild(vs);
+      if(et.length){var c=bloco('c3-mi-cm c2-reveal');c.appendChild(cdEl('div','c3-mi-t','Como funciona'));
+        var sd=cdEl('div','c3-mi-st');et.forEach(function(e){var s=cdEl('div','c3-mi-s');s.appendChild(cdEl('b',null,e.t));if(e.d)s.appendChild(cdEl('span',null,e.d));sd.appendChild(s);});c.appendChild(sd);}
+      // dados so aparecem quando o admin preenche; nada e inventado
+      var dados=[['Mensalidade',T('mensal')],['Mês de início',T('inicio')],['Data do evento',T('data')],['Vagas',T('vagas')]].filter(function(p){return p[1];});
+      if(dados.length){var v=bloco('c3-mi-vl c2-reveal');v.appendChild(cdEl('div','c3-mi-t','Condições'));
+        var vs=cdEl('div','c3-mi-vs');
+        dados.forEach(function(p){var d=cdEl('div','c3-mi-v');d.appendChild(cdEl('small',null,p[0]));d.appendChild(cdEl('b',null,p[1]));vs.appendChild(d);});
+        v.appendChild(vs);}
+      var g=bloco('c3-mi-cta c2-reveal');
       var go=cdEl('button','c3-mi-go','Quero saber mais');go.type='button';
       go.addEventListener('click',function(){
         if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
         var url='https://wa.me/5513996057099?text='+encodeURIComponent('Olá! Sou '+PROPOSTA.nome+'. Tenho interesse no Especial Milão. Podemos conversar?');
         var w=window.open(url,'_blank');if(!w)window.location.href=url;
       });
-      v.appendChild(go);
+      g.appendChild(go);
     }
 
     function c3AtivaRc(){
@@ -1461,11 +1521,12 @@
       var tabs=document.getElementById('c3Tabs');
       document.documentElement.style.setProperty('--c3h',h+'px');
       document.documentElement.style.setProperty('--c3off',(h+(tabs?tabs.offsetHeight:56)+12)+'px');
+      C3.fx.forEach(function(f){f();});
     }
 
     function c3Tab(id){
       if(C3.tab===id||C3.tabs.indexOf(id)<0)return;
-      C3.tab=id;
+      var was=C3.tab;C3.tab=id;
       document.querySelectorAll('#c3TabBtns .c3-tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false');});
       document.querySelectorAll('#c3Root .c3-pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===id);});
       var mi=id==='milao';
@@ -1474,7 +1535,9 @@
       document.body.classList.toggle('c3-mi-on',mi);
       if(id==='recorrente')c3AtivaRc();
       var an=document.getElementById('c3Anchor'),tb=document.getElementById('c3Tabs');
-      if(tb.getBoundingClientRect().top<=C3.hdr+1)an.scrollIntoView({behavior:C2.reduce?'auto':'smooth',block:'start'});
+      C3.fx.forEach(function(f){f();});
+      if(was&&(mi||was==='milao'))an.scrollIntoView({behavior:'auto',block:'start'});
+      else if(tb.getBoundingClientRect().top<=C3.hdr+1)an.scrollIntoView({behavior:C2.reduce?'auto':'smooth',block:'start'});
     }
 
     function renderCardapio3(){
@@ -1488,7 +1551,9 @@
       var P=PROPOSTA;
       C3.tabs=[];if(P.av)C3.tabs.push('avulsos');if(P.rc)C3.tabs.push('recorrente');if(P.mi)C3.tabs.push('milao');
       c2Abertura();c2Strip('c2Strip1');
-      if(P.obs){var ob=document.getElementById('c2Obs');ob.textContent=String(P.obs);ob.style.display='block';}
+      var mf=document.getElementById('c3ManifPh'),mfi=c2Img('manifesto-camiseta-bone',false);if(mfi)mf.appendChild(mfi);else mf.style.display='none';
+      var obsT=String(P.obs==null?'':P.obs).trim();
+      if(obsT){var ob=document.getElementById('c2Obs');ob.textContent=obsT;ob.style.display='block';}
       if(P.av)c3Avulsos(document.getElementById('c3PAv'),P.av);
       if(P.rc)c3Recorrente(document.getElementById('c3PRc'),P.rc);
       if(P.mi)c3Milao(document.getElementById('c3PMi'),P.mi);
