@@ -507,7 +507,7 @@
   <div class="expired-screen" id="expiredScreen">
     <div class="expired-title">Proposta expirada</div>
     <div class="expired-sub">Este link não é mais válido. Entre em contato para solicitar uma nova proposta.</div>
-    <a href="https://wa.me/5513996057099?text=Ol%C3%A1%21+Gostaria+de+uma+nova+proposta." class="expired-btn">Solicitar nova proposta →</a>
+    <a href="https://wa.me/5513996057099?text=Ol%C3%A1%21+Gostaria+de+uma+nova+proposta." class="expired-btn" id="expiredBtn">Solicitar nova proposta →</a>
   </div>
   <div class="timer-bar"><div class="timer-logo">STUDIO PULGA</div><div class="timer-right"><div class="timer-label">Proposta Expira em</div><div class="timer-count" id="timerCount">—</div></div></div>
   <section class="hero"><div class="hero-photo"></div><div class="hero-overlay"></div><div class="hero-content"><div class="hero-tag">Proposta exclusiva</div><div class="hero-name" id="heroName">Olá, cliente.</div><h1 class="hero-title">Feito pra <em style="font-family:'Outfit',sans-serif;font-style:normal;font-weight:300;font-size:clamp(44px,9vw,100px);color:rgba(244,234,221,0.75);letter-spacing:0.01em;">você</em></h1><p class="hero-desc">Esta proposta foi preparada especialmente para você após nossa conversa. Ela é válida pelo período indicado acima.</p></div></section>
@@ -597,6 +597,9 @@
     var SUPA='https://ixclkelqjpfkucejbzuq.supabase.co';
     var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Y2xrZWxxanBma3VjZWpienVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NzM5NTAsImV4cCI6MjA5NjA0OTk1MH0.VmXA6P-9IS0TsNnh_2ZGBQZQqtqtCrp4CdHGOVIc5zU';
 
+    // Hora do servidor: a decisao de "expirada" usa o horario do servidor (SKEW = servidor - aparelho). O relogio do aparelho so alimenta a contagem visual.
+    var SKEW=0;
+    function agora(){return Date.now()+SKEW;}
     function getParam(k){return new URLSearchParams(window.location.search).get(k);}
 
     // DECODER ROBUSTO — 3 tentativas
@@ -626,11 +629,36 @@
       return null;
     }
 
+    // Tres telas distintas: "Proposta expirada" so quando o servidor confirma o prazo; link incompleto/invalido; falha de rede.
+    var WA_NUM='5513996057099';
+    function mostraTela(t){
+      var e=document.getElementById('expiredScreen'),ti=e.querySelector('.expired-title'),su=e.querySelector('.expired-sub'),bt=document.getElementById('expiredBtn');
+      bt.onclick=null;
+      if(t==='invalido'){
+        ti.textContent='Link incompleto ou inválido';
+        su.textContent='Peça um novo link ao Studio.';
+        bt.textContent='Pedir novo link no WhatsApp →';
+        bt.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent('Olá! O link da minha proposta abriu incompleto ou inválido. Pode me enviar um novo?');
+      }else if(t==='rede'){
+        ti.textContent='Não foi possível verificar agora';
+        su.textContent='Tente novamente.';
+        bt.textContent='Tentar de novo';
+        bt.href='#';
+        bt.onclick=function(ev){ev.preventDefault();e.classList.remove('show');loadProposta();};
+      }else{
+        ti.textContent='Proposta expirada';
+        su.textContent='Este link não é mais válido. Entre em contato para solicitar uma nova proposta.';
+        bt.textContent='Solicitar nova proposta →';
+        bt.href='https://wa.me/'+WA_NUM+'?text=Ol%C3%A1%21+Gostaria+de+uma+nova+proposta.';
+      }
+      e.classList.add('show');
+    }
+
     function loadProposta(){
       var d=getParam('d');
-      // Sem parametro: exibe tela de expirada direto
+      // Sem parametro (link cortado ou aberto sem o codigo): link incompleto
       if(!d){
-        document.getElementById('expiredScreen').classList.add('show');
+        mostraTela('invalido');
         return;
       }
       // Links do tipo cardapio muito grandes vem comprimidos (prefixo "z~"). Os demais seguem como sempre.
@@ -643,9 +671,9 @@
     }
 
     function seguirCarga(d){
-      // Decode falhou: exibe tela de expirada
-      if(!PROPOSTA){
-        document.getElementById('expiredScreen').classList.add('show');
+      // Decode falhou (link cortado, incompleto ou alterado): link incompleto ou invalido, nunca "expirada"
+      if(!PROPOSTA||typeof PROPOSTA!=='object'){
+        mostraTela('invalido');
         return;
       }
 
@@ -653,10 +681,12 @@
       // O expira_em do banco prevalece sobre o expira embutido na URL.
       var lh=PROPOSTA.lh;
       if(!lh){
-        document.getElementById('expiredScreen').classList.add('show');
+        mostraTela('invalido');
         return;
       }
-      sha256hex(d).then(function(h){
+      var hashP;
+      try{hashP=sha256hex(d);}catch(eh){mostraTela('rede');return;}
+      hashP.then(function(h){
         return fetch(SUPA+'/rest/v1/rpc/proposta_status',{
           method:'POST',
           headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'},
@@ -666,23 +696,19 @@
         if(!r.ok)throw new Error('falha');
         return r.json();
       }).then(function(st){
-        if(!st||!st.valida){
-          document.getElementById('expiredScreen').classList.add('show');
-          return;
-        }
+        // A resposta precisa ser valida; qualquer outra coisa e falha de verificacao, nunca "expirada"
+        if(!st||typeof st!=='object'||typeof st.valida!=='boolean')throw new Error('resposta');
+        return st;
+      }).then(function(st){
+        // Servidor respondeu: a partir daqui a decisao e dele
+        if(st.agora){var sv=new Date(st.agora).getTime();if(isFinite(sv))SKEW=sv-Date.now();}
+        if(!st.existe&&st.existe!==undefined||!st.valida){mostraTela('invalido');return;}
         if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
-        if(Date.now()>PROPOSTA.expira){
-          document.getElementById('expiredScreen').classList.add('show');
-          return;
-        }
+        if(st.expirada===true||agora()>PROPOSTA.expira){mostraTela('expirada');return;}
         renderProposta();
-      }).catch(function(){
-        // Sem conexao com o banco: usa o expira da URL
-        if(Date.now()>PROPOSTA.expira){
-          document.getElementById('expiredScreen').classList.add('show');
-          return;
-        }
-        renderProposta();
+      },function(){
+        // Sem resposta do servidor (rede, bloqueio, erro): nao abre a proposta e nao diz "expirada"
+        mostraTela('rede');
       });
     }
 
@@ -727,8 +753,8 @@
       }
 
       // Checar expiração ANTES de aplicar itens
-      if(Date.now()>PROPOSTA.expira){
-        document.getElementById('expiredScreen').classList.add('show');
+      if(agora()>PROPOSTA.expira){
+        mostraTela('expirada');
         return;
       }
 
@@ -788,8 +814,8 @@
 
     function startTimer(){
       function tick(){
-        var diff=PROPOSTA.expira-Date.now();
-        if(diff<=0){document.getElementById('expiredScreen').classList.add('show');return;}
+        var diff=PROPOSTA.expira-agora();
+        if(diff<=0){mostraTela('expirada');return;}
         var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
         var el=document.getElementById('timerCount');
         el.textContent=(d>0?d+'d ':'')+pad(h)+'h '+pad(m)+'m '+pad(s)+'s';
@@ -855,7 +881,7 @@
     }
     function fecharPlano(e,num){
       e.preventDefault();
-      if(PROPOSTA&&PROPOSTA.expira&&Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(PROPOSTA&&PROPOSTA.expira&&agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       plFinaliza(num);
     }
     function plFinaliza(num){
@@ -896,7 +922,7 @@
         if(!nome){er.textContent='Informe o seu nome.';fn.focus();return;}
         if(em&&!/^\S+@\S+\.\S+$/.test(em)){er.textContent='Confira o e-mail.';fe.focus();return;}
         if(tel&&tel.replace(/\D/g,'').length<10){er.textContent='Confira o telefone (com DDD).';ft.focus();return;}
-        if(Date.now()>PROPOSTA.expira){fecha();document.getElementById('expiredScreen').classList.add('show');return;}
+        if(agora()>PROPOSTA.expira){fecha();mostraTela('expirada');return;}
         fecha();
         enviarPedidoPlano(num,{nome:nome,email:em,tel:tel});
       };
@@ -922,18 +948,50 @@
 
     // ===== Tipo CARDAPIO (novo) =====
     // Descomprime links "z~..." (deflate-raw + base64url). Devolve o JSON ou null.
+    // Inflate (deflate-raw) em JS puro: usado quando o aparelho nao tem DecompressionStream (iOS < 16.4).
+    function inflateRaw(src){
+      var pos=0,bit=0,cnt=0,out=[];
+      function bits(n){var v=0;for(var i=0;i<n;i++){if(!cnt){if(pos>=src.length)throw new Error('fim');bit=src[pos++];cnt=8;}v|=(bit&1)<<i;bit>>=1;cnt--;}return v;}
+      function build(lens){var c=[],o=[],i,l;for(i=0;i<16;i++)c[i]=0;for(i=0;i<lens.length;i++)c[lens[i]]++;c[0]=0;o[1]=0;for(i=1;i<15;i++)o[i+1]=o[i]+c[i];var sy=[];for(i=0;i<lens.length;i++)if(lens[i])sy[o[lens[i]]++]=i;return{c:c,s:sy};}
+      function dec(h){var code=0,first=0,idx=0;for(var l=1;l<16;l++){code|=bits(1);var n=h.c[l];if(code-n<first)return h.s[idx+(code-first)];idx+=n;first+=n;first<<=1;code<<=1;}throw new Error('cod');}
+      var LB=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258],
+          LE=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0],
+          DB=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577],
+          DE=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+      var fix=null;
+      function codes(lh,dh){for(;;){var sy=dec(lh);if(sy<256)out.push(sy);else if(sy===256)return;else{sy-=257;if(sy>=29)throw new Error('len');var len=LB[sy]+bits(LE[sy]);var ds=dec(dh);if(ds>=30)throw new Error('dst');var dist=DB[ds]+bits(DE[ds]);if(dist>out.length)throw new Error('dst2');for(var k=0;k<len;k++)out.push(out[out.length-dist]);}}}
+      var last;
+      do{
+        last=bits(1);var t=bits(2);
+        if(t===0){cnt=0;var ln=src[pos]|(src[pos+1]<<8);pos+=4;if(pos+ln>src.length)throw new Error('stored');for(var i=0;i<ln;i++)out.push(src[pos++]);}
+        else if(t===1){if(!fix){var l=[],i2;for(i2=0;i2<144;i2++)l[i2]=8;for(;i2<256;i2++)l[i2]=9;for(;i2<280;i2++)l[i2]=7;for(;i2<288;i2++)l[i2]=8;var d=[];for(i2=0;i2<30;i2++)d[i2]=5;fix={l:build(l),d:build(d)};}codes(fix.l,fix.d);}
+        else if(t===2){var nl=bits(5)+257,nd=bits(5)+1,nc=bits(4)+4,ORD=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],lens=[],i3;for(i3=0;i3<19;i3++)lens[i3]=0;for(i3=0;i3<nc;i3++)lens[ORD[i3]]=bits(3);var ch=build(lens);lens=[];var ix=0;while(ix<nl+nd){var sy=dec(ch);if(sy<16)lens[ix++]=sy;else{var pv=0,rp;if(sy===16){if(!ix)throw new Error('rep');pv=lens[ix-1];rp=3+bits(2);}else if(sy===17)rp=3+bits(3);else rp=11+bits(7);while(rp--)lens[ix++]=pv;}}
+          codes(build(lens.slice(0,nl)),build(lens.slice(nl,nl+nd)));}
+        else throw new Error('tipo');
+      }while(!last);
+      return new Uint8Array(out);
+    }
+    function utf8Json(u){
+      var s='';for(var i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
+      return JSON.parse(decodeURIComponent(escape(s)));
+    }
     function decodeComprimido(s){
+      var u;
       try{
         var b64=s.replace(/-/g,'+').replace(/_/g,'/');
         while(b64.length%4!==0)b64+='=';
-        var bin=atob(b64),u=new Uint8Array(bin.length);
+        var bin=atob(b64);u=new Uint8Array(bin.length);
         for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+      }catch(e){return Promise.resolve(null);}
+      function jsPuro(){try{return utf8Json(inflateRaw(u));}catch(e2){return null;}}
+      if(typeof DecompressionStream==='undefined')return Promise.resolve(jsPuro());
+      try{
         var ds=new DecompressionStream('deflate-raw');
-        var w=ds.writable.getWriter();w.write(u);w.close();
+        var w=ds.writable.getWriter();w.write(u).catch(function(){});w.close().catch(function(){});
         return new Response(ds.readable).arrayBuffer().then(function(buf){
           return JSON.parse(new TextDecoder('utf-8').decode(buf));
-        }).catch(function(){return null;});
-      }catch(e){return Promise.resolve(null);}
+        }).catch(function(){return jsPuro();});
+      }catch(e){return Promise.resolve(jsPuro());}
     }
 
     var CD={items:[],sel:{},ui:{}};
@@ -1030,7 +1088,7 @@
     }
 
     function renderCardapio(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       // esconde as secoes do tipo "planos" (so as do corpo da pagina, nao as do cardapio)
       document.querySelectorAll('body > .hero, body > .quote-section, body > .services-section, body > .planos-section').forEach(function(s){s.style.display='none';});
       document.body.classList.add('cd-on');
@@ -1113,7 +1171,7 @@
     }
 
     function cdQuero(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       var t=cdTotais();if(!t.n)return;
       var BR={timeZone:'America/Sao_Paulo'},dt=new Date(PROPOSTA.expira);
       var ate=dt.toLocaleDateString('pt-BR',BR)+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
@@ -1490,7 +1548,7 @@
         if(!nome){er.textContent='Informe o seu nome.';fn.focus();return;}
         if(em&&!/^\S+@\S+\.\S+$/.test(em)){er.textContent='Confira o e-mail.';fe.focus();return;}
         if(tel&&tel.replace(/\D/g,'').length<10){er.textContent='Confira o telefone (com DDD).';ft.focus();return;}
-        if(Date.now()>PROPOSTA.expira){fecha();document.getElementById('expiredScreen').classList.add('show');return;}
+        if(agora()>PROPOSTA.expira){fecha();mostraTela('expirada');return;}
         var sel=b.querySelector('input[name=c3Pag]:checked');
         var tt=c2Totais();if(!tt.n){fecha();return;}
         fecha();
@@ -1501,7 +1559,7 @@
       box.hidden=false;b.scrollTop=0;ok.focus({preventScroll:true});
     }
     function c2Quero(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       var t=c2Totais();if(!t.n)return;
       if(!C3.tabs.length){finalizarPedido({},t);return;}
       c3Finaliza(t);
@@ -1541,7 +1599,7 @@
     }
 
     function renderCardapio2(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       C2.reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
       document.querySelectorAll('body > .hero, body > .quote-section, body > .services-section, body > .planos-section').forEach(function(s){s.style.display='none';});
       document.body.classList.add('c2-on');
@@ -1940,7 +1998,7 @@
       var g=bloco('c3-mi-cta c2-reveal');
       var go=cdEl('button','c3-mi-go','Quero saber mais');go.type='button';
       go.addEventListener('click',function(){
-        if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+        if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
         var url='https://wa.me/5513996057099?text='+encodeURIComponent('Olá! Sou '+PROPOSTA.nome+'. Tenho interesse no Especial Milão. Podemos conversar?');
         var w=window.open(url,'_blank');if(!w)window.location.href=url;
       });
@@ -1971,7 +2029,7 @@
     }
 
     function renderCardapio3(){
-      if(Date.now()>PROPOSTA.expira){document.getElementById('expiredScreen').classList.add('show');return;}
+      if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
       C2.reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
       document.querySelectorAll('body > .hero, body > .quote-section, body > .services-section, body > .planos-section').forEach(function(s){s.style.display='none';});
       var old=document.getElementById('c2Root');if(old&&old.parentNode)old.parentNode.removeChild(old);
