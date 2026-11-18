@@ -3,6 +3,7 @@
 <head>
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1973272740000551');fbq('track','PageView');fbq('track','ViewContent',{content_name:'Proposta Studio Pulga'});</script>
   <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Studio Pulga ~ Proposta</title>
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;700;900&family=Outfit:wght@300;400;500;600&family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -500,6 +501,12 @@
       .c3-gal-tr{scroll-behavior:auto;}
       .c3-tab,.c3-link,.c3-acc svg{transition:none!important;}
     }
+    /* Conteudo da proposta so aparece depois que o servidor confirma (classe sp-ok em <html>) */
+    html:not(.sp-ok) body>*:not(.expired-screen):not(script):not(#spLoad){display:none!important;}
+    #spLoad{position:fixed;inset:0;background:#F4EADD;display:flex;align-items:center;justify-content:center;z-index:9000;}
+    #spLoad i{width:8px;height:8px;border-radius:50%;background:#6E2C14;animation:spP 1s infinite;}
+    @keyframes spP{0%,100%{opacity:.3}50%{opacity:1}}
+    html.sp-ok #spLoad{display:none;}
     /* ===== Mobile (ate 600 px): barra "Seu pacote" recolhida + folha inferior; cabecalho curto. Nao afeta telas maiores. ===== */
     .c2-rc-s{display:none;}
     .c2-bk{display:none;}
@@ -536,6 +543,7 @@
   </style>
 </head>
 <body>
+  <div id="spLoad" aria-label="Carregando"><i></i></div>
   <div class="expired-screen" id="expiredScreen">
     <div class="expired-title">Proposta expirada</div>
     <div class="expired-sub">Este link não é mais válido. Entre em contato para solicitar uma nova proposta.</div>
@@ -693,8 +701,8 @@
         mostraTela('invalido');
         return;
       }
-      // Links do tipo cardapio muito grandes vem comprimidos (prefixo "z~"). Os demais seguem como sempre.
-      if(d.slice(0,2)==='z~'){
+      // Links compactos (prefixo "z0"; os antigos usam "z~"). Links sem compressao comecam com "ey" e seguem como sempre.
+      if(d.slice(0,2)==='z~'||d.slice(0,2)==='z0'){
         decodeComprimido(d.slice(2)).then(function(p){PROPOSTA=p;seguirCarga(d);});
         return;
       }
@@ -734,9 +742,12 @@
       }).then(function(st){
         // Servidor respondeu: a partir daqui a decisao e dele
         if(st.agora){var sv=new Date(st.agora).getTime();if(isFinite(sv))SKEW=sv-Date.now();}
-        if(!st.existe&&st.existe!==undefined||!st.valida){mostraTela('invalido');return;}
+        // O servidor decide: prazo vencido (expirada) vem antes; depois link inexistente/alterado.
+        if(st.expirada===true){mostraTela('expirada');return;}
+        if(st.existe===false||!st.valida){mostraTela('invalido');return;}
         if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
-        if(st.expirada===true||agora()>PROPOSTA.expira){mostraTela('expirada');return;}
+        if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
+        document.documentElement.classList.add('sp-ok');   // so agora o conteudo aparece
         renderProposta();
       },function(){
         // Sem resposta do servidor (rede, bloqueio, erro): nao abre a proposta e nao diz "expirada"

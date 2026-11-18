@@ -363,7 +363,7 @@ function gerarLink() {
   var btn = document.getElementById('btnGerar');
   btn.disabled = true; btn.textContent = 'Salvando…';
   var enc0 = encode(data), encoded, link, snapPl;
-  // link compacto (deflate, prefixo "z~") por padrao, igual ao cardapio; sem suporte do navegador, cai no formato antigo
+  // link compacto (deflate, prefixo "z0") por padrao, igual ao cardapio; sem suporte do navegador, cai no formato antigo
   var pronto = window.CompressionStream ? cdComprimir(data).catch(function(){ return enc0; }) : Promise.resolve(enc0);
   // o link so vale depois de salvo no banco (com a assinatura dele)
   pronto.then(function(e2){
@@ -832,7 +832,7 @@ function c2ItemEd(P, lista, i, pi) {
   return box;
 }
 
-// comprime o JSON (deflate) so quando o link ficaria longo. Prefixo "z~" (nunca aparece em base64url).
+// comprime o JSON (deflate) so quando o link ficaria longo. Prefixo "z0" (so letras e numeros; o antigo "z~" continua sendo aceito pela pagina). Link sem compressao sempre comeca com "ey".
 function cdComprimir(data) {
   var cs = new CompressionStream('deflate-raw');
   var w = cs.writable.getWriter();
@@ -840,7 +840,7 @@ function cdComprimir(data) {
   return new Response(cs.readable).arrayBuffer().then(function(buf) {
     var b = new Uint8Array(buf), bin = '';
     for (var n = 0; n < b.length; n++) bin += String.fromCharCode(b[n]);
-    return 'z~' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_');
+    return 'z0' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_');
   });
 }
 
