@@ -644,10 +644,10 @@ function c3Defaults() {
         ops:[I('Até 5 vídeos',760,'unico',{desc:'No período contratado.'}),I('Até 10 vídeos',1210,'unico',{desc:'No período contratado.'}),I('Até 14 vídeos',1430,'unico',{desc:'No período contratado.'})],
         extras:[I('Vídeo adicional',130,'unidade',{rot:'por vídeo'})]}),
       S('a','servico-artes-colagem','Artes e design',{apoio:'Valores por unidade.', modo:'varios',
-        ops:[I('Post de arte',90,'unidade',{rot:'por unidade'}),I('Data sazonal',90,'unidade',{rot:'por unidade'}),I('Pack 3 datas sazonais',240,'unidade',{rot:'por pack'}),
+        ops:[I('Post de arte',140,'unidade',{rot:'por unidade'}),I('Data sazonal',140,'unidade',{rot:'por unidade'}),I('Pack 3 datas sazonais',360,'unidade',{rot:'por pack'}),
              I('Carrossel até 7 lâminas',250,'unidade',{rot:'por unidade',g:'car'}),I('Carrossel até 7 lâminas, com briefing nosso',290,'unidade',{rot:'por unidade',g:'car'}),
              I('Sequência de stories até 5 telas',120,'unidade',{rot:'por unidade',g:'sto'}),I('Sequência de stories até 5 telas, com briefing nosso',140,'unidade',{rot:'por unidade',g:'sto'}),
-             I('Capas de destaque, set de 5',120,'unidade',{rot:'por set',g:'cap'}),I('Capas de destaque, set de 5, com briefing nosso',140,'unidade',{rot:'por set',g:'cap'})]})
+             I('Capas de destaque, set de 5',160,'unidade',{rot:'por set',g:'cap'}),I('Capas de destaque, set de 5, com briefing nosso',180,'unidade',{rot:'por set',g:'cap'})]})
     ]},
     rc:{on:true, tit:'Avulso é pontual. Recorrente é constância.',
       comp:[{l:'Frequência',a:'Quando você contrata',r:'Todo mês'},
@@ -667,8 +667,9 @@ function c3Defaults() {
       gal:C3_GAL_TXT,
       difs:[{t:'Identidade cool e autoral',d:''},{t:'Equipe completa',d:'Filmmaker mobile, editor de vídeo e foto e social media.'},{t:'Rotina combinada',d:'Agenda, tabela de postagem e grupo com o videomaker.'}]},
     mi:{on:true, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
-      oque:'Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.',
-      leva:[], etapas:[], mensal:'', inicio:'', data:'', vagas:''}
+      oqt:'Milão, com a gente.',
+      oque:'O Studio estará lá e cobrirá 1 dia inteiro de captação com você, da manhã à noite. Nos demais dias, você pode ter stories todos os dias, como adicional.',
+      total:'3120', inicio:'11', fim:'4', data:'', vagas:'', cal:'2027-04', ida:'', volta:'', sdia:'147'}
   };
 }
 var c3S = c3Defaults();
@@ -906,17 +907,30 @@ function c3Render() {
   // ---- MILAO
   c3Fold(cont, 'mi', 'Aba Especial Milão', c3S.mi, function(b) {
     var M = c3S.mi;
-    b.appendChild(c2Campo('Título', M, 'titulo', {max:40}));
+    b.appendChild(c2Campo('Título da aba', M, 'titulo', {max:40}));
     b.appendChild(c2Campo('Subtítulo', M, 'sub', {max:140}));
-    b.appendChild(c2Campo('O que é', M, 'oque', {ta:true, max:400}));
-    b.appendChild(c2Linhas('O que está incluso', M, 'leva', 'Em branco: o bloco não aparece.'));
-    b.appendChild(c2e('div', 'sec-sep', 'Como funciona (em branco: não aparece)'));
-    c3Rows(b, M.etapas, [['t', 'Etapa', 50], ['d', 'Texto', 140]], function() { return {t:'', d:''}; }, '+ Adicionar etapa');
-    b.appendChild(c2e('div', 'cd-hint', 'Mensalidade, mês de início, data do evento e vagas só aparecem para o cliente quando preenchidos. Todos em branco: a aba mostra só o botão "Quero saber mais".'));
-    b.appendChild(c2Campo('Mensalidade', M, 'mensal', {ph:'Ex: R$ 0.000 por mês', max:40}));
-    b.appendChild(c2Campo('Mês de início', M, 'inicio', {max:40}));
-    b.appendChild(c2Campo('Data do evento', M, 'data', {max:40}));
-    b.appendChild(c2Campo('Vagas', M, 'vagas', {max:40}));
+    b.appendChild(c2Campo('Título do bloco de texto', M, 'oqt', {max:60}));
+    b.appendChild(c2Campo('Texto curto', M, 'oque', {ta:true, max:400}));
+    b.appendChild(c2e('div', 'sec-sep', 'Valor e parcelas'));
+    b.appendChild(c2e('div', 'cd-hint', 'O destaque ("R$ 520/mês, de novembro a abril...") e a calculadora "Quando você entra" são gerados daqui. Valor total em branco: não aparecem.'));
+    b.appendChild(c2Campo('Valor total (R$)', M, 'total', {ph:'Ex: 3120', max:12}));
+    var MESN = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    [['inicio', 'Mês de início'], ['fim', 'Mês final']].forEach(function(c) {
+      var f = c2e('div', 'field'); f.appendChild(c2e('label', 'label', c[1]));
+      var se = c2e('select', 'inp');
+      var o0 = c2e('option', null, '(não definido)'); o0.value = ''; se.appendChild(o0);
+      MESN.forEach(function(nm, i) { var o = c2e('option', null, nm); o.value = String(i + 1); if (String(M[c[0]]) === o.value) o.selected = true; se.appendChild(o); });
+      se.addEventListener('change', function() { M[c[0]] = se.value; });
+      f.appendChild(se); b.appendChild(f);
+    });
+    b.appendChild(c2Campo('Data do evento (opcional)', M, 'data', {max:40}));
+    b.appendChild(c2Campo('Vagas (opcional)', M, 'vagas', {max:40}));
+    b.appendChild(c2e('div', 'sec-sep', 'Stories nos outros dias'));
+    b.appendChild(c2e('div', 'cd-hint', 'Enquanto a data de ida e a de volta estiverem vazias, o calendário aparece só para ver, com o aviso "Informaremos a data disponível...". Preenchidas, só os dias da viagem ficam clicáveis.'));
+    b.appendChild(c2Campo('Mês e ano do calendário', M, 'cal', {ph:'AAAA-MM  (ex: 2027-04)', max:7}));
+    b.appendChild(c2Campo('Data de ida', M, 'ida', {ph:'AAAA-MM-DD', max:10}));
+    b.appendChild(c2Campo('Data de volta', M, 'volta', {ph:'AAAA-MM-DD', max:10}));
+    b.appendChild(c2Campo('Stories por dia, Milão (R$)', M, 'sdia', {ph:'Ex: 147', max:12}));
   });
   var n = [c3S.av.on, c3S.rc.on, c3S.mi.on].filter(Boolean).length;
   document.getElementById('cdCount').textContent = n + ' de 3 abas ligadas. Os textos e valores são de referência e podem ser editados.';
@@ -999,10 +1013,18 @@ function gerarCardapio() {
   } else if (vEnt) { alert('O valor especial vale para o plano da aba Recorrente, que está desligada. Ligue-a ou limpe o campo.'); return; }
   if (S3.mi.on) {
     var M = S3.mi, mi = {};
-    ['titulo','sub','oque','mensal','inicio','data','vagas'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
-    if (M.leva.length) mi.leva = M.leva;
-    var et = M.etapas.filter(function(x) { return String(x.t || '').trim(); }).map(function(x) { var o = {t:String(x.t).trim()}; if (String(x.d || '').trim()) o.d = String(x.d).trim(); return o; });
-    if (et.length) mi.etapas = et;
+    var mTot = String(M.total || '').trim();
+    if (mTot && cdNum(mTot) == null) { alert('Valor total do Milão inválido.'); return; }
+    var mSd = String(M.sdia || '').trim();
+    if (mSd && cdNum(mSd) == null) { alert('Valor de stories por dia (Milão) inválido.'); return; }
+    var mCal = String(M.cal || '').trim();
+    if (mCal && !/^\d{4}-(0[1-9]|1[0-2])$/.test(mCal)) { alert('Mês e ano do calendário do Milão: use AAAA-MM (ex: 2027-04).'); return; }
+    var mIda = String(M.ida || '').trim(), mVol = String(M.volta || '').trim();
+    var rD = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    if ((mIda && !rD.test(mIda)) || (mVol && !rD.test(mVol))) { alert('Datas de ida e volta do Milão: use AAAA-MM-DD.'); return; }
+    if ((mIda && !mVol) || (!mIda && mVol)) { alert('Preencha as duas datas (ida e volta) do Milão, ou deixe as duas em branco.'); return; }
+    if (mIda && mVol && mIda > mVol) { alert('A data de ida do Milão vem depois da volta.'); return; }
+    ['titulo','sub','oqt','oque','total','inicio','fim','data','vagas','cal','ida','volta','sdia'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
     data.mi = mi;
   }
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);

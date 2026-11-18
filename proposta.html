@@ -270,6 +270,19 @@
       .c2-tots .cd-tot{flex:0 0 auto;}
       .c2-recibo .cd-go{flex:0 0 auto;width:100%;padding:14px 20px;}
     }
+    @media(min-width:1024px){
+      body.c3-mi-on #c3Main{display:none;}
+      body.c3-mi-on #c3Layout{display:block;padding:0;}
+      body.c3-mi-on .c2-recibo{position:fixed;left:0;right:0;bottom:0;top:auto;margin:0;align-self:auto;border-radius:0;padding:0 clamp(16px,4vw,40px) 12px;box-shadow:0 -8px 30px rgba(30,8,2,0.25);transform:translateY(105%);}
+      body.c3-mi-on .c2-recibo.show{transform:translateY(0);}
+      body.c3-mi-on .c2-rc-t{pointer-events:auto;padding:12px 0 8px;}
+      body.c3-mi-on .c2-rc-c{display:block;}
+      body.c3-mi-on .c2-rl-w{grid-template-rows:0fr;}
+      body.c3-mi-on .c2-recibo.open .c2-rl-w{grid-template-rows:1fr;}
+      body.c3-mi-on .c2-tots{flex-direction:row;align-items:flex-end;gap:12px 20px;padding-top:8px;border-top:none;margin-top:0;}
+      body.c3-mi-on .c2-recibo .cd-go{width:auto;flex:0 0 auto;}
+    }
+    @media(max-width:1023px){body.c3-mi-on #c3Main{display:none;}body.c3-mi-on #c3Layout{display:block;}}
     @media (prefers-reduced-motion:reduce){
       .c2-reveal{opacity:1;transform:none;transition:none;}
       .c2-slide{transition:none;}
@@ -373,7 +386,7 @@
     .c3-mi-v b{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(20px,4.4vw,30px);letter-spacing:-0.02em;line-height:1.1;overflow-wrap:anywhere;}
     .c3-mi-go{display:inline-block;padding:16px 34px;border-radius:50px;border:none;background:var(--mi-b);color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
     .c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
-    body.c3-mi-on{padding-bottom:0!important;}
+    body.c3-mi-on{padding-bottom:150px!important;}
     body.c3-mi-on #c2Open,body.c3-mi-on .c2-manif,body.c3-mi-on #c2Strip1,body.c3-mi-on .c3-apoio{display:none;}
     .c3-mi-top{position:relative;min-height:min(80svh,680px);display:flex;align-items:flex-end;overflow:hidden;background:var(--mi-r);color:#F2E8D8;}
     .c3-mi-ph{position:absolute;inset:0;}
@@ -381,10 +394,45 @@
     .c3-mi-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(94,44,26,0.9),rgba(94,44,26,0.25) 55%,rgba(94,44,26,0.05));}
     .c3-mi-top-in{position:relative;z-index:2;width:100%;max-width:880px;margin:0 auto;padding:clamp(40px,8vw,90px) clamp(22px,6vw,80px) clamp(34px,6vw,64px);}
     .c3-mi-flag{position:absolute;z-index:3;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#3F6B4F 0 33.33%,#F2E8D8 33.33% 66.66%,#BF4630 66.66% 100%);}
+    .c3-mi-dest{margin-top:20px;display:inline-block;padding:14px 18px;border-radius:14px;background:var(--mi-r);color:#F2E8D8;font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(17px,3.6vw,24px);letter-spacing:-0.02em;line-height:1.2;}
+    .c3-mi-ms{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+    .c3-mi-m{min-width:58px;padding:12px 16px;border-radius:50px;border:2px solid rgba(242,232,216,0.7);background:transparent;color:#F2E8D8;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
+    .c3-mi-m.on{background:#F2E8D8;color:var(--mi-g);border-color:#F2E8D8;}
+    .c3-mi-m:focus-visible,.c3-mi-d:focus-visible,.c3-mi-go:focus-visible{outline:2px solid #FFB347;outline-offset:3px;}
+    .c3-mi-res{min-height:56px;}
+    .c3-mi-r1{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(28px,7vw,44px);letter-spacing:-0.03em;line-height:1.05;}
+    .c3-mi-r2{font-size:14px;line-height:1.5;font-weight:400;margin-top:4px;opacity:0.9;}
+    .c3-mi-aviso{margin:14px 0;padding:12px 14px;border:2px dashed rgba(242,232,216,0.65);border-radius:12px;font-size:14px;line-height:1.5;font-weight:600;}
+    .c3-mi-cal{margin-top:16px;max-width:420px;background:#F2E8D8;color:var(--mi-b);border-radius:16px;padding:14px;}
+    .c3-mi-cal-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;text-transform:capitalize;margin-bottom:8px;}
+    .c3-mi-cal-h,.c3-mi-cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+    .c3-mi-cal-h span{text-align:center;font-size:10px;font-weight:700;letter-spacing:0.08em;opacity:0.6;padding:2px 0;}
+    .c3-mi-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid rgba(94,44,26,0.25);background:transparent;color:var(--mi-b);font:600 13px 'Outfit',sans-serif;cursor:pointer;padding:0;}
+    .c3-mi-d.vz{border-color:transparent;pointer-events:none;}
+    .c3-mi-d:disabled{opacity:0.3;cursor:default;border-color:transparent;}
+    .c3-mi-d.on{background:var(--mi-b);color:#F2E8D8;border-color:var(--mi-b);}
+    .c3-mi-cinf{margin-top:14px;font-size:14px;line-height:1.5;min-height:22px;}
+    .c3-mi-sub2{font-family:'League Spartan',sans-serif;font-weight:900;font-size:20px;margin-top:4px;}
     .c3-mi-oq .c3-mi-in{display:grid;gap:26px;align-items:center;}
     .c3-mi-fig{margin:0;width:min(100%,340px);aspect-ratio:3/4;border-radius:18px;overflow:hidden;background:var(--mi-b);justify-self:center;}
     .c3-mi-fig img{width:100%;height:100%;object-fit:cover;display:block;}
     @media(min-width:820px){.c3-mi-oq .c3-mi-in{grid-template-columns:minmax(0,1fr) 300px;gap:44px;}.c3-mi-fig{width:100%;}}
+    .c3-rlw{min-height:0;overflow:hidden;}
+    .c3-rlw .c2-rl{max-height:30vh;}
+    .c3-pay{margin-top:12px;padding-top:10px;border-top:1px solid rgba(244,234,221,0.18);opacity:0.55;}
+    .c3-pay-t{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,234,221,0.7);margin-bottom:6px;}
+    .c3-pay-t small{text-transform:none;letter-spacing:0;font-weight:400;margin-left:6px;}
+    .c3-pay-o{display:flex;flex-wrap:wrap;gap:6px;}
+    .c3-pay-o button{padding:6px 10px;border-radius:50px;border:1px solid rgba(244,234,221,0.4);background:transparent;color:#F4EADD;font:500 11px 'Outfit',sans-serif;cursor:not-allowed;}
+    .c2-recibo.c3-hide{display:none;}
+    .c3-conf{position:fixed;inset:0;z-index:400;background:rgba(30,8,2,0.55);display:flex;align-items:center;justify-content:center;padding:20px;}
+    .c3-conf[hidden]{display:none;}
+    .c3-conf-b{background:#F4EADD;color:var(--br);border-radius:18px;padding:24px 22px 20px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(30,8,2,0.4);}
+    .c3-conf-b p{font-size:16px;line-height:1.5;font-weight:600;margin-bottom:18px;}
+    .c3-conf-bt{display:flex;gap:10px;}
+    .c3-conf-bt button{flex:1;padding:13px 10px;border-radius:50px;border:1.5px solid var(--br);background:transparent;color:var(--br);font:700 14px 'Outfit',sans-serif;cursor:pointer;}
+    .c3-conf-bt button:first-child{background:var(--br);color:#F4EADD;}
+    .c3-conf-bt button:focus-visible{outline:2px solid #FFB347;outline-offset:2px;}
     .c3-mi-cta{background:var(--mi-r);color:#F2E8D8;text-align:center;}
     .c3-mi-cta .c3-mi-go{background:#F2E8D8;color:var(--mi-b);}
     /* aba Avulsos: chips com fade e arrasto; foto de baixa resolucao nao e ampliada */
@@ -480,7 +528,9 @@
       </div>
       <aside class="c2-recibo" id="c2Recibo" aria-label="Seu pacote">
         <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <div class="c2-rl-w"><div class="c2-rl" id="c2Rl"></div></div>
+        <div class="c2-rl-w"><div class="c3-rlw"><div class="c2-rl" id="c2Rl"></div>
+          <div class="c3-pay" aria-disabled="true"><div class="c3-pay-t">Forma de pagamento <small>em breve</small></div><div class="c3-pay-o"><button type="button" disabled>Cartão recorrente</button><button type="button" disabled>Pix</button><button type="button" disabled>Boleto</button><button type="button" disabled>Cartão parcelado à vista</button></div></div>
+        </div></div>
         <div class="c2-tots">
           <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v zero" id="c2TotM"><span class="cd-tot-de" id="c2TotMDe" style="display:none;"></span><span id="c2TotMV">—</span></div></div>
           <div class="cd-tot"><div class="cd-tot-l">Total único</div><div class="cd-tot-v zero" id="c2TotU"><span class="cd-tot-de" id="c2TotUDe" style="display:none;"></span><span id="c2TotUV">—</span></div></div>
@@ -489,6 +539,7 @@
       </aside>
     </div>
     <div class="c3-pane c3-mi" data-tab="milao" id="c3PMi" role="tabpanel"></div>
+    <div class="c3-conf" id="c3Conf" role="alertdialog" aria-modal="true" aria-labelledby="c3ConfT" hidden><div class="c3-conf-b"><p id="c3ConfT"></p><div class="c3-conf-bt"><button type="button" id="c3ConfOk">Confirmar</button><button type="button" id="c3ConfNo">Cancelar</button></div></div></div>
   </div></template>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
@@ -1016,8 +1067,40 @@
 
     function c2Toggle(k){
       var o=C2.it[k],s=C2.sel[k];
-      if(!s.on&&o.x.g){C2.it.forEach(function(z,j){if(j!==k&&z.p===o.p&&z.x.g===o.x.g)C2.sel[j].on=false;});}
-      s.on=!s.on;c2Recalc();
+      var go=function(){
+        if(!s.on&&o.x.g){C2.it.forEach(function(z,j){if(j!==k&&z.p===o.p&&z.x.g===o.x.g)C2.sel[j].on=false;});}
+        s.on=!s.on;c2Recalc();
+      };
+      var mod=C2.paths[o.p]&&C2.paths[o.p].mod;
+      if(!s.on&&mod)c3Troca(mod,go);else go();
+    }
+    // ===== exclusividade Avulsos x Recorrente (o Especial Milao conta como Recorrente) =====
+    function c3Tem(mod){
+      var r=false;
+      C2.it.forEach(function(o,k){if(C2.sel[k]&&C2.sel[k].on&&C2.paths[o.p]&&C2.paths[o.p].mod===mod)r=true;});
+      if(mod==='rc'&&(C3.mi.mes>=0||C3.mi.dias.length))r=true;
+      return r;
+    }
+    function c3Limpa(mod){
+      C2.it.forEach(function(o,k){if(C2.paths[o.p]&&C2.paths[o.p].mod===mod){C2.sel[k].on=false;C2.sel[k].q=1;}});
+      if(mod==='rc'){C3.mi.mes=-1;C3.mi.dias=[];}
+    }
+    function c3ModoTxt(){return c3Tem('av')?'Avulsos':(c3Tem('rc')?'Recorrente':'');}
+    function c3Confirma(txt,ok){
+      var box=document.getElementById('c3Conf');if(!box){ok();return;}
+      document.getElementById('c3ConfT').textContent=txt;
+      var b1=document.getElementById('c3ConfOk'),b2=document.getElementById('c3ConfNo');
+      function fecha(){box.hidden=true;b1.onclick=b2.onclick=null;document.removeEventListener('keydown',esc,true);}
+      function esc(e){if(e.key==='Escape'){fecha();}}
+      b1.onclick=function(){fecha();ok();};b2.onclick=fecha;
+      document.addEventListener('keydown',esc,true);
+      box.hidden=false;b1.focus();
+    }
+    function c3Troca(destino,fn){
+      var outro=destino==='av'?'rc':'av';
+      if(!c3Tem(outro)){fn();return;}
+      var nm=function(m){return m==='av'?'Avulsos':'Recorrente';};
+      c3Confirma('Você está trocando de '+nm(outro)+' para '+nm(destino)+'. Sua seleção anterior será removida.',function(){c3Limpa(outro);fn();});
     }
 
     function c2Lista(titulo,arr,cls){
@@ -1135,6 +1218,19 @@
         });
         if(g.l.length)t.g.push(g);
       });
+      var M=C3.mi;
+      if(M.cfg){
+        var gm={titulo:'Especial Milão',l:[]};
+        if(M.mes>=0&&M.cfg.total){
+          var pc=c3Parc(M.mes);t.n++;t.m+=pc.p;t.mDe+=pc.p;
+          gm.l.push({t:'Parcela: '+pc.n+'x R$ '+cdFmt(pc.p)+' (entrada em '+C3_MESF[M.cfg.meses[M.mes]]+', total R$ '+cdFmt(M.cfg.total)+')',val:'R$ '+cdFmt(pc.p)+'/mês',de:null,mensal:true});
+        }
+        if(M.dias.length&&M.cfg.sdia){
+          var sub=M.dias.length*M.cfg.sdia;t.n++;t.u+=sub;t.uDe+=sub;
+          gm.l.push({t:'Stories nos outros dias: '+M.dias.map(function(d){return c3Dd(d,M.cfg);}).join(', '),val:'R$ '+cdFmt(sub),de:null});
+        }
+        if(gm.l.length)t.g.push(gm);
+      }
       return t;
     }
 
@@ -1177,7 +1273,11 @@
           v.appendChild(document.createTextNode(l.val));r.appendChild(v);rl.appendChild(r);
         });
       });
-      document.getElementById('c2RcN').textContent=t.n?(t.n+(t.n===1?' item':' itens')):'';
+      var mt=C3.tabs.length?c3ModoTxt():'';
+      document.getElementById('c2RcN').textContent=t.n?((mt?mt+' · ':'')+t.n+(t.n===1?' item':' itens')):'';
+      var recb=document.getElementById('c2Recibo');
+      if(C3.tabs.length)recb.classList.toggle('c3-hide',C3.tab==='milao'&&!t.n);
+      if(C3.miRender)C3.miRender();
       function de(idDe,idBox,v,d){
         var e=document.getElementById(idDe);
         document.getElementById(idBox).classList.toggle('zero',!(v>0));
@@ -1196,7 +1296,8 @@
       var ate=dt.toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})+' às '+dt.toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
       var ls=[];
       t.g.forEach(function(g){ls.push('*'+g.titulo+'*');g.l.forEach(function(l){ls.push('• '+l.t+' ('+l.val+')');});});
-      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote:\n'+ls.join('\n')+
+      var mt=C3.tabs.length?c3ModoTxt():'';
+      var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote'+(mt?' (modo '+mt+')':'')+':\n'+ls.join('\n')+
         '\n\nTotal mensal: R$ '+cdFmt(t.m)+'\nTotal único: R$ '+cdFmt(t.u)+
         '\nProposta válida até '+ate+'.\nPodemos avançar?';
       if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
@@ -1273,7 +1374,7 @@
     }
 
     // ===== Cardapio v3: abas Avulsos | Recorrente | Especial Milao (so para links com "v":3) =====
-    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[]};
+    var C3={tab:'',tabs:[],lazyOk:false,hdr:48,galFeita:false,fx:[],mi:{cfg:null,mes:-1,dias:[]},miRender:null};
     var C3_NOMES={avulsos:'Avulsos',recorrente:'Recorrente',milao:'Especial Milão'};
     var C3_GAL=[
       {src:'/img/assets-proposta/olhar-01-maquete.webp',leg:'Maquete'},
@@ -1411,7 +1512,7 @@
       if(rows.length)pane.appendChild(c3Comp(rows));
       pane.appendChild(cdEl('h3','c3-sh','Plano de entrada'));
       var pl=c2Norm(R.plano||{});pl.lazy=true;
-      var pi=C2.paths.length;C2.paths.push({titulo:'Plano recorrente',lazy:true});
+      var pi=C2.paths.length;C2.paths.push({titulo:'Plano recorrente',lazy:true,mod:'rc'});
       if(!pl.foto)pl.foto='recorrente-poltrona';
       pane.appendChild(c3Servico(pl,pi,'c3plano'));
       var gal=cdEl('div');
@@ -1448,7 +1549,7 @@
       var comum=cdLista(A.comb);
       sv.forEach(function(S,i){
         var P=c2Norm(S);if(!P.comb.length)P.comb=comum.slice();
-        var pi=C2.paths.length;C2.paths.push({titulo:P.titulo});
+        var pi=C2.paths.length;C2.paths.push({titulo:P.titulo,mod:'av'});
         var id='c3s'+i;
         var ch=cdEl('button','c3-chip',P.titulo);ch.type='button';
         ch.addEventListener('click',function(){var e=document.getElementById(id);if(e)e.scrollIntoView({behavior:C2.reduce?'auto':'smooth',block:'start'});});
@@ -1466,8 +1567,29 @@
       }
     }
 
+    var C3_MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    var C3_MESF=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    function c3Dd(d,cfg){return ('0'+d).slice(-2)+'/'+('0'+(cfg.cal.m+1)).slice(-2);}
+    function c3Cfg(M){
+      var tot=cdNum(M.total),a=parseInt(M.inicio,10),b=parseInt(M.fim,10),sd=cdNum(M.sdia);
+      var cfg={total:null,meses:[],sdia:(sd!=null&&sd>0)?sd:null,cal:null,ida:null,volta:null};
+      if(tot!=null&&tot>0&&a>=1&&a<=12&&b>=1&&b<=12){
+        var n=b>=a?b-a+1:b+12-a+1;
+        for(var i=0;i<n;i++)cfg.meses.push((a-1+i)%12);
+        cfg.total=tot;
+      }
+      var m=/^(\d{4})-(\d{2})$/.exec(String(M.cal||'').trim());
+      if(m&&+m[2]>=1&&+m[2]<=12)cfg.cal={y:+m[1],m:+m[2]-1};
+      function pd(v){var q=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||'').trim());return q?new Date(+q[1],+q[2]-1,+q[3]):null;}
+      cfg.ida=pd(M.ida);cfg.volta=pd(M.volta);
+      return cfg;
+    }
+    // parcela = total / meses restantes ate o mes final (o total e sempre o mesmo)
+    function c3Parc(i){var c=C3.mi.cfg,n=c.meses.length-i;return {p:Math.round(c.total/n*100)/100,n:n};}
+
     function c3Milao(pane,M){
       M=M||{};
+      var cfg=c3Cfg(M);C3.mi.cfg=cfg;
       var T=function(k){return String(M[k]==null?'':M[k]).trim();};
       function bloco(cls){var b=cdEl('section','c3-mi-b '+cls),i=cdEl('div','c3-mi-in');b.appendChild(i);pane.appendChild(b);return i;}
       // topo proprio da aba: foto de abertura, titulo, subtitulo e detalhe tricolor
@@ -1481,21 +1603,86 @@
       ti.appendChild(cdEl('p','c3-mi-sub',T('sub')||'Viaje com a gente ao evento de arquitetura de abril.'));
       top.appendChild(ti);top.appendChild(cdEl('span','c3-mi-flag'));
       pane.appendChild(top);
+      // Milao, com a gente (texto curto) + destaque gerado dos campos do admin
       var o=bloco('c3-mi-oq c2-reveal');
       var ot=cdEl('div','c3-mi-oqt');
-      ot.appendChild(cdEl('div','c3-mi-t','O que é'));
-      ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'Projeto recorrente para arquitetos viajarem a Milão no evento de arquitetura de abril, onde o Studio também vai e grava com você. A cobrança é mensal e recorrente até abril.'));
+      ot.appendChild(cdEl('div','c3-mi-t',T('oqt')||'Milão, com a gente.'));
+      ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'O Studio estará lá e cobrirá 1 dia inteiro de captação com você, da manhã à noite. Nos demais dias, você pode ter stories todos os dias, como adicional.'));
+      if(cfg.total&&cfg.meses.length){
+        var n=cfg.meses.length,pm=Math.round(cfg.total/n*100)/100;
+        ot.appendChild(cdEl('div','c3-mi-dest','R$ '+cdFmt(pm)+'/mês, de '+C3_MESF[cfg.meses[0]]+' a '+C3_MESF[cfg.meses[n-1]]+' ('+n+(n===1?' parcela':' parcelas')+', R$ '+cdFmt(cfg.total)+')'));
+      }
       o.appendChild(ot);
-      var fg=cdEl('figure','c3-mi-fig');var im2=c2Img('milao-rua-italia',false);if(im2)fg.appendChild(im2);
-      if(im2)o.appendChild(fg);
-      var lv=cdLista(M.leva);
-      if(lv.length){var l=bloco('c3-mi-lv c2-reveal');l.appendChild(cdEl('div','c3-mi-t','O que está incluso'));
-        var ul=cdEl('ul','c3-mi-ul');lv.forEach(function(t){ul.appendChild(cdEl('li',null,t));});l.appendChild(ul);}
-      var et=(Array.isArray(M.etapas)?M.etapas:[]).filter(function(e){return e&&e.t;});
-      if(et.length){var c=bloco('c3-mi-cm c2-reveal');c.appendChild(cdEl('div','c3-mi-t','Como funciona'));
-        var sd=cdEl('div','c3-mi-st');et.forEach(function(e){var s=cdEl('div','c3-mi-s');s.appendChild(cdEl('b',null,e.t));if(e.d)s.appendChild(cdEl('span',null,e.d));sd.appendChild(s);});c.appendChild(sd);}
-      // dados so aparecem quando o admin preenche; nada e inventado
-      var dados=[['Mensalidade',T('mensal')],['Mês de início',T('inicio')],['Data do evento',T('data')],['Vagas',T('vagas')]].filter(function(p){return p[1];});
+      var fg=cdEl('figure','c3-mi-fig');var im2=c2Img('milao-rua-italia',false);if(im2){fg.appendChild(im2);o.appendChild(fg);}
+      var reps=[];
+      // calculadora: quando voce entra
+      if(cfg.total&&cfg.meses.length){
+        var cb=bloco('c3-mi-lv c2-reveal');cb.appendChild(cdEl('div','c3-mi-t','Quando você entra'));
+        var ms=cdEl('div','c3-mi-ms');ms.setAttribute('role','group');ms.setAttribute('aria-label','Mês de entrada');
+        var btns=[];
+        cfg.meses.forEach(function(mm,i){
+          var b=cdEl('button','c3-mi-m',C3_MES[mm]);b.type='button';b.setAttribute('aria-pressed','false');b.setAttribute('aria-label',C3_MESF[mm]);
+          b.addEventListener('click',function(){
+            var go=function(){C3.mi.mes=C3.mi.mes===i?-1:i;c2Recalc();};
+            if(C3.mi.mes!==i)c3Troca('rc',go);else go();
+          });
+          ms.appendChild(b);btns.push(b);
+        });
+        cb.appendChild(ms);
+        var res=cdEl('div','c3-mi-res');cb.appendChild(res);
+        reps.push(function(){
+          btns.forEach(function(b,i){var on=C3.mi.mes===i;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
+          res.textContent='';
+          if(C3.mi.mes>=0){
+            var pc=c3Parc(C3.mi.mes);
+            res.appendChild(cdEl('div','c3-mi-r1',pc.n+' × R$ '+cdFmt(pc.p)));
+            res.appendChild(cdEl('div','c3-mi-r2','Total R$ '+cdFmt(cfg.total)+' · entrada em '+C3_MESF[cfg.meses[C3.mi.mes]]));
+          }else res.appendChild(cdEl('div','c3-mi-r2','Escolha o mês em que você entra.'));
+        });
+      }
+      // stories nos outros dias (calendario do mes vindo do admin)
+      if(cfg.cal&&cfg.sdia){
+        var sb=bloco('c3-mi-cm c2-reveal');sb.appendChild(cdEl('div','c3-mi-t','Stories nos outros dias'));
+        sb.appendChild(cdEl('p','c3-mi-p','Stories todos os dias, como adicional: R$ '+cdFmt(cfg.sdia)+' por dia escolhido.'));
+        var aberto=!!(cfg.ida&&cfg.volta&&cfg.ida<=cfg.volta);
+        if(!aberto)sb.appendChild(cdEl('div','c3-mi-aviso','Informaremos a data disponível para a captação em '+C3_MESF[cfg.cal.m]+'.'));
+        var cal=cdEl('div','c3-mi-cal');
+        cal.appendChild(cdEl('div','c3-mi-cal-t',C3_MESF[cfg.cal.m]+' '+cfg.cal.y));
+        var hd=cdEl('div','c3-mi-cal-h');['D','S','T','Q','Q','S','S'].forEach(function(l){hd.appendChild(cdEl('span',null,l));});cal.appendChild(hd);
+        var gr=cdEl('div','c3-mi-cal-g');
+        var first=new Date(cfg.cal.y,cfg.cal.m,1).getDay(),dim=new Date(cfg.cal.y,cfg.cal.m+1,0).getDate();
+        for(var e=0;e<first;e++)gr.appendChild(cdEl('span','c3-mi-d vz'));
+        var dbt={};
+        for(var d=1;d<=dim;d++){
+          (function(d){
+            var dt=new Date(cfg.cal.y,cfg.cal.m,d),b=cdEl('button','c3-mi-d',String(d));b.type='button';
+            var ok=aberto&&dt>=cfg.ida&&dt<=cfg.volta;
+            if(!ok){b.disabled=true;}
+            else{b.setAttribute('aria-pressed','false');b.addEventListener('click',function(){
+              var i=C3.mi.dias.indexOf(d);
+              if(i>-1){C3.mi.dias.splice(i,1);c2Recalc();return;}
+              c3Troca('rc',function(){C3.mi.dias.push(d);C3.mi.dias.sort(function(a,b2){return a-b2;});c2Recalc();});
+            });}
+            dbt[d]=b;gr.appendChild(b);
+          })(d);
+        }
+        cal.appendChild(gr);sb.appendChild(cal);
+        var inf=cdEl('div','c3-mi-cinf');sb.appendChild(inf);
+        reps.push(function(){
+          Object.keys(dbt).forEach(function(d){var on=C3.mi.dias.indexOf(+d)>-1;dbt[d].classList.toggle('on',on);if(!dbt[d].disabled)dbt[d].setAttribute('aria-pressed',on?'true':'false');});
+          inf.textContent='';
+          if(!aberto)return;
+          var n=C3.mi.dias.length;
+          if(!n)inf.appendChild(cdEl('span',null,'Clique nos dias desejados.'));
+          else{
+            var b1=cdEl('b',null,n+(n===1?' dia: ':' dias: '));inf.appendChild(b1);
+            inf.appendChild(document.createTextNode(C3.mi.dias.map(function(d){return c3Dd(d,cfg);}).join(', ')));
+            inf.appendChild(cdEl('div','c3-mi-sub2','Subtotal R$ '+cdFmt(n*cfg.sdia)));
+          }
+        });
+      }
+      // dados opcionais (so aparecem se preenchidos)
+      var dados=[['Data do evento',T('data')],['Vagas',T('vagas')]].filter(function(p){return p[1];});
       if(dados.length){var v=bloco('c3-mi-vl c2-reveal');v.appendChild(cdEl('div','c3-mi-t','Condições'));
         var vs=cdEl('div','c3-mi-vs');
         dados.forEach(function(p){var d=cdEl('div','c3-mi-v');d.appendChild(cdEl('small',null,p[0]));d.appendChild(cdEl('b',null,p[1]));vs.appendChild(d);});
@@ -1508,10 +1695,11 @@
         var w=window.open(url,'_blank');if(!w)window.location.href=url;
       });
       g.appendChild(go);
+      C3.miRender=function(){reps.forEach(function(f){f();});};
     }
 
     function c3AtivaRc(){
-      if(C3.lazyOk)return;C3.lazyOk=true;
+      if(C3.lazyOk||c3Tem('av'))return;C3.lazyOk=true;
       C2.it.forEach(function(o,k){if(C2.paths[o.p]&&C2.paths[o.p].lazy&&o.x.pre)C2.sel[k].on=true;});
       c2Recalc();
     }
@@ -1530,10 +1718,9 @@
       document.querySelectorAll('#c3TabBtns .c3-tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false');});
       document.querySelectorAll('#c3Root .c3-pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===id);});
       var mi=id==='milao';
-      document.getElementById('c3Layout').style.display=mi?'none':'';
-      document.getElementById('c2Recibo').style.display=mi?'none':'';
       document.body.classList.toggle('c3-mi-on',mi);
       if(id==='recorrente')c3AtivaRc();
+      c2Recalc();
       var an=document.getElementById('c3Anchor'),tb=document.getElementById('c3Tabs');
       C3.fx.forEach(function(f){f();});
       if(was&&(mi||was==='milao'))an.scrollIntoView({behavior:'auto',block:'start'});
