@@ -127,6 +127,8 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .pad-fold{border:1.5px solid var(--brl);border-radius:10px;margin-bottom:10px;overflow:hidden;}
 .pad-fold>.items-toggle{margin:0;border:none;}
 .pad-ok{font-size:12px;color:#2e7d32;margin-top:8px;min-height:16px;}
+.imp-box{border:1px dashed var(--gray2,#b9a58f);border-radius:12px;padding:12px;margin:0 0 14px;background:rgba(110,44,20,.04);}
+.imp-t{font-size:13px;font-weight:600;color:#6E2C14;}
 .hist-tipo{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);}
 </style>
 </head>
@@ -201,7 +203,8 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
   </div>
   <div class="card" id="secPad" style="display:none;">
     <div class="card-title" id="padTit">Padrões</div>
-    <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos neste navegador.</div>
+    <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos no servidor e valem em qualquer aparelho.</div>
+    <div id="impBox"></div>
     <div id="padPl"></div>
     <div id="padCd" style="display:none;">
       <div class="field">
@@ -359,7 +362,7 @@ function gerarLink() {
   data.mo = PL_MODELO;   // modelo (arq/loja): a página do cliente cita no pedido
   var btn = document.getElementById('btnGerar');
   btn.disabled = true; btn.textContent = 'Salvando…';
-  var enc0 = encode(data), encoded, link;
+  var enc0 = encode(data), encoded, link, snapPl;
   // link compacto (deflate, prefixo "z~") por padrao, igual ao cardapio; sem suporte do navegador, cai no formato antigo
   var pronto = window.CompressionStream ? cdComprimir(data).catch(function(){ return enc0; }) : Promise.resolve(enc0);
   // o link so vale depois de salvo no banco (com a assinatura dele)
@@ -367,7 +370,8 @@ function gerarLink() {
     encoded = e2; link = window.location.origin + '/proposta.html?d=' + encoded;
     return sha256hex(encoded);
   }).then(function(h){
-    return adm('criar', {proposta:{cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
+    snapPl = {tipo:'pl', link:link, form:{modelo:PL_MODELO, nome:nome, v:[v1,v2,v3], vo:[vo1,vo2,vo3], ck:[ck1,ck2,ck3], iS:iS, niS:niS}};
+    return adm('criar', {proposta:{cliente:nome, v1:v1, v2:v2, v3:v3, planos:[ck1,ck2,ck3], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h, tipo:'pl', email:em, snapshot:snapPl}});
   }).then(function(r){
     if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro||'erro')); return; }
     window.SP_ULTIMO = {link:link, data:data};   // o e-mail do admin usa isto quando o link é compacto
@@ -375,7 +379,7 @@ function gerarLink() {
     document.getElementById('result').classList.add('show');
     document.getElementById('shortWrap').style.display = 'none';
     document.getElementById('btnCopy').textContent = 'Copiar link';
-    histLocal(r.id, {tipo:'pl', link:link, form:{modelo:PL_MODELO, nome:nome, v:[v1,v2,v3], vo:[vo1,vo2,vo3], ck:[ck1,ck2,ck3], iS:iS, niS:niS}});
+    histLocal(r.id, snapPl);
     carregarHistorico();
   }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
   .then(function(){ btn.disabled = false; btn.textContent = 'Gerar link →'; });
@@ -418,7 +422,7 @@ function renderHistorico(lista) {
     }
     h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
     if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions">' + (LH[p.id] && LH[p.id].link ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button></div>';
+    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button></div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
@@ -432,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if(TOKEN){
     document.getElementById('loginCard').style.display='none';
     document.getElementById('adminWrap').style.display='block';
-    carregarHistorico();
+    carregarHistorico(); if (window.padCarregar) padCarregar();
   }
 
   // Login
@@ -553,7 +557,7 @@ function doLogin() {
       sessionStorage.setItem('sp_token', TOKEN);
       document.getElementById('loginCard').style.display = 'none';
       document.getElementById('adminWrap').style.display = 'block';
-      carregarHistorico();
+      carregarHistorico(); if (window.padCarregar) padCarregar();
     } else {
       err.textContent = r.erro || 'Senha incorreta.';
       err.style.display = 'block';
@@ -653,10 +657,10 @@ function S(id, foto, titulo, ex) {
   return o;
 }
 // Valores de referencia (editaveis). Nada aqui e promessa de prazo ou resultado.
-function c3Load() {
+function c3Load(svIn) {
   var d = c3Defaults();
   try {
-    var sv = JSON.parse(localStorage.getItem('sp_pad_cd') || 'null');
+    var sv = svIn !== undefined ? svIn : JSON.parse(localStorage.getItem('sp_pad_cd') || 'null');
     if (sv && sv.av && sv.rc && sv.mi) {
       ['aba','av','rc','fr','tt'].forEach(function(k) { if (sv[k] != null) d[k] = sv[k]; });
       d.mi = Object.assign(d.mi, sv.mi); d.pg = Object.assign(d.pg, {av:(sv.pg||{}).av||'', rc:(sv.pg||{}).rc||'', m1:(sv.pg||{}).m1||'', m2:(sv.pg||{}).m2||''});
@@ -1123,20 +1127,21 @@ function gerarCardapio() {
   if (em) data.em = em;
   var btn = document.getElementById('btnGerar');
   btn.disabled = true; btn.textContent = 'Salvando…';
-  var enc = encode(data);
+  var snapCd, enc = encode(data);
   var pronto = (enc.length > 4500 && window.CompressionStream) ? cdComprimir(data).catch(function() { return enc; }) : Promise.resolve(enc);
   pronto.then(function(encoded) {
     var link = window.location.origin + '/proposta.html?d=' + encoded;
     if (link.length > 12000) throw new Error('longo');
     return sha256hex(encoded).then(function(h) {
-      return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h}});
+      snapCd = {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:copia(c3S)}};
+      return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h, tipo:'cd', email:em, snapshot:snapCd}});
     }).then(function(r) {
       if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
       document.getElementById('resultUrl').textContent = link;
       document.getElementById('result').classList.add('show');
       document.getElementById('shortWrap').style.display = 'none';
       document.getElementById('btnCopy').textContent = 'Copiar link';
-      histLocal(r.id, {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:c3S}});
+      histLocal(r.id, snapCd);
       carregarHistorico();
     });
   }).catch(function(e) {
@@ -1243,7 +1248,7 @@ function padPlRender() {
   var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
   var ok = c2e('div', 'pad-ok');
   sv.addEventListener('click', function() {
-    ok.textContent = lsSet('sp_pad_pl', PAD_PL) ? 'Padrão salvo neste navegador. Vale para as próximas propostas.' : 'Não foi possível salvar neste navegador.';
+    padSalvar([['planos_arquiteto', PAD_PL.arq], ['planos_loja', PAD_PL.loja]], 'sp_pad_pl', PAD_PL, ok);
     modeloAplica(PL_MODELO);
   });
   var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
@@ -1254,10 +1259,86 @@ function padCdBotoes() {
   var c = $('padCdBtns'); c.textContent = '';
   var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
   var ok = c2e('div', 'pad-ok');
-  sv.addEventListener('click', function() { ok.textContent = lsSet('sp_pad_cd', c3S) ? 'Padrão salvo neste navegador. Vale para as próximas propostas.' : 'Não foi possível salvar neste navegador.'; });
+  sv.addEventListener('click', function() { padSalvar([['cardapio', c3S]], 'sp_pad_cd', c3S, ok); });
   var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
   rs.addEventListener('click', function() { if (confirm('Voltar o cardápio aos valores de fábrica? (Só vale depois de salvar.)')) { c3S = c3Defaults(); c3Render(); } });
   c.appendChild(sv); c.appendChild(ok); c.appendChild(rs);
+}
+
+
+// ---- padroes no servidor (Supabase, via /api/admin). Sem conexao, cai no navegador e avisa.
+function padSalvar(pares, chaveLocal, tudo, ok) {
+  ok.textContent = 'Salvando…';
+  Promise.all(pares.map(function(x) { return adm('padrao_set', {chave:x[0], dados:copia(x[1])}); })).then(function(rs) {
+    if (!rs.every(function(r) { return r && r.ok; })) throw new Error('falhou');
+    ok.textContent = 'Padrão salvo no servidor. Vale em qualquer aparelho, para as próximas propostas.';
+    impMostrar();
+  }).catch(function(e) {
+    if (e && e.message === 'sessao') return;
+    ok.textContent = lsSet(chaveLocal, tudo) ? 'Sem conexão com o servidor: salvo só neste navegador. Salve de novo quando voltar.' : 'Não foi possível salvar.';
+  });
+}
+function padValido(a) { return Array.isArray(a) && a.length === 3 && a.every(function(p) { return p && Array.isArray(p.inc) && Array.isArray(p.nao); }); }
+function padCarregar() {
+  return adm('padroes_get').then(function(r) {
+    var P = (r && r.ok && r.padroes) || {};
+    var a = P.planos_arquiteto && P.planos_arquiteto.dados, l = P.planos_loja && P.planos_loja.dados, c = P.cardapio && P.cardapio.dados;
+    if (padValido(a)) PAD_PL.arq = a;
+    if (padValido(l)) PAD_PL.loja = l;
+    if (c && c.av && c.rc && c.mi) c3S = c3Load(c);
+    modeloAplica(PL_MODELO);
+    if (AREA === 'cd') nvSync();
+    subSet(SUB);
+    impMostrar();
+  }).catch(function(e) { if (e && e.message !== 'sessao') impMostrar(); });
+}
+window.padCarregar = padCarregar;
+
+// ---- importar o que ja esta salvo neste navegador (nao apaga o local sem confirmar)
+function impLocal() {
+  var pl = lsGet('sp_pad_pl', null), cd = lsGet('sp_pad_cd', null), h = histGet();
+  var pad = {};
+  if (pl && pl.arq && pl.loja) { pad.planos_arquiteto = pl.arq; pad.planos_loja = pl.loja; }
+  if (cd && cd.av && cd.rc && cd.mi) pad.cardapio = cd;
+  var hist = (h.order || []).filter(function(id) { return h.m[id]; }).map(function(id) { return {id:id, tipo:h.m[id].tipo === 'cd' ? 'cardapio' : 'planos', snapshot:h.m[id]}; });
+  return {pad:pad, hist:hist};
+}
+var IMP_FEITO = false;
+function impMostrar() {
+  var box = $('impBox'); if (!box || IMP_FEITO) return;
+  var L = impLocal(), np = Object.keys(L.pad).length, nh = L.hist.length;
+  box.textContent = '';
+  if (!np && !nh) return;
+  var w = c2e('div', 'imp-box');
+  w.appendChild(c2e('div', 'imp-t', 'Dados salvos neste navegador'));
+  w.appendChild(c2e('div', 'cd-hint', np + ' padrão(ões) e ' + nh + ' proposta(s) com cópia completa. Importe para o servidor para ver em qualquer aparelho. Nada é apagado daqui até você confirmar.'));
+  var b = c2e('button', 'btn-out', 'Importar deste navegador'); b.type = 'button'; b.style.cssText = 'margin-top:8px;width:100%;';
+  var st = c2e('div', 'pad-ok');
+  b.addEventListener('click', function() { impEnviar(L, b, st, w); });
+  w.appendChild(b); w.appendChild(st); box.appendChild(w);
+}
+function impEnviar(L, b, st, w) {
+  b.disabled = true; st.textContent = 'Importando…';
+  adm('padroes_get').then(function(r) {
+    var P = (r && r.padroes) || {}, conf = Object.keys(L.pad).filter(function(k) { return P[k]; }), sobre = false;
+    if (conf.length) sobre = confirm('Já existem padrões no servidor (' + conf.length + '). OK = substituir pelos deste navegador. Cancelar = manter os do servidor.');
+    return adm('importar', {padroes:L.pad, historico:L.hist, sobrescrever:sobre});
+  }).then(function(r) {
+    if (!r || !r.ok) throw new Error('falhou');
+    var x = r.resultado || {};
+    st.textContent = 'Importado: ' + (x.padroes || 0) + ' padrão(ões), ' + (x.historico || 0) + ' proposta(s). ' + (x.ignorados || 0) + ' já estavam no servidor ou foram ignoradas.';
+    IMP_FEITO = true;
+    var ap = c2e('button', 'btn-out', 'Apagar a cópia deste navegador'); ap.type = 'button'; ap.style.cssText = 'margin-top:8px;width:100%;';
+    ap.addEventListener('click', function() {
+      if (!confirm('Apagar deste navegador os padrões e o histórico antigos? O que está no servidor continua. Só faça isso depois de conferir que tudo apareceu.')) return;
+      ['sp_pad_pl', 'sp_pad_cd', 'sp_hist'].forEach(function(k) { try { localStorage.removeItem(k); } catch (e) {} });
+      w.textContent = ''; w.appendChild(c2e('div', 'pad-ok', 'Cópia deste navegador apagada.'));
+    });
+    var velho = w.querySelector('.imp-apagar'); if (velho) velho.remove();
+    ap.classList.add('imp-apagar'); w.appendChild(ap);
+    return padCarregar().then(function() { carregarHistorico(); });
+  }).catch(function(e) { if (e && e.message !== 'sessao') st.textContent = 'Não foi possível importar. Nada foi apagado.'; })
+  .then(function() { b.disabled = false; });
 }
 
 // ---- areas e secoes
@@ -1291,21 +1372,31 @@ function subSet(s) {
 
 // ---- copia local dos dados de cada proposta (para Duplicar e Copiar link); o servidor guarda so o resumo
 function histGet() { return lsGet('sp_hist', {order:[], m:{}}); }
-function histLocal(id, obj) {
-  if (!id) return;
-  var h = histGet(); if (h.order.indexOf(id) < 0) h.order.push(id); h.m[id] = obj;
-  while (h.order.length > 40) { delete h.m[h.order.shift()]; }
-  var n = 0;
-  while (!lsSet('sp_hist', h) && h.order.length > 1 && n++ < 40) { delete h.m[h.order.shift()]; }
+// a cópia completa de cada proposta fica no servidor; aqui só um cache da sessão (e a cópia local antiga, até ser importada)
+var SNAP = {};
+function histLocal(id, obj) { if (id) SNAP[id] = obj; }
+function snapDe(id) { return SNAP[id] || histGet().m[id] || null; }
+function comSnap(p, cb) {
+  var L = snapDe(p.id);
+  if (L || !p.tem_snapshot) { cb(L); return; }
+  adm('prop_get', {id:p.id}).then(function(r) {
+    var sn = r && r.ok && r.proposta && r.proposta.snapshot;
+    if (sn) SNAP[p.id] = sn;
+    cb(sn || null);
+  }).catch(function(e) { if (e.message !== 'sessao') alert('Não foi possível carregar a cópia desta proposta.'); });
 }
 function areaDe(p) {
-  var L = histGet().m[p.id]; if (L) return L.tipo;
+  if (p.tipo) return p.tipo === 'cardapio' ? 'cd' : 'pl';
+  var L = snapDe(p.id); if (L) return L.tipo;
   var pl = p.planos || [true, true, true];
   return (!pl[0] && !pl[1] && !pl[2]) ? 'cd' : 'pl';
 }
 function duplicarProposta(i) {
   var p = _lista[i]; if (!p) return;
-  var L = histGet().m[p.id], a = areaDe(p);
+  comSnap(p, function(L) { duplicarCom(p, L); });
+}
+function duplicarCom(p, L) {
+  var a = areaDe(p);
   window.NV_DUP = false;
   areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
   $('fNome').value = p.cliente; $('fEmail').value = '';
@@ -1347,9 +1438,9 @@ document.addEventListener('DOMContentLoaded', function() {
   modeloAplica('arq'); nvSync();
   document.addEventListener('click', function(e) {
     var t = e.target; if (!t.dataset || t.dataset.cp === undefined) return;
-    var p = _lista[+t.dataset.cp], L = p && histGet().m[p.id]; if (!L || !L.link) return;
+    var p = _lista[+t.dataset.cp]; if (!p) return;
     var ok = function() { t.textContent = 'Copiado ✓'; setTimeout(function() { t.textContent = 'Copiar link'; }, 1800); };
-    if (navigator.clipboard) navigator.clipboard.writeText(L.link).then(ok).catch(function() {});
+    comSnap(p, function(L) { if (L && L.link && navigator.clipboard) navigator.clipboard.writeText(L.link).then(ok).catch(function() {}); });
   });
 });
 </script>
