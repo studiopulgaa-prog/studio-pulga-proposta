@@ -3,7 +3,7 @@
 <head>
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1973272740000551');fbq('track','PageView');fbq('track','ViewContent',{content_name:'Proposta Studio Pulga'});</script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Studio Pulga ~ Proposta</title>
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;700;900&family=Outfit:wght@300;400;500;600&family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -361,7 +361,6 @@
     .c3-fig-m{position:relative;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#6E2C14,#B5683F);}
     .c3-fig-m img{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none;user-select:none;}
     .c3-fig-m::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(110,44,20,0.35),transparent 55%);pointer-events:none;}
-    .c3-fig figcaption{font-size:12px;color:var(--gray);margin-top:8px;font-weight:400;line-height:1.4;}
     .c3-difs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:6px;}
     .c3-dif{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:18px 18px 20px;}
     .c3-dif-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;letter-spacing:-0.02em;line-height:1.2;margin-bottom:6px;}
@@ -501,6 +500,39 @@
       .c3-gal-tr{scroll-behavior:auto;}
       .c3-tab,.c3-link,.c3-acc svg{transition:none!important;}
     }
+    /* ===== Mobile (ate 600 px): barra "Seu pacote" recolhida + folha inferior; cabecalho curto. Nao afeta telas maiores. ===== */
+    .c2-rc-s{display:none;}
+    .c2-bk{display:none;}
+    @media(max-width:600px){
+      .timer-bar{padding:7px 14px;}
+      .timer-bar.has-note{row-gap:0;}
+      .timer-logo{font-size:13px;white-space:nowrap;}
+      .timer-right{gap:8px;white-space:nowrap;}
+      .timer-label{font-size:9px;letter-spacing:0.06em;white-space:nowrap;}
+      .timer-count{font-size:15px;white-space:nowrap;}
+      .timer-note{font-size:9px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0;}
+      body.c2-on{padding-bottom:calc(64px + env(safe-area-inset-bottom) + 28px);}
+      .c2-recibo{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:center;padding:0 16px calc(8px + env(safe-area-inset-bottom));border-radius:18px 18px 0 0;}
+      .c2-tots{display:contents;}
+      .c2-rl-w{grid-column:1/-1;order:1;}
+      .c2-recibo .c3-rlw{max-height:min(46vh,380px);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+      .c2-recibo .c3-rlw .c2-rl,.c2-recibo .c2-rl{max-height:none;overflow:visible;padding-top:12px;}
+      .c2-recibo .cd-tot{order:2;grid-column:1/-1;display:none;flex:none;}
+      .c2-recibo.open .cd-tot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0 0;}
+      .c2-recibo.open .cd-tot+.cd-tot{padding-top:2px;}
+      .c2-recibo .cd-tot-v{font-size:19px;}
+      .c2-recibo .c3-duv{order:3;grid-column:1/-1;display:none;width:100%;margin:10px 0 8px;flex:none;}
+      .c2-recibo.open .c3-duv{display:block;}
+      .c2-rc-t{order:4;grid-column:1;box-sizing:border-box;height:56px;padding:6px 0;justify-content:flex-start;gap:8px;text-align:left;min-width:0;}
+      .c2-rc-t>span:first-child{display:block;min-width:0;}
+      .c2-rc-h{display:block;font-size:11px;letter-spacing:0.08em;color:rgba(244,234,221,0.7);}
+      .c2-rc-n{display:none;}
+      .c2-rc-s{display:block;font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      .c2-rc-c{flex:0 0 18px;}
+      .c2-recibo .cd-go{order:4;grid-column:2;flex:none;width:auto;padding:13px 18px;font-size:13px;white-space:nowrap;}
+      .c2-bk{display:none;}
+      body.c2-sheet .c2-bk{display:block;position:fixed;inset:0;z-index:149;background:rgba(30,8,2,0.45);}
+    }
   </style>
 </head>
 <body>
@@ -543,7 +575,7 @@
     <div class="c2-layout">
       <section class="c2-sec" id="c2Sec"><div class="planos-header"><div class="planos-divider"><span class="planos-divider-text">PARA COMEÇAR</span></div><div class="planos-title">O que você precisa agora?</div></div><div class="cd-obs c2-ob" id="c2Obs" style="display:none;"></div><div id="c2Lista"></div></section>
       <aside class="c2-recibo" id="c2Recibo" aria-label="Seu pacote">
-        <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span><span class="c2-rc-s" id="c2RcS">Escolha um item</span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="c2-rl-w"><div class="c2-rl" id="c2Rl"></div></div>
         <div class="c2-tots">
           <div class="cd-tot"><div class="cd-tot-l">Total mensal</div><div class="cd-tot-v zero" id="c2TotM"><span class="cd-tot-de" id="c2TotMDe" style="display:none;"></span><span id="c2TotMV">—</span></div></div>
@@ -575,7 +607,7 @@
         <div class="c3-pane" data-tab="recorrente" id="c3PRc" role="tabpanel"></div>
       </div>
       <aside class="c2-recibo" id="c2Recibo" aria-label="Seu pacote">
-        <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="c2-rc-t" id="c2RcT" aria-expanded="false" aria-controls="c2Rl"><span><span class="c2-rc-h">Seu pacote</span><span class="c2-rc-n" id="c2RcN"></span><span class="c2-rc-s" id="c2RcS">Escolha um item</span></span><svg class="c2-rc-c" viewBox="0 0 24 24" fill="none"><polyline points="6 15 12 9 18 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="c2-rl-w"><div class="c3-rlw"><div class="c2-rl" id="c2Rl"></div>
           <div class="c3-pg" id="c3Pg"></div>
         </div></div>
@@ -1459,6 +1491,11 @@
         });
       });
       var mt=C3.tabs.length?C3_NOMES[C3.tab]:'';
+      var rs=document.getElementById('c2RcS');
+      if(rs){
+        var tx=[];if(t.m>0)tx.push('R$ '+cdFmt(t.m)+'/mês');if(t.u>0)tx.push('R$ '+cdFmt(t.u)+(t.m>0?' único':''));
+        rs.textContent=t.n&&tx.length?tx.join(' + '):'Escolha um item';
+      }
       document.getElementById('c2RcN').textContent=t.n?((mt?mt+' · ':'')+t.n+(t.n===1?' item':' itens')):'';
       var recb=document.getElementById('c2Recibo');
       if(C3.tabs.length)recb.classList.toggle('c3-hide',C3.tab==='milao'&&!t.n);
@@ -1472,9 +1509,19 @@
       de('c2TotMDe','c2TotM',t.m,t.mDe);de('c2TotUDe','c2TotU',t.u,t.uDe);
       c2Anim('c2TotMV',t.m);c2Anim('c2TotUV',t.u);
       var go=document.getElementById('c2Go');go.disabled=t.n===0;
-      go.textContent=t.n===0?'Escolha ao menos um item':'Quero este pacote';
+      go.textContent=(t.n===0&&!c2Mob())?'Escolha ao menos um item':'Quero este pacote';
+      if(t.n===0)c2Sheet(false);
     }
 
+    // Mobile (ate 600 px): a barra "Seu pacote" abre como folha inferior; fecha no segundo toque, fora da folha ou ao pedir o pacote
+    function c2Mob(){return !!(window.matchMedia&&window.matchMedia('(max-width:600px)').matches);}
+    function c2Sheet(o){
+      var r=document.getElementById('c2Recibo'),t=document.getElementById('c2RcT');if(!r||!t)return;
+      r.classList.toggle('open',!!o);t.setAttribute('aria-expanded',o?'true':'false');
+      document.body.classList.toggle('c2-sheet',!!o&&c2Mob());
+      var bk=document.getElementById('c2Bk');
+      if(!bk){bk=document.createElement('div');bk.id='c2Bk';bk.className='c2-bk';bk.addEventListener('click',function(){c2Sheet(false);});document.body.appendChild(bk);}
+    }
     var C3_ZAP='5513996057099';
     function c3AbreZap(msg){
       var url='https://wa.me/'+C3_ZAP+'?text='+encodeURIComponent(msg);
@@ -1611,9 +1658,9 @@
       if(PROPOSTA.obs){var ob=document.getElementById('c2Obs');ob.textContent=String(PROPOSTA.obs);ob.style.display='block';}
       var temA=C2.paths.some(function(P){return P.id==='a';});
       document.getElementById('c2Tl').style.display=temA?'':'none';
-      document.getElementById('c2Go').addEventListener('click',c2Quero);
+      document.getElementById('c2Go').addEventListener('click',function(){c2Sheet(false);c2Quero();});
       var rt=document.getElementById('c2RcT');
-      rt.addEventListener('click',function(){var r=document.getElementById('c2Recibo');var o=!r.classList.contains('open');r.classList.toggle('open',o);rt.setAttribute('aria-expanded',o?'true':'false');});
+      rt.addEventListener('click',function(){c2Sheet(!document.getElementById('c2Recibo').classList.contains('open'));});
       document.getElementById('c2Root').classList.add('show');
       // o recibo (barra no mobile) so aparece depois que a abertura sai da tela
       var rec=document.getElementById('c2Recibo');
@@ -1652,9 +1699,9 @@
       s=String(s==null?'':s).trim();
       return (/^\/img\/(?:[\w\-]+\/)?[\w\-.]+\.(jpe?g|png|webp)$/i.test(s)||/^https:\/\/[^\s"'<>]{1,500}$/i.test(s))?s:null;
     }
-    function c3Pic(src,eager){
+    function c3Pic(src,eager,alt){
       var s=c3Src(src);if(!s)return null;
-      var im=document.createElement('img');im.alt='';im.decoding='async';im.draggable=false;
+      var im=document.createElement('img');im.alt=alt?String(alt).slice(0,120):'';im.decoding='async';im.draggable=false;
       if(!eager)im.loading='lazy';
       im.addEventListener('error',function(){if(im.parentNode)im.parentNode.removeChild(im);});
       im.src=s;return im;
@@ -1737,10 +1784,9 @@
       var tr=cdEl('div','c3-gal-tr');tr.tabIndex=0;tr.setAttribute('aria-label','Galeria Nosso olhar');
       list.forEach(function(it){
         var f=cdEl('figure','c3-fig'),m=cdEl('div','c3-fig-m');
-        var im=c3Pic(it.src||it.poster,false);if(im)m.appendChild(im);
+        var im=c3Pic(it.src||it.poster,false,it.leg);if(im)m.appendChild(im); // it.leg vira so o texto alternativo (alt), nao aparece na tela
         if(it.video)c3Vid(m,it.video,it.poster||it.src);
         f.appendChild(m);
-        if(it.leg)f.appendChild(cdEl('figcaption',null,it.leg));
         tr.appendChild(f);
       });
       // arrasto com o mouse (no toque a rolagem ja e nativa)
@@ -2058,9 +2104,9 @@
       if(!C3.tabs.length||(P.um===1&&C3.tabs.length===1))document.getElementById('c3Tabs').style.display='none';
       var dv=document.getElementById('c3Duv');if(dv)dv.addEventListener('click',c3Duvidas);
       var ft=document.querySelector('.footer-proposta');if(ft&&!document.getElementById('c3DuvF')){var fb=cdEl('button','c3-duv-f','Tirar dúvidas no WhatsApp');fb.type='button';fb.id='c3DuvF';fb.addEventListener('click',c3Duvidas);ft.appendChild(document.createElement('br'));ft.appendChild(fb);}
-      document.getElementById('c2Go').addEventListener('click',c2Quero);
+      document.getElementById('c2Go').addEventListener('click',function(){c2Sheet(false);c2Quero();});
       var rc=document.getElementById('c2RcT');
-      rc.addEventListener('click',function(){var r=document.getElementById('c2Recibo');var o=!r.classList.contains('open');r.classList.toggle('open',o);rc.setAttribute('aria-expanded',o?'true':'false');});
+      rc.addEventListener('click',function(){c2Sheet(!document.getElementById('c2Recibo').classList.contains('open'));});
       rt.classList.add('show');
       c3Medidas();window.addEventListener('resize',c3Medidas);window.addEventListener('load',c3Medidas);setTimeout(c3Medidas,700);
       if(document.fonts&&document.fonts.ready)document.fonts.ready.then(c3Medidas);

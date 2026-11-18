@@ -189,15 +189,15 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     <button class="btn-main" id="btnGerar">Gerar link →</button>
     <div class="result" id="result">
       <div class="result-label">Link gerado</div>
-      <div class="result-url" id="resultUrl"></div>
+      <div class="result-url" id="shortUrl"></div>
       <div class="btn-row">
         <button class="btn-out" id="btnCopy">Copiar link</button>
-        <button class="btn-out" id="btnShort">Encurtar link</button>
+        <button class="btn-out" id="btnShort">Mostrar link completo</button>
       </div>
       <div id="shortWrap" style="display:none;margin-top:12px;">
-        <div class="result-label">Link encurtado</div>
-        <div class="result-url" id="shortUrl"></div>
-        <button class="btn-out" id="btnCopyShort">Copiar link curto</button>
+        <div class="result-label">Link completo</div>
+        <div class="result-url" id="resultUrl"></div>
+        <button class="btn-out" id="btnCopyShort">Copiar link completo</button>
       </div>
     </div>
   </div>
@@ -375,10 +375,7 @@ function gerarLink() {
   }).then(function(r){
     if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro||'erro')); return; }
     window.SP_ULTIMO = {link:link, data:data};   // o e-mail do admin usa isto quando o link é compacto
-    document.getElementById('resultUrl').textContent = link;
-    document.getElementById('result').classList.add('show');
-    document.getElementById('shortWrap').style.display = 'none';
-    document.getElementById('btnCopy').textContent = 'Copiar link';
+    mostraResultado(link);
     histLocal(r.id, snapPl);
     carregarHistorico();
   }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
@@ -463,8 +460,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Gerar link
   document.getElementById('btnGerar').addEventListener('click', gerarLink);
   document.getElementById('btnCopy').addEventListener('click', copiarLink);
-  document.getElementById('btnShort').addEventListener('click', encurtarLink);
-  document.getElementById('btnCopyShort').addEventListener('click', copiarLinkCurto);
+  document.getElementById('btnShort').addEventListener('click', alternaCompleto);
+  document.getElementById('btnCopyShort').addEventListener('click', copiarLinkCompleto);
 
   // Delegação para itens renderizados dinamicamente
   document.addEventListener('click', function(e) {
@@ -606,30 +603,50 @@ function addNI(p) {
   document.getElementById('niadd'+(p+1)).value = '';
   renderNI(p);
 }
-function copiarLink() {
-  navigator.clipboard.writeText(document.getElementById('resultUrl').textContent).then(function(){
-    var b = document.getElementById('btnCopy'); b.textContent='Copiado!'; b.classList.add('ok');
-    setTimeout(function(){ b.textContent='Copiar link'; b.classList.remove('ok'); }, 2000);
+// Resultado: mostra e copia primeiro o link CURTO (gerado na hora); o link completo fica em "Mostrar link completo"
+var SHORT_ATUAL = null, SHORT_TOKEN = 0;
+function mostraResultado(link) {
+  var tk = ++SHORT_TOKEN;
+  SHORT_ATUAL = null;
+  document.getElementById('resultUrl').textContent = link;
+  document.getElementById('shortWrap').style.display = 'none';
+  document.getElementById('btnShort').textContent = 'Mostrar link completo';
+  var sh = document.getElementById('shortUrl'), cp = document.getElementById('btnCopy');
+  sh.textContent = 'Gerando o link curto…';
+  cp.textContent = 'Copiar link'; cp.disabled = true; cp.classList.remove('ok');
+  document.getElementById('result').classList.add('show');
+  var nome = (document.getElementById('fNome').value || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  var slug = (nome || 'proposta') + '-' + Date.now().toString(36);
+  adm('link', {slug:slug, url:link}).then(function(r) {
+    if (tk !== SHORT_TOKEN) return;
+    if (!r || !r.ok) throw new Error('falha');
+    SHORT_ATUAL = window.location.origin + '/p/' + slug;
+    sh.textContent = SHORT_ATUAL; cp.disabled = false;
+  }).catch(function(e) {
+    if (tk !== SHORT_TOKEN || (e && e.message === 'sessao')) return;
+    sh.textContent = 'Não foi possível gerar o link curto agora. O link completo abaixo funciona do mesmo jeito.';
+    document.getElementById('shortWrap').style.display = 'block';
+    document.getElementById('btnShort').textContent = 'Ocultar link completo';
+    cp.textContent = 'Copiar link completo'; cp.disabled = false;
   });
 }
-function encurtarLink() {
-  var url = document.getElementById('resultUrl').textContent;
-  var nome = document.getElementById('fNome').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
-  var slug = nome + '-' + Date.now().toString(36);
-  document.getElementById('btnShort').textContent = 'Gerando…';
-  adm('link', {slug:slug, url:url})
-  .then(function(r){
-    if (!r.ok) throw new Error('falha');
-    var lc = window.location.origin + '/p/' + slug;
-    document.getElementById('shortUrl').textContent = lc;
-    document.getElementById('shortWrap').style.display = 'block';
-    document.getElementById('btnShort').textContent = 'Encurtar link';
-  }).catch(function(){ document.getElementById('btnShort').textContent = 'Erro'; });
+function textoCopia() { return SHORT_ATUAL || document.getElementById('resultUrl').textContent; }
+function copiarLink() {
+  var b = document.getElementById('btnCopy'), rot = b.textContent;
+  navigator.clipboard.writeText(textoCopia()).then(function(){
+    b.textContent = 'Copiado!'; b.classList.add('ok');
+    setTimeout(function(){ b.textContent = rot; b.classList.remove('ok'); }, 2000);
+  });
 }
-function copiarLinkCurto() {
-  navigator.clipboard.writeText(document.getElementById('shortUrl').textContent).then(function(){
+function alternaCompleto() {
+  var w = document.getElementById('shortWrap'), abre = w.style.display === 'none';
+  w.style.display = abre ? 'block' : 'none';
+  document.getElementById('btnShort').textContent = abre ? 'Ocultar link completo' : 'Mostrar link completo';
+}
+function copiarLinkCompleto() {
+  navigator.clipboard.writeText(document.getElementById('resultUrl').textContent).then(function(){
     var b = document.getElementById('btnCopyShort'); b.textContent='Copiado!'; b.classList.add('ok');
-    setTimeout(function(){ b.textContent='Copiar link curto'; b.classList.remove('ok'); }, 2000);
+    setTimeout(function(){ b.textContent='Copiar link completo'; b.classList.remove('ok'); }, 2000);
   });
 }
 </script>
@@ -645,7 +662,7 @@ var C2_COMB = [
   'Serviços adicionais ou ajustes fora do escopo podem ser orçados à parte',
   'Vídeos de até 1 minuto; vídeo de 2 partes conta como individual'
 ];
-var C3_GAL_TXT = ['olhar-01-maquete|Maquete','olhar-02-carrinho|Carrinho','olhar-03-obra-andaime|Obra e andaime','olhar-04-banco-almofada|Banco e almofada','olhar-05-cesta-revistas|Cesta de revistas','olhar-06-materiais-mao|Materiais na mão','olhar-07-cafe-janela|Café na janela','olhar-08-cafe-balcao|Café no balcão','olhar-09-casal-cafe|Casal no café','olhar-10-retrato-abajur|Retrato com abajur','olhar-11-casal-plantas|Casal e plantas'].map(function(x) { var q = x.split('|'); return 'assets-proposta/' + q[0] + '.webp | ' + q[1]; }).join('\n');
+var C3_GAL_TXT = ['olhar-01-maquete|Maquete','olhar-02-carrinho|Carrinho','olhar-03-obra-andaime|Obra e andaime','olhar-04-banco-almofada|Banco e almofada','olhar-05-cesta-revistas|Cesta de revistas','olhar-06-materiais-mao|Materiais na mão','olhar-07-cafe-janela|Café na janela','olhar-08-cafe-balcao|Café no balcão','olhar-09-casal-cafe|Casal no café','olhar-10-retrato-abajur|Retrato com abajur','olhar-11-casal-plantas|Casal e plantas'].map(function(x) { var q = x.split('|'); return 'assets-proposta/' + q[0] + '.webp'; }).join('\n');
 function I(nome, valor, un, ex) {
   var o = {nome:nome, desc:'', valor:String(valor), de:'', unidade:un, rot:'', g:'', pre:false, tag:'', nota:''};
   if (ex) { for (var k in ex) o[k] = ex[k]; }
@@ -946,7 +963,7 @@ function c3Render() {
     b.appendChild(c2e('div', 'sec-sep', 'Plano de entrada'));
     c3Fold(b, 'rcp', 'Plano de entrada', null, function(bb) { c3PathBody(bb, c3S.rc.plano, 'rcp', function() { return c3Defaults().rc.plano; }); });
     b.appendChild(c2e('div', 'sec-sep', 'Nosso olhar'));
-    var fg = c2e('div', 'field'); fg.appendChild(c2e('label', 'label', 'Imagens da galeria (uma por linha: arquivo ou URL | legenda)'));
+    var fg = c2e('div', 'field'); fg.appendChild(c2e('label', 'label', 'Imagens da galeria (uma por linha: arquivo ou URL)'));
     var ta = c2e('textarea', 'inp cd-ta'); ta.style.minHeight = '120px'; ta.value = c3S.rc.gal;
     ta.addEventListener('input', function() { c3S.rc.gal = ta.value; });
     fg.appendChild(ta);
@@ -1039,7 +1056,8 @@ function c3Out(P, vEnt) {
   return {c:c};
 }
 function c3Gal(txt) {
-  if (String(txt).trim() === C3_GAL_TXT) return null; // padrao: a pagina usa /img/galeria.json
+  // padrao: a pagina usa /img/galeria.json (compara sem o que vier depois de "|", de textos salvos antes)
+  if (String(txt).split('\n').map(function(l) { return l.split('|')[0].trim(); }).join('\n').trim() === C3_GAL_TXT) return null;
   var out = [];
   String(txt).split('\n').forEach(function(l) {
     var p = l.split('|'), a = (p[0] || '').trim(), leg = (p.slice(1).join('|') || '').trim();
@@ -1137,10 +1155,7 @@ function gerarCardapio() {
       return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h, tipo:'cd', email:em, snapshot:snapCd}});
     }).then(function(r) {
       if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
-      document.getElementById('resultUrl').textContent = link;
-      document.getElementById('result').classList.add('show');
-      document.getElementById('shortWrap').style.display = 'none';
-      document.getElementById('btnCopy').textContent = 'Copiar link';
+      mostraResultado(link);
       histLocal(r.id, snapCd);
       carregarHistorico();
     });

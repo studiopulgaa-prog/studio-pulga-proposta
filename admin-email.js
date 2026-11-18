@@ -35,7 +35,9 @@
       '<button class="btn-out" id="btnTeste">Enviar só este (teste, sem lembretes)</button>' +
       '<button class="btn-out" id="btnCancelaEnvio">Cancelar</button></div></div>' +
       '<div id="emailMsg" style="font-size:12px;margin-top:8px;"></div>';
-    url.parentNode.insertBefore(box, url.nextSibling);
+    // o botao de e-mail fica sempre visivel: depois do bloco do link completo (que pode estar recolhido)
+    var refBox = document.getElementById('shortWrap') || url;
+    refBox.parentNode.insertBefore(box, refBox.nextSibling);
     var btn = box.querySelector('#btnEmailEnviar'), msg = box.querySelector('#emailMsg'),
         conf = box.querySelector('#emailConfirma'), para = box.querySelector('#emailPara');
     var atual = null;
