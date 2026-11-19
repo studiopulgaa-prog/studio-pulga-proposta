@@ -1,6 +1,6 @@
 // api/admin.js — todas as acoes do painel passam por aqui (exige sessao valida)
 import { rpc } from './_email.js';
-import { tokenValido, LINK_OK } from './_seg.js';
+import { sessaoValida, LINK_OK } from './_seg.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const txt = (v, n) => String(v == null ? '' : v).slice(0, n);
@@ -13,7 +13,7 @@ const TIPO = { pl: 'planos', cd: 'cardapio', planos: 'planos', cardapio: 'cardap
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
-  if (!tokenValido(req)) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
   const b = req.body || {};
   const ruim = () => res.status(400).json({ ok: false, erro: 'dados invalidos' });
   try {

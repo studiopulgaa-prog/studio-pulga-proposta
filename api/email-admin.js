@@ -1,11 +1,11 @@
 // api/email-admin.js — acoes do admin: enviar link por e-mail, mudar status, listar
 import { rpc, enviar } from './_email.js';
-import { tokenValido, LINK_OK } from './_seg.js';
+import { sessaoValida, LINK_OK } from './_seg.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ ok: false, erro: 'Metodo nao permitido' });
   res.setHeader('Cache-Control', 'no-store');
-  if (!tokenValido(req)) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
   const { acao, lh, email, cliente, link, status, modo } = req.body || {};
 
   try {

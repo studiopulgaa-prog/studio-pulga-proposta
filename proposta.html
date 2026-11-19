@@ -381,7 +381,7 @@
     .c3-mi-cm{background:var(--mi-a);color:#F2E8D8;}
     .c3-mi-vl{background:var(--mi-o);color:var(--mi-b);}
     .c3-mi-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:clamp(26px,6vw,44px);letter-spacing:-0.03em;line-height:1.05;margin-bottom:20px;}
-    .c3-mi-p{font-size:clamp(15px,2.2vw,18px);line-height:1.7;font-weight:400;}
+    .c3-mi-p{font-size:clamp(15px,2.2vw,18px);line-height:1.7;font-weight:400;white-space:pre-line;}
     .c3-mi-ul{list-style:none;display:grid;gap:10px;}
     .c3-mi-ul li{font-size:clamp(16px,2.4vw,20px);line-height:1.4;font-weight:600;padding:14px 16px;border:1.5px solid rgba(242,232,216,0.55);border-radius:14px;}
     .c3-mi-st{display:grid;gap:12px;}
@@ -412,7 +412,7 @@
     .c3-mi-pg{border:1.5px solid rgba(242,232,216,0.4);border-radius:16px;padding:18px;}
     .c3-mi-pgt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:17px;line-height:1.2;margin-bottom:10px;}
     .c3-mi-pgl{font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;margin-bottom:10px;}
-    .c3-mi-pgn{font-size:13px;line-height:1.5;opacity:0.85;margin:12px 0 0;}
+    .c3-mi-pgn{font-size:13px;line-height:1.5;opacity:0.85;margin:12px 0 0;white-space:pre-line;}
     .c3-mi-chk{display:flex;align-items:flex-start;gap:12px;margin-top:6px;padding:14px 16px;border:1px solid currentColor;border-radius:14px;cursor:pointer;font-weight:600;line-height:1.4;}
     .c3-mi-chk input{width:22px;height:22px;flex:0 0 22px;margin:0;accent-color:#6E2C14;cursor:pointer;}
     .timer-bar.has-note{flex-wrap:wrap;row-gap:0;}
@@ -1950,7 +1950,9 @@
       var ot=cdEl('div','c3-mi-oqt');
       ot.appendChild(cdEl('div','c3-mi-t',T('oqt')||'Milão, com a gente.'));
       ot.appendChild(cdEl('p','c3-mi-p',T('oque')||'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.'));
-      if(cfg.total&&cfg.meses.length){
+      if(T('dest')){
+        ot.appendChild(cdEl('div','c3-mi-dest',T('dest')));   // texto escrito à mão no admin
+      }else if(cfg.total&&cfg.meses.length){
         var n=cfg.meses.length,pm=Math.round(cfg.total/n*100)/100;
         ot.appendChild(cdEl('div','c3-mi-dest','R$ '+cdFmt(pm)+'/mês, de '+C3_MESF[cfg.meses[0]]+' a '+C3_MESF[cfg.meses[n-1]]+' ('+n+(n===1?' parcela':' parcelas')+', R$ '+cdFmt(cfg.total)+')'));
       }
@@ -1960,11 +1962,11 @@
       // formas de pagamento: duas situacoes lado a lado (informativo; o fechamento e pelo WhatsApp)
       if(cfg.total&&cfg.meses.length){
         var pg=C3.pg||(C3.pg=c3PgCfg());
-        var cb=bloco('c3-mi-lv c2-reveal');cb.appendChild(cdEl('div','c3-mi-t','Formas de pagamento'));
+        var cb=bloco('c3-mi-lv c2-reveal');cb.appendChild(cdEl('div','c3-mi-t',T('pgt')||'Formas de pagamento'));
         var gr2=cdEl('div','c3-mi-pgs');
         var A=cdEl('div','c3-mi-pg');
-        A.appendChild(cdEl('div','c3-mi-pgt',pg.m1||'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'));
-        A.appendChild(cdEl('div','c3-mi-pgl','Quando você entra'));
+        A.appendChild(cdEl('div','c3-mi-pgt',T('m1')||pg.m1||'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'));
+        A.appendChild(cdEl('div','c3-mi-pgl',T('pgq')||'Quando você entra'));
         var ms=cdEl('div','c3-mi-ms');ms.setAttribute('role','group');ms.setAttribute('aria-label','Mês de entrada');
         var btns=[];
         cfg.meses.forEach(function(mm,i){
@@ -1984,17 +1986,17 @@
           }else res.appendChild(cdEl('div','c3-mi-r2','Escolha o mês em que você entra.'));
         });
         var B=cdEl('div','c3-mi-pg');
-        B.appendChild(cdEl('div','c3-mi-pgt',pg.m2||'Cartão de crédito'));
-        var bp=cdEl('p','c3-mi-pgn',c3PgBanco());bp.style.margin='0';B.appendChild(bp);
-        B.appendChild(cdEl('p','c3-mi-pgn',C3_PG_PIX));
+        B.appendChild(cdEl('div','c3-mi-pgt',T('m2')||pg.m2||'Cartão de crédito'));
+        var bp=cdEl('p','c3-mi-pgn',T('pgc')||c3PgBanco());bp.style.margin='0';B.appendChild(bp);
+        B.appendChild(cdEl('p','c3-mi-pgn',T('pgp')||C3_PG_PIX));
         gr2.appendChild(A);gr2.appendChild(B);cb.appendChild(gr2);
-        cb.appendChild(cdEl('p','c3-mi-pgn',C3_PG_ZAP));
+        cb.appendChild(cdEl('p','c3-mi-pgn',T('pgz')||C3_PG_ZAP));
       }
       // Stories na viagem: todos os dias ou dias escolhidos (so os dias da viagem clicam)
       var aberto=!!(cfg.cal&&cfg.ida&&cfg.volta&&cfg.ida<=cfg.volta);
       if(cfg.cal){
         var sb=bloco('c3-mi-cm c2-reveal');sb.appendChild(cdEl('div','c3-mi-t','Stories na viagem'));
-        sb.appendChild(cdEl('p','c3-mi-p',T('stq')||'Quer stories durante toda a viagem? Você também pode ter essa opção.'));
+        if(T('stoff')!=='1')sb.appendChild(cdEl('p','c3-mi-p',T('stq')||'Quer stories durante toda a viagem? Você também pode ter essa opção.'));
         if(cfg.sdia)sb.appendChild(cdEl('p','c3-mi-p','Valor: R$ '+cdFmt(cfg.sdia)+' por dia escolhido.'));
         var dias=[];
         if(aberto){for(var q=new Date(cfg.ida);q<=cfg.volta;q.setDate(q.getDate()+1)){if(q.getMonth()===cfg.cal.m)dias.push(q.getDate());}}

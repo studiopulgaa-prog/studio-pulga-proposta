@@ -2,7 +2,16 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#6E2C14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Propostas">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <title>Studio Pulga — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;900&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -130,6 +139,58 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .imp-box{border:1px dashed var(--gray2,#b9a58f);border-radius:12px;padding:12px;margin:0 0 14px;background:rgba(110,44,20,.04);}
 .imp-t{font-size:13px;font-weight:600;color:#6E2C14;}
 .hist-tipo{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);}
+/* ===== Celular: sem zoom automatico do iOS (campos com 16 px), sem rolagem lateral, alvos de toque de 44 px; o zoom do usuario continua liberado ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));overflow-x:hidden;}
+.wrap,.card,.field,.cd-ed,.items-body,.result,.hist-item{min-width:0;}
+.de-para{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+input,textarea,select{max-width:100%;}
+.hist-hdr>div:first-child{min-width:0;}
+.hist-nome{overflow-wrap:anywhere;}
+.lg-manter{display:flex;align-items:center;gap:10px;text-align:left;margin-top:12px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;}
+.lg-manter input{width:22px;height:22px;accent-color:var(--br);flex-shrink:0;}
+.lg-aviso{font-size:12px;color:var(--gray);margin-top:8px;display:none;}
+.cd-ckw{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px 0 -8px -12px;cursor:pointer;flex-shrink:0;}
+.msg-box{margin:0 0 12px;}
+.mi-lh{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.mi-lh .label{margin-bottom:0;}
+.mi-rs{background:none;border:none;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;text-decoration:underline;cursor:pointer;padding:6px 0 6px 8px;white-space:nowrap;min-height:44px;}
+.mi-sw{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(110,44,20,0.04);border:1.5px solid var(--brl);border-radius:10px;cursor:pointer;margin-bottom:8px;font-size:13px;font-weight:600;min-height:44px;}
+.mi-sw.on{background:rgba(110,44,20,0.08);border-color:var(--br);}
+.mi-sw input{width:20px;height:20px;accent-color:var(--br);flex-shrink:0;}
+.mi-auto{font-size:12px;color:var(--gray);background:rgba(110,44,20,0.05);border:1.5px dashed var(--brl);border-radius:10px;padding:10px 12px;margin:0 0 8px;overflow-wrap:anywhere;}
+.mi-prev{border:1.5px solid var(--brl);border-radius:14px;background:#F4EADD;padding:14px;margin-top:12px;}
+.mi-prev-k{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:10px;}
+.mi-pv-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:26px;letter-spacing:-0.03em;line-height:1.05;margin-bottom:12px;overflow-wrap:anywhere;}
+.mi-pv-p{font-size:14px;line-height:1.6;font-weight:400;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:10px;}
+.mi-pv-dest{display:inline-block;max-width:100%;padding:10px 14px;border-radius:12px;background:var(--br);color:#F2E8D8;font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;line-height:1.2;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 12px;}
+.mi-pv-sec{border-top:1px solid var(--brl);padding-top:12px;margin-top:6px;}
+.mi-pv-st{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;line-height:1.2;margin-bottom:8px;overflow-wrap:anywhere;}
+.mi-pv-pgs{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;}
+.mi-pv-pg{border:1.5px solid var(--brl);border-radius:10px;padding:10px;background:rgba(255,255,255,0.6);min-width:0;}
+.mi-pv-pgt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:14px;line-height:1.2;margin-bottom:6px;white-space:pre-line;overflow-wrap:anywhere;}
+.mi-pv-pgl{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;margin-bottom:6px;}
+.mi-pv-pgn{font-size:12px;line-height:1.5;opacity:0.85;margin:6px 0 0;white-space:pre-line;overflow-wrap:anywhere;}
+.mi-pv-note{font-size:11px;color:var(--gray2);margin-top:10px;}
+.msg-box textarea{min-height:104px;}
+.btn-share{width:100%;margin:0 0 8px;}
+@media (max-width:820px),(pointer:coarse){
+  input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!important;}
+  .inp,.add-inp,.item-edit-inp{min-height:44px;height:auto;}
+  textarea.inp{min-height:88px;}
+  .cd-ed .inp{min-height:44px;height:auto;}
+  textarea.cd-ta{min-height:104px;}
+  .btn-main,.btn-out,.btn-enc,.btn-enc-all,.add-btn,.val-btn,.cd-seg,.st-b,.btn-sair,.items-toggle,.plano-ck,.hist-hdr{min-height:44px;}
+  .btn-out,.btn-enc,.add-btn{padding-top:10px;padding-bottom:10px;}
+  .btn-sair{min-width:44px;}
+  .ibtn,.hist-del{min-width:44px;min-height:44px;}
+  .tg{display:flex;flex-wrap:wrap;width:100%;border-radius:14px;}
+  .tg-t{flex:1 1 100%;min-width:0;min-height:44px;overflow-wrap:anywhere;}
+  .tg-x{flex:1 1 0;min-width:44px;min-height:44px;padding:0;border-top:1px solid var(--brl);}
+  .imp-box button,#btnAtivar,#btnTeste,#btnCancelaEnvio,#btnEmailEnviar{min-height:44px;height:auto!important;}
+  .plano-ck input,.item-row input[type=checkbox]{width:22px;height:22px;}
+  .login{margin-top:48px;padding:32px 20px;}
+}
 </style>
 </head>
 <body>
@@ -137,9 +198,11 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 <div class="login" id="loginCard">
   <div class="login-logo">STUDIO PULGA</div>
   <div class="login-sub">Painel de propostas</div>
-  <input class="inp" type="password" id="loginSenha" placeholder="Senha">
+  <input class="inp" type="password" id="loginSenha" placeholder="Senha" autocomplete="current-password">
+  <label class="lg-manter"><input type="checkbox" id="loginManter"><span>Manter conectado neste aparelho (30 dias)</span></label>
   <button class="btn-main" id="btnLogin">Entrar</button>
   <div class="err" id="loginErr">Senha incorreta.</div>
+  <div class="lg-aviso" id="loginAviso"></div>
 </div>
 <div class="admin" id="adminWrap">
   <div class="hdr"><div class="hdr-logo">STUDIO PULGA</div><button class="btn-sair" id="btnSair">Sair</button></div>
@@ -172,6 +235,7 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     </div>
     <div id="cdBlock" style="display:none;">
       <div class="field"><label class="label">Abas que este cliente vê</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck" id="nvDivMi"><input type="checkbox" id="nvMi"><span class="plano-ck-label">Especial Milão</span></div><div class="cd-hint">Marque pelo menos uma. Com uma só aba, a barra de abas some e a página abre direto nela.</div></div>
+      <div class="field" id="miCliField" style="display:none;"><div class="items-toggle" id="miCliTog" role="button" tabindex="0" aria-expanded="false"><span class="items-toggle-label">Personalizar este cliente · Especial Milão</span><span class="items-arrow" id="miCliArr">›</span></div><div class="items-body" id="miCliBody"></div></div>
       <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
       <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
       <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
@@ -190,8 +254,14 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
     <div class="result" id="result">
       <div class="result-label">Link gerado</div>
       <div class="result-url" id="shortUrl"></div>
+      <div class="msg-box field" id="msgBox" style="display:none;">
+        <label class="label" for="msgTxt">Mensagem (pode editar antes de enviar)</label>
+        <textarea class="inp cd-ta" id="msgTxt" maxlength="600"></textarea>
+      </div>
+      <button class="btn-main btn-share" id="btnShare" style="display:none;">Compartilhar</button>
       <div class="btn-row">
         <button class="btn-out" id="btnCopy">Copiar link</button>
+        <button class="btn-out" id="btnCopyMsg" style="display:none;">Copiar mensagem</button>
         <button class="btn-out" id="btnShort">Mostrar link completo</button>
       </div>
       <div id="shortWrap" style="display:none;margin-top:12px;">
@@ -222,8 +292,19 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 </div>
 </div>
 <script>
-// Seguranca: a senha e conferida no servidor (/api/admin-login). O painel guarda so uma sessao de 12h.
-var TOKEN = sessionStorage.getItem('sp_token') || '';
+// Seguranca: a senha e conferida no servidor (/api/admin-login) e nunca fica guardada no navegador.
+// Sessao normal: 12h (so nesta aba). "Manter conectado": token de 30 dias assinado pelo servidor e revogavel ("Sair" encerra).
+var LS_LONGO = 'sp_token_l';
+function lerLongo() {
+  try {
+    var o = JSON.parse(localStorage.getItem(LS_LONGO) || 'null');
+    if (o && typeof o.t === 'string' && o.exp > Date.now()) return o.t;
+    localStorage.removeItem(LS_LONGO);
+  } catch (e) {}
+  return '';
+}
+var TOKEN = sessionStorage.getItem('sp_token') || lerLongo();
+if (TOKEN) { try { sessionStorage.setItem('sp_token', TOKEN); } catch (e) {} }   // admin-email.js le o token daqui
 function adm(acao, dados) {
   return fetch('/api/admin', {
     method: 'POST',
@@ -375,7 +456,7 @@ function gerarLink() {
   }).then(function(r){
     if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro||'erro')); return; }
     window.SP_ULTIMO = {link:link, data:data};   // o e-mail do admin usa isto quando o link é compacto
-    mostraResultado(link);
+    mostraResultado(link, {nome:nome, expira:expira});
     histLocal(r.id, snapPl);
     carregarHistorico();
   }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
@@ -460,6 +541,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Gerar link
   document.getElementById('btnGerar').addEventListener('click', gerarLink);
   document.getElementById('btnCopy').addEventListener('click', copiarLink);
+  document.getElementById('btnCopyMsg').addEventListener('click', copiarMensagem);
+  document.getElementById('btnShare').addEventListener('click', compartilhar);
   document.getElementById('btnShort').addEventListener('click', alternaCompleto);
   document.getElementById('btnCopyShort').addEventListener('click', copiarLinkCompleto);
 
@@ -546,12 +629,17 @@ function doLogin() {
   var btn = document.getElementById('btnLogin');
   var err = document.getElementById('loginErr');
   btn.disabled = true; btn.textContent = 'Entrando…'; err.style.display = 'none';
-  fetch('/api/admin-login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:campo.value})})
+  var manter = !!document.getElementById('loginManter').checked, av = document.getElementById('loginAviso');
+  av.style.display = 'none';
+  fetch('/api/admin-login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:campo.value, manter:manter})})
   .then(function(r){ return r.json(); })
   .then(function(r){
     if (r.ok && r.token) {
       TOKEN = r.token;
       sessionStorage.setItem('sp_token', TOKEN);
+      try { localStorage.removeItem(LS_LONGO); } catch (e) {}
+      if (manter && r.longo && r.exp) { try { localStorage.setItem(LS_LONGO, JSON.stringify({t:TOKEN, exp:r.exp})); } catch (e) {} }
+      else if (manter) { av.textContent = 'Entrou, mas só por esta sessão: a opção de 30 dias não está disponível agora.'; av.style.display = 'block'; }
       document.getElementById('loginCard').style.display = 'none';
       document.getElementById('adminWrap').style.display = 'block';
       carregarHistorico(); if (window.padCarregar) padCarregar();
@@ -563,9 +651,12 @@ function doLogin() {
   .then(function(){ campo.value = ''; btn.disabled = false; btn.textContent = 'Entrar'; });
 }
 function logout() {
+  // avisa o servidor para revogar a sessao longa deste aparelho (se der erro, o token local some do mesmo jeito)
+  if (TOKEN) { try { fetch('/api/admin-logout', {method:'POST', headers:{'Authorization':'Bearer ' + TOKEN}, keepalive:true}).catch(function(){}); } catch (e) {} }
   TOKEN = '';
   sessionStorage.removeItem('sp_token');
   sessionStorage.removeItem('sp_logado');
+  try { localStorage.removeItem(LS_LONGO); } catch (e) {}
   document.getElementById('adminWrap').style.display = 'none';
   document.getElementById('loginCard').style.display = 'block';
   document.getElementById('loginSenha').value = '';
@@ -604,14 +695,32 @@ function addNI(p) {
   renderNI(p);
 }
 // Resultado: mostra e copia primeiro o link CURTO (gerado na hora); o link completo fica em "Mostrar link completo"
-var SHORT_ATUAL = null, SHORT_TOKEN = 0;
-function mostraResultado(link) {
+var SHORT_ATUAL = null, SHORT_TOKEN = 0, MSG_INFO = null;
+function primeiroNome(n) {
+  var p = String(n || '').trim().split(/\s+/)[0] || '';
+  return p ? p.charAt(0).toUpperCase() + p.slice(1).toLowerCase() : '';
+}
+function fmtValidade(ms) {
+  var o = {timeZone:'America/Sao_Paulo'};
+  var d = new Date(ms);
+  return d.toLocaleDateString('pt-BR', Object.assign({day:'2-digit', month:'2-digit', year:'numeric'}, o)) + ' às ' + d.toLocaleTimeString('pt-BR', Object.assign({hour:'2-digit', minute:'2-digit'}, o));
+}
+// mensagem pronta para o cliente (editavel antes de enviar)
+function montaMensagem(link) {
+  var i = MSG_INFO || {}, nome = primeiroNome(i.nome);
+  return 'Olá' + (nome ? ', ' + nome : '') + '! Preparei esta proposta pra você: ' + link + '. Ela é exclusiva e tem validade até ' + (i.expira ? fmtValidade(i.expira) : 'a data combinada') + '.';
+}
+function podeCompartilhar() { return typeof navigator.share === 'function'; }
+function mostraResultado(link, info) {
   var tk = ++SHORT_TOKEN;
   SHORT_ATUAL = null;
+  MSG_INFO = info || null;
   document.getElementById('resultUrl').textContent = link;
   document.getElementById('shortWrap').style.display = 'none';
   document.getElementById('btnShort').textContent = 'Mostrar link completo';
   var sh = document.getElementById('shortUrl'), cp = document.getElementById('btnCopy');
+  var mb = document.getElementById('msgBox'), mt = document.getElementById('msgTxt'), bs = document.getElementById('btnShare'), bm = document.getElementById('btnCopyMsg');
+  mb.style.display = 'none'; mt.value = ''; bs.style.display = 'none'; bm.style.display = 'none';
   sh.textContent = 'Gerando o link curto…';
   cp.textContent = 'Copiar link'; cp.disabled = true; cp.classList.remove('ok');
   document.getElementById('result').classList.add('show');
@@ -622,6 +731,9 @@ function mostraResultado(link) {
     if (!r || !r.ok) throw new Error('falha');
     SHORT_ATUAL = window.location.origin + '/p/' + slug;
     sh.textContent = SHORT_ATUAL; cp.disabled = false;
+    // mensagem pronta + botao principal "Compartilhar" (sem suporte: so copiar)
+    mt.value = montaMensagem(SHORT_ATUAL); mb.style.display = '';
+    if (podeCompartilhar()) bs.style.display = ''; else bm.style.display = '';
   }).catch(function(e) {
     if (tk !== SHORT_TOKEN || (e && e.message === 'sessao')) return;
     sh.textContent = 'Não foi possível gerar o link curto agora. O link completo abaixo funciona do mesmo jeito.';
@@ -631,11 +743,19 @@ function mostraResultado(link) {
   });
 }
 function textoCopia() { return SHORT_ATUAL || document.getElementById('resultUrl').textContent; }
-function copiarLink() {
-  var b = document.getElementById('btnCopy'), rot = b.textContent;
-  navigator.clipboard.writeText(textoCopia()).then(function(){
-    b.textContent = 'Copiado!'; b.classList.add('ok');
-    setTimeout(function(){ b.textContent = rot; b.classList.remove('ok'); }, 2000);
+function copiaTexto(txt, btn, rot) {
+  var fim = function() { btn.textContent = 'Copiado!'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent = rot; btn.classList.remove('ok'); }, 2000); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(fim).catch(function(){ btn.textContent = 'Não foi possível copiar'; setTimeout(function(){ btn.textContent = rot; }, 2000); });
+  else { btn.textContent = 'Não foi possível copiar'; setTimeout(function(){ btn.textContent = rot; }, 2000); }
+}
+function copiarLink() { var b = document.getElementById('btnCopy'); copiaTexto(textoCopia(), b, b.textContent === 'Copiado!' ? 'Copiar link' : b.textContent); }
+function copiarMensagem() { var b = document.getElementById('btnCopyMsg'); copiaTexto(document.getElementById('msgTxt').value, b, 'Copiar mensagem'); }
+function compartilhar() {
+  var txt = document.getElementById('msgTxt').value.trim() || textoCopia();
+  if (!podeCompartilhar()) { copiarLink(); return; }
+  navigator.share({text: txt}).catch(function(e) {
+    if (e && e.name === 'AbortError') return;   // o usuario fechou a folha de compartilhar
+    copiarLink();
   });
 }
 function alternaCompleto() {
@@ -663,6 +783,20 @@ var C2_COMB = [
   'Vídeos de até 1 minuto; vídeo de 2 partes conta como individual'
 ];
 var C3_GAL_TXT = ['olhar-01-maquete|Maquete','olhar-02-carrinho|Carrinho','olhar-03-obra-andaime|Obra e andaime','olhar-04-banco-almofada|Banco e almofada','olhar-05-cesta-revistas|Cesta de revistas','olhar-06-materiais-mao|Materiais na mão','olhar-07-cafe-janela|Café na janela','olhar-08-cafe-balcao|Café no balcão','olhar-09-casal-cafe|Casal no café','olhar-10-retrato-abajur|Retrato com abajur','olhar-11-casal-plantas|Casal e plantas'].map(function(x) { var q = x.split('|'); return 'assets-proposta/' + q[0] + '.webp'; }).join('\n');
+// textos padrao da aba Especial Milao (iguais aos que a pagina do cliente usa quando o campo vem em branco)
+var MI_DEF = {
+  titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
+  oqt:'Milão, com a gente.',
+  oque:'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.',
+  stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.',
+  pgt:'Formas de pagamento', m1:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)', pgq:'Quando você entra', m2:'Cartão de crédito',
+  pgp:'Se preferir, Pix ou boleto à vista também é possível.', pgz:'Hoje o fechamento passa por uma confirmação enviada pelo WhatsApp.'
+};
+var MI_TXT = ['titulo','sub','oqt','oque','stq','pgt','m1','pgq','m2','pgc','pgp','pgz'];   // campos de texto (em branco = padrao)
+function miDef(k) {
+  if (k === 'pgc') { var n = parseInt(((typeof c3S !== 'undefined' && c3S.pg) || {}).max, 10); return 'Parcele em até ' + ((n >= 2 && n <= 24) ? n : 12) + 'x, escolhendo na tela de pagamento.'; }
+  return MI_DEF[k] || '';
+}
 function I(nome, valor, un, ex) {
   var o = {nome:nome, desc:'', valor:String(valor), de:'', unidade:un, rot:'', g:'', pre:false, tag:'', nota:''};
   if (ex) { for (var k in ex) o[k] = ex[k]; }
@@ -674,6 +808,12 @@ function S(id, foto, titulo, ex) {
   return o;
 }
 // Valores de referencia (editaveis). Nada aqui e promessa de prazo ou resultado.
+// os titulos "Milao sem cartao / no cartao" ficavam em pg.m1/pg.m2; agora ficam junto dos outros textos do Milao
+function c3Migra(c) {
+  if (!c || !c.mi || !c.pg) return c;
+  ['m1', 'm2'].forEach(function(k) { if (!c.mi[k] && c.pg[k]) c.mi[k] = c.pg[k]; c.pg[k] = ''; });
+  return c;
+}
 function c3Load(svIn) {
   var d = c3Defaults();
   try {
@@ -683,7 +823,7 @@ function c3Load(svIn) {
       d.mi = Object.assign(d.mi, sv.mi); d.pg = Object.assign(d.pg, {av:(sv.pg||{}).av||'', rc:(sv.pg||{}).rc||'', m1:(sv.pg||{}).m1||'', m2:(sv.pg||{}).m2||''});
     }
   } catch (e) {}
-  return d;
+  return c3Migra(d);
 }
 function c3Defaults() {
   var hr = function(v) { return I('Hora adicional', v, 'unidade', {rot:'por hora'}); };
@@ -730,11 +870,12 @@ function c3Defaults() {
                 I('Revisão extra',60,'unidade',{rot:'por revisão'}),I('Pacote 2 artes por mês',150,'mensal'),I('Calendário anual de 12 datas',900,'unico')]}),
       gal:C3_GAL_TXT,
       difs:[{t:'Identidade cool e autoral',d:''},{t:'Equipe completa',d:'Filmmaker mobile, editor de vídeo e foto e social media.'},{t:'Rotina combinada',d:'Agenda, tabela de postagem e grupo com o videomaker.'}]},
-    mi:{on:false, titulo:'Especial Milão', sub:'Viaje com a gente ao evento de arquitetura de abril.',
-      oqt:'Milão, com a gente.',
-      oque:'Cobertura de Milão com o Studio Pulga. Você terá 1 dia disponível para captação, nos períodos da manhã, tarde e noite. Nesse dia, fotos e vídeos curtos para stories do próprio dia.',
+    mi:{on:false, titulo:MI_DEF.titulo, sub:MI_DEF.sub,
+      oqt:MI_DEF.oqt,
+      oque:MI_DEF.oque,
       total:'3120', inicio:'11', fim:'4', data:'', vagas:'', cal:'2027-04', ida:'2027-04-13', volta:'2027-04-20', sdia:'147', sv:false,
-      stq:'Quer stories durante toda a viagem? Você também pode ter essa opção.'},
+      stq:MI_DEF.stq,
+      stoff:false, dm:false, dest:'', pgt:'', m1:'', pgq:'', m2:'', pgc:'', pgp:'', pgz:''},
     pg:{max:'12', av:'', rc:'', m1:'', m2:''},
     fr:'Após essa data os valores podem mudar.',
     tt:true
@@ -859,10 +1000,11 @@ function c3Fold(cont, key, texto, onObj, build) {
   var lw = c2e('span'); lw.style.cssText = 'display:flex;align-items:center;min-width:0;';
   if (onObj) {
     var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!onObj.on; ck.title = 'Aba ligada por padrão nas novas propostas';
-    ck.style.cssText = 'width:16px;height:16px;accent-color:#6E2C14;margin-right:10px;flex-shrink:0;';
-    ck.addEventListener('click', function(e) { e.stopPropagation(); });
+    ck.style.cssText = 'width:20px;height:20px;accent-color:#6E2C14;flex-shrink:0;';
+    var ckw = c2e('label', 'cd-ckw'); ckw.appendChild(ck);
+    ckw.addEventListener('click', function(e) { e.stopPropagation(); });
     ck.addEventListener('change', function() { onObj.on = ck.checked; c3Render(); });
-    lw.appendChild(ck);
+    lw.appendChild(ckw);
   }
   lw.appendChild(lab); tg.appendChild(lw); tg.appendChild(ar);
   tg.addEventListener('click', function() { c2Aberto[key] = !c2Aberto[key]; c3Render(); });
@@ -937,7 +1079,143 @@ function c3PathBody(body, P, key, defaultFn) {
   body.appendChild(rs);
 }
 
+// ===== Especial Milao: textos editaveis (Padroes = valem para as proximas propostas; "Personalizar este cliente" = so para aquele link) =====
+var NV_MI = {};            // textos so deste cliente (por cima dos Padroes); vai no link e na copia (snapshot.form.mc)
+var MI_CLI_ABERTO = false;
+var MI_HOOKS = {pad:[], cli:[]};   // atualizam o destaque automatico e a pre-visualizacao quando Valor total / meses mudam
+function miHook() { MI_HOOKS.pad.concat(MI_HOOKS.cli).forEach(function(f) { try { f(); } catch (e) {} }); }
+var MI_MESF = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function miFmt(n) { return n.toLocaleString('pt-BR', {minimumFractionDigits:(n % 1 ? 2 : 0), maximumFractionDigits:2}); }
+// destaque automatico: igual ao que a pagina do cliente gera a partir de Valor total, mes de inicio e mes final
+function miAuto() {
+  var M = c3S.mi, tot = cdNum(M.total), a = parseInt(M.inicio, 10), b = parseInt(M.fim, 10);
+  if (!(tot != null && tot > 0 && a >= 1 && a <= 12 && b >= 1 && b <= 12)) return '';
+  var n = b >= a ? b - a + 1 : b + 12 - a + 1, pm = Math.round(tot / n * 100) / 100;
+  return 'R$ ' + miFmt(pm) + '/mês, de ' + MI_MESF[a - 1] + ' a ' + MI_MESF[b - 1] + ' (' + n + (n === 1 ? ' parcela' : ' parcelas') + ', R$ ' + miFmt(tot) + ')';
+}
+// fonte dos textos: Padroes (c3S.mi) ou este cliente (NV_MI por cima de c3S.mi)
+function miFonte(cli, refaz) {
+  var M = c3S.mi;
+  return {
+    cli: !!cli, refaz: refaz, hooks: cli ? MI_HOOKS.cli : MI_HOOKS.pad,
+    val: function(k) { var v = (cli && NV_MI[k] !== undefined) ? NV_MI[k] : M[k]; return v == null ? '' : v; },
+    txt: function(k) { return String(this.val(k) || '') || miDef(k); },
+    set: function(k, v) { if (cli) NV_MI[k] = v; else M[k] = v; },
+    reset: function(k) { if (cli) delete NV_MI[k]; else M[k] = (typeof M[k] === 'boolean') ? false : ''; }
+  };
+}
+function miPreview(F) {
+  var box = c2e('div', 'mi-prev');
+  box.appendChild(c2e('div', 'mi-prev-k', 'Pré-visualização'));
+  var body = c2e('div'); box.appendChild(body);
+  var nota = c2e('div', 'mi-pv-note', 'Aproximação do que o cliente vê. O bloco de pagamento só aparece com Valor total e meses preenchidos; o de stories, com o mês do calendário.');
+  box.refresh = function() {
+    body.textContent = '';
+    body.appendChild(c2e('div', 'mi-pv-t', F.txt('oqt')));
+    body.appendChild(c2e('div', 'mi-pv-p', F.txt('oque')));
+    var d = F.val('dm') ? String(F.val('dest') || '').trim() : miAuto();
+    if (d) body.appendChild(c2e('div', 'mi-pv-dest', d));
+    var pg = c2e('div', 'mi-pv-sec');
+    pg.appendChild(c2e('div', 'mi-pv-st', F.txt('pgt')));
+    var gr = c2e('div', 'mi-pv-pgs');
+    var A = c2e('div', 'mi-pv-pg'); A.appendChild(c2e('div', 'mi-pv-pgt', F.txt('m1'))); A.appendChild(c2e('div', 'mi-pv-pgl', F.txt('pgq')));
+    var B = c2e('div', 'mi-pv-pg'); B.appendChild(c2e('div', 'mi-pv-pgt', F.txt('m2'))); B.appendChild(c2e('p', 'mi-pv-pgn', F.txt('pgc'))); B.appendChild(c2e('p', 'mi-pv-pgn', F.txt('pgp')));
+    gr.appendChild(A); gr.appendChild(B); pg.appendChild(gr); pg.appendChild(c2e('p', 'mi-pv-pgn', F.txt('pgz')));
+    body.appendChild(pg);
+    if (!F.val('stoff')) { var st = c2e('div', 'mi-pv-sec'); st.appendChild(c2e('div', 'mi-pv-st', 'Stories na viagem')); st.appendChild(c2e('div', 'mi-pv-p', F.txt('stq'))); body.appendChild(st); }
+    body.appendChild(nota);
+  };
+  box.refresh();
+  return box;
+}
+// campo de texto com "Restaurar texto padrão"
+function miTexto(cont, F, k, label, o, prev) {
+  o = o || {};
+  var f = c2e('div', 'field'), head = c2e('div', 'mi-lh');
+  head.appendChild(c2e('label', 'label', label));
+  var rb = c2e('button', 'mi-rs', 'Restaurar texto padrão'); rb.type = 'button'; head.appendChild(rb); f.appendChild(head);
+  var inp = o.ta ? c2e('textarea', 'inp cd-ta') : c2e('input', 'inp');
+  if (!o.ta) inp.type = 'text';
+  inp.maxLength = o.max || 160;
+  inp.value = F.txt(k);
+  inp.addEventListener('input', function() { F.set(k, inp.value === miDef(k) ? '' : inp.value); prev.refresh(); });
+  rb.addEventListener('click', function() { F.reset(k); inp.value = F.txt(k); prev.refresh(); });
+  f.appendChild(inp);
+  if (o.hint) f.appendChild(c2e('div', 'cd-hint', o.hint));
+  cont.appendChild(f);
+}
+// chave liga/desliga
+function miChave(cont, F, k, texto, invertido, prev) {
+  var on = invertido ? !F.val(k) : !!F.val(k);
+  var w = c2e('label', 'mi-sw' + (on ? ' on' : '')), ck = c2e('input'); ck.type = 'checkbox'; ck.checked = on;
+  w.appendChild(ck); w.appendChild(c2e('span', null, texto));
+  ck.addEventListener('change', function() { F.set(k, invertido ? !ck.checked : ck.checked); if (F.refaz) F.refaz(); });
+  cont.appendChild(w);
+}
+function miTextos(cont, F) {
+  var prev = miPreview(F);
+  F.hooks.push(function() { prev.refresh(); });
+  if (!F.cli) miTexto(cont, F, 'sub', 'Subtítulo da aba', {max:140}, prev);
+  cont.appendChild(c2e('div', 'sec-sep', 'Texto da aba'));
+  miTexto(cont, F, 'oqt', 'Título (hoje: "' + MI_DEF.oqt + '")', {max:60}, prev);
+  miTexto(cont, F, 'oque', 'Texto principal (o que será oferecido em Milão)', {ta:true, max:600, hint:'Dia de captação, períodos, fotos e vídeos curtos. Enter cria nova linha e a quebra aparece para o cliente.'}, prev);
+  cont.appendChild(c2e('div', 'sec-sep', 'Destaque de valor'));
+  var auto = !F.val('dm');
+  var sg = c2e('div', 'cd-seg-row'); sg.style.marginBottom = '8px';
+  [[true, 'Gerar automático'], [false, 'Escrever à mão']].forEach(function(o) {
+    var b = c2e('button', 'cd-seg' + (auto === o[0] ? ' on' : ''), o[1]); b.type = 'button';
+    b.addEventListener('click', function() { F.set('dm', !o[0]); if (F.refaz) F.refaz(); });
+    sg.appendChild(b);
+  });
+  cont.appendChild(sg);
+  if (auto) {
+    var a = miAuto();
+    var ea = c2e('div', 'mi-auto', a ? a : 'Sem destaque: preencha "Valor total" e os meses (em Padrões, Aba Especial Milão) ou escreva à mão.');
+    cont.appendChild(ea);
+    F.hooks.push(function() { var x = miAuto(); ea.textContent = x ? x : 'Sem destaque: preencha "Valor total" e os meses (em Padrões, Aba Especial Milão) ou escreva à mão.'; });
+    cont.appendChild(c2e('div', 'cd-hint', 'Gerado a partir de Valor total, mês de início e mês final (em Padrões).'));
+  } else {
+    miDest(cont, F, prev);
+  }
+  cont.appendChild(c2e('div', 'sec-sep', 'Stories na viagem'));
+  miChave(cont, F, 'stoff', 'Mostrar a linha de stories', true, prev);
+  if (!F.val('stoff')) miTexto(cont, F, 'stq', 'Linha de stories', {max:140}, prev);
+  cont.appendChild(c2e('div', 'sec-sep', 'Formas de pagamento (Milão)'));
+  [['pgt', 'Título do bloco', 60], ['m1', 'Título: sem cartão de crédito', 120], ['pgq', 'Rótulo dos meses', 40], ['m2', 'Título: cartão de crédito', 120], ['pgc', 'Texto do cartão', 160], ['pgp', 'Texto de Pix e boleto', 160], ['pgz', 'Texto sobre o fechamento', 200]].forEach(function(c) {
+    miTexto(cont, F, c[0], c[1], {max:c[2]}, prev);
+  });
+  cont.appendChild(prev);
+}
+function miDest(cont, F, prev) {
+  var f = c2e('div', 'field'), head = c2e('div', 'mi-lh');
+  head.appendChild(c2e('label', 'label', 'Destaque escrito à mão'));
+  var rb = c2e('button', 'mi-rs', 'Restaurar texto padrão'); rb.type = 'button'; head.appendChild(rb); f.appendChild(head);
+  var inp = c2e('textarea', 'inp cd-ta'); inp.maxLength = 160; inp.style.minHeight = '74px';
+  inp.placeholder = 'Ex: R$ 520/mês, de novembro a abril (6 parcelas, R$ 3.120)';
+  inp.value = F.val('dest') || '';
+  inp.addEventListener('input', function() { F.set('dest', inp.value); prev.refresh(); });
+  rb.addEventListener('click', function() { F.reset('dest'); F.set('dm', false); if (F.refaz) F.refaz(); });   // volta ao automático
+  f.appendChild(inp); f.appendChild(c2e('div', 'cd-hint', 'Escreva o que quiser; vale no lugar do texto automático. "Restaurar texto padrão" volta para o automático.'));
+  cont.appendChild(f);
+}
+// "Personalizar este cliente" (so no Cardapio, com a aba Especial Milao marcada)
+function miCliRender() {
+  var fld = $('miCliField'); if (!fld) return;
+  var vis = AREA === 'cd' && $('nvMi').checked;
+  fld.style.display = vis ? '' : 'none';
+  var body = $('miCliBody'); body.textContent = '';
+  $('miCliArr').classList.toggle('open', MI_CLI_ABERTO); body.classList.toggle('show', MI_CLI_ABERTO && vis);
+  if (!vis || !MI_CLI_ABERTO) return;
+  body.appendChild(c2e('div', 'cd-hint', 'Vale só para o link deste cliente e fica guardado na cópia da proposta. Os Padrões não mudam. "Restaurar texto padrão" volta ao texto salvo em Padrões.'));
+  MI_HOOKS.cli.length = 0;
+  miTextos(body, miFonte(true, miCliRender));
+  var rt = c2e('button', 'btn-out', 'Descartar tudo e usar os Padrões'); rt.type = 'button'; rt.style.cssText = 'margin-top:12px;width:100%;';
+  rt.addEventListener('click', function() { NV_MI = {}; miCliRender(); });
+  body.appendChild(rt);
+}
+
 function c3Render() {
+  MI_HOOKS.pad.length = 0;
   var cont = document.getElementById('cdCaminhos');
   var rolagem = window.pageYOffset;
   cont.textContent = '';
@@ -976,20 +1254,17 @@ function c3Render() {
   c3Fold(cont, 'mi', 'Aba Especial Milão', c3S.mi, function(b) {
     var M = c3S.mi;
     b.appendChild(c2Campo('Título da aba', M, 'titulo', {max:40}));
-    b.appendChild(c2Campo('Subtítulo', M, 'sub', {max:140}));
-    b.appendChild(c2Campo('Título do bloco de texto', M, 'oqt', {max:60}));
-    b.appendChild(c2Campo('Texto curto', M, 'oque', {ta:true, max:400}));
-    b.appendChild(c2Campo('Pergunta dos stories', M, 'stq', {max:140}));
+    miTextos(b, miFonte(false, c3Render));
     b.appendChild(c2e('div', 'sec-sep', 'Valor e parcelas'));
     b.appendChild(c2e('div', 'cd-hint', 'O destaque ("R$ 520/mês, de novembro a abril...") e a calculadora "Quando você entra" são gerados daqui. Valor total em branco: não aparecem.'));
-    b.appendChild(c2Campo('Valor total (R$)', M, 'total', {ph:'Ex: 3120', max:12}));
+    b.appendChild(c2Campo('Valor total (R$)', M, 'total', {ph:'Ex: 3120', max:12, on:miHook}));
     var MESN = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
     [['inicio', 'Mês de início'], ['fim', 'Mês final']].forEach(function(c) {
       var f = c2e('div', 'field'); f.appendChild(c2e('label', 'label', c[1]));
       var se = c2e('select', 'inp');
       var o0 = c2e('option', null, '(não definido)'); o0.value = ''; se.appendChild(o0);
       MESN.forEach(function(nm, i) { var o = c2e('option', null, nm); o.value = String(i + 1); if (String(M[c[0]]) === o.value) o.selected = true; se.appendChild(o); });
-      se.addEventListener('change', function() { M[c[0]] = se.value; });
+      se.addEventListener('change', function() { M[c[0]] = se.value; miHook(); });
       f.appendChild(se); b.appendChild(f);
     });
     b.appendChild(c2Campo('Data do evento (opcional)', M, 'data', {max:40}));
@@ -1013,8 +1288,7 @@ function c3Render() {
     b.appendChild(c2Campo('Máximo de parcelas no cartão', G, 'max', {ph:'12', max:2, hint:'Aparece só no texto "Parcele em até Nx". Nenhum valor de parcela é calculado.'}));
     b.appendChild(c2Campo('Texto extra: Avulsos (opcional, antes do bloco do cartão)', G, 'av', {ta:true, max:300, ph:'Vazio: mostra só o bloco do cartão.'}));
     b.appendChild(c2Campo('Texto: Recorrente', G, 'rc', {ta:true, max:300, ph:'Cobrança mensal no cartão (recorrente), ou Pix e boleto.'}));
-    b.appendChild(c2Campo('Título: Milão sem cartão de crédito', G, 'm1', {max:120, ph:'Sem cartão de crédito (Pix, boleto ou cartão recorrente)'}));
-    b.appendChild(c2Campo('Título: Milão no cartão de crédito', G, 'm2', {max:120, ph:'Cartão de crédito'}));
+    b.appendChild(c2e('div', 'cd-hint', 'Os títulos do bloco de pagamento do Milão ficam em "Aba Especial Milão".'));
   });
   // ---- OUTROS
   c3Fold(cont, 'ou', 'Outros ajustes', null, function(b) {
@@ -1076,7 +1350,7 @@ function gerarCardapio() {
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
-  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, {on:document.getElementById('nvMi').checked})}), abas = [];
+  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, NV_MI, {on:document.getElementById('nvMi').checked})}), abas = [];
   if (!S3.av.on && !S3.rc.on && !S3.mi.on) { alert('Marque pelo menos uma aba para este cliente.'); return; }
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
   if (!abas.length) { alert('Ligue ao menos 1 aba.'); return; }
@@ -1127,6 +1401,14 @@ function gerarCardapio() {
     if (mIda && mVol && mIda > mVol) { alert('A volta do Milão precisa ser depois da ida.'); return; }
     if (mCal && mIda && (mIda.slice(0, 7) !== mCal || mVol.slice(0, 7) !== mCal)) { alert('Ida e volta do Milão precisam estar no mês do calendário (' + mCal + ').'); return; }
     ['titulo','sub','oqt','oque','stq','total','inicio','fim','data','vagas','cal','ida','volta'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v) mi[k] = v; });
+    // textos novos: so vao no link quando diferem do padrao da pagina (em branco = a pagina usa o padrao atual)
+    ['pgt','m1','pgq','m2','pgc','pgp','pgz'].forEach(function(k) { var v = String(M[k] || '').trim(); if (v && v !== miDef(k)) mi[k] = v.slice(0, 200); });
+    if (M.stoff) mi.stoff = '1';
+    if (M.dm) {
+      var dv = String(M.dest || '').trim();
+      if (!dv) { alert('O destaque de valor está em "Escrever à mão", mas o texto está vazio. Escreva o destaque ou volte para "Gerar automático".'); return; }
+      mi.dest = dv.slice(0, 160);
+    }
     if (M.sv && mSd) mi.sdia = mSd;   // sem "Exibir valor por dia", o valor fica só no admin
     data.mi = mi;
   }
@@ -1151,11 +1433,12 @@ function gerarCardapio() {
     var link = window.location.origin + '/proposta.html?d=' + encoded;
     if (link.length > 12000) throw new Error('longo');
     return sha256hex(encoded).then(function(h) {
-      snapCd = {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:copia(c3S)}};
+      snapCd = {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:copia(c3S), mc:copia(NV_MI)}};
       return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h, tipo:'cd', email:em, snapshot:snapCd}});
     }).then(function(r) {
       if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
-      mostraResultado(link);
+      mostraResultado(link, {nome:nome, expira:expira});
+      NV_MI = {}; miCliRender();   // os textos "só deste cliente" não passam para o próximo
       histLocal(r.id, snapCd);
       carregarHistorico();
     });
@@ -1368,12 +1651,14 @@ function areaSet(a) {
   $('histTit').textContent = 'Histórico · ' + (card ? 'Cardápio' : 'Planos de gestão');
   $('result').classList.remove('show');
   subSet(SUB);
+  miCliRender();
   if (_lista.length) renderHistorico(_lista);
 }
 function nvSync() {
   [['nvAv', 'nvDivAv', 'av'], ['nvRc', 'nvDivRc', 'rc'], ['nvMi', 'nvDivMi', 'mi']].forEach(function(x) {
     $(x[0]).checked = !!c3S[x[2]].on; $(x[1]).classList.toggle('on', !!c3S[x[2]].on);
   });
+  miCliRender();
 }
 function subSet(s) {
   SUB = s;
@@ -1413,6 +1698,7 @@ function duplicarProposta(i) {
 function duplicarCom(p, L) {
   var a = areaDe(p);
   window.NV_DUP = false;
+  NV_MI = {};
   areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
   $('fNome').value = p.cliente; $('fEmail').value = '';
   if (a === 'pl') {
@@ -1428,11 +1714,13 @@ function duplicarCom(p, L) {
     }
   } else if (L && L.form) {
     var g = L.form;
-    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); var dd = c3Defaults(); c3S.mi = Object.assign(dd.mi, c3S.mi); c3S.pg = Object.assign(dd.pg, {av:(c3S.pg||{}).av||'', rc:(c3S.pg||{}).rc||'', m1:(c3S.pg||{}).m1||'', m2:(c3S.pg||{}).m2||''}); if (c3S.fr == null) c3S.fr = dd.fr; }
+    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); var dd = c3Defaults(); c3S.mi = Object.assign(dd.mi, c3S.mi); c3S.pg = Object.assign(dd.pg, {av:(c3S.pg||{}).av||'', rc:(c3S.pg||{}).rc||'', m1:(c3S.pg||{}).m1||'', m2:(c3S.pg||{}).m2||''}); c3Migra(c3S); if (c3S.fr == null) c3S.fr = dd.fr; }
     window.NV_DUP = true;
     ['nvAv', 'nvRc', 'nvMi'].forEach(function(id, j) { var on = !!(g.nv || [true, true, false])[j]; $(id).checked = on; $(id.replace('nv', 'nvDiv')).classList.toggle('on', on); });
     $('cdVEntrada').value = g.vEnt || ''; $('cdObs').value = g.obs || ''; $('cdVidAbertura').value = g.vid || '';
+    NV_MI = (g.mc && typeof g.mc === 'object' && !Array.isArray(g.mc)) ? copia(g.mc) : {};
   }
+  miCliRender();
   window.scrollTo({top:0, behavior:'smooth'});
   setTimeout(function() { $('fNome').focus(); $('fNome').select(); }, 400);
 }
@@ -1447,9 +1735,11 @@ document.addEventListener('DOMContentLoaded', function() {
   $('mdLoja').addEventListener('click', function() { modeloAplica('loja'); });
   [['nvDivAv', 'nvAv'], ['nvDivRc', 'nvRc'], ['nvDivMi', 'nvMi']].forEach(function(x) {
     var d = $(x[0]), k = $(x[1]);
-    d.addEventListener('click', function() { k.checked = !k.checked; d.classList.toggle('on', k.checked); });
-    k.addEventListener('click', function(e) { e.stopPropagation(); d.classList.toggle('on', k.checked); });
+    d.addEventListener('click', function() { k.checked = !k.checked; d.classList.toggle('on', k.checked); miCliRender(); });
+    k.addEventListener('click', function(e) { e.stopPropagation(); d.classList.toggle('on', k.checked); miCliRender(); });
   });
+  $('miCliTog').addEventListener('click', function() { MI_CLI_ABERTO = !MI_CLI_ABERTO; this.setAttribute('aria-expanded', MI_CLI_ABERTO ? 'true' : 'false'); miCliRender(); });
+  $('miCliTog').addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); } });
   modeloAplica('arq'); nvSync();
   document.addEventListener('click', function(e) {
     var t = e.target; if (!t.dataset || t.dataset.cp === undefined) return;
@@ -1458,6 +1748,10 @@ document.addEventListener('DOMContentLoaded', function() {
     comSnap(p, function(L) { if (L && L.link && navigator.clipboard) navigator.clipboard.writeText(L.link).then(ok).catch(function() {}); });
   });
 });
+</script>
+<script>
+// admin instalavel (PWA): service worker minimo, so para a pagina do admin; nao guarda nada em cache
+if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw-admin.js', {scope:'/admin.html'}).catch(function() {}); }); }
 </script>
 <script src="/admin-email.js"></script>
 </body>

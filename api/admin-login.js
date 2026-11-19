@@ -1,6 +1,6 @@
-// api/admin-login.js — confere a senha do painel no servidor e devolve uma sessao de 12h
+// api/admin-login.js — confere a senha do painel no servidor e devolve uma sessao de 12h (ou de 30 dias, revogavel, se pedido)
 import { rpc } from './_email.js';
-import { criarToken, senhaConfere, ipDe } from './_seg.js';
+import { criarToken, criarTokenLongo, senhaConfere, ipDe } from './_seg.js';
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -19,6 +19,10 @@ export default async function handler(req, res) {
     try { await rpc('login_falha', { p_ip: ip }); } catch (e) { console.error('login_falha', e); }
     await espera(800);
     return res.status(401).json({ ok: false, erro: 'Senha incorreta.' });
+  }
+  if ((req.body || {}).manter === true) {
+    const l = await criarTokenLongo();
+    if (l) return res.json({ ok: true, token: l.token, longo: true, exp: l.exp });
   }
   return res.json({ ok: true, token: criarToken() });
 }
