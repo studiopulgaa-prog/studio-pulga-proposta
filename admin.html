@@ -136,6 +136,10 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .pad-fold{border:1.5px solid var(--brl);border-radius:10px;margin-bottom:10px;overflow:hidden;}
 .pad-fold>.items-toggle{margin:0;border:none;}
 .pad-ok{font-size:12px;color:#2e7d32;margin-top:8px;min-height:16px;}
+.pad-ok.pad-err{color:#b3261e;font-weight:600;}
+.pad-aviso{font-size:12px;line-height:1.4;color:#b3261e;font-weight:600;margin:0 0 12px;}
+.mi-src{text-transform:none;letter-spacing:0;display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#ece6dc;color:#5c4b3a;margin-left:8px;white-space:nowrap;vertical-align:middle;}
+.mi-src.alt{background:#f7d9c8;color:#6E2C14;}
 .imp-box{border:1px dashed var(--gray2,#b9a58f);border-radius:12px;padding:12px;margin:0 0 14px;background:rgba(110,44,20,.04);}
 .imp-t{font-size:13px;font-weight:600;color:#6E2C14;}
 .hist-tipo{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);}
@@ -235,7 +239,7 @@ input,textarea,select{max-width:100%;}
     </div>
     <div id="cdBlock" style="display:none;">
       <div class="field"><label class="label">Abas que este cliente vê</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck" id="nvDivMi"><input type="checkbox" id="nvMi"><span class="plano-ck-label">Especial Milão</span></div><div class="cd-hint">Marque pelo menos uma. Com uma só aba, a barra de abas some e a página abre direto nela.</div></div>
-      <div class="field" id="miCliField" style="display:none;"><div class="items-toggle" id="miCliTog" role="button" tabindex="0" aria-expanded="false"><span class="items-toggle-label">Personalizar este cliente · Especial Milão</span><span class="items-arrow" id="miCliArr">›</span></div><div class="items-body" id="miCliBody"></div></div>
+      <div class="field" id="miCliField" style="display:none;"><div class="items-toggle" id="miCliTog" role="button" tabindex="0" aria-expanded="false"><span class="items-toggle-label">Personalizar este cliente · Especial Milão <span class="mi-src" id="miCliSrc"></span></span><span class="items-arrow" id="miCliArr">›</span></div><div class="items-body" id="miCliBody"></div></div>
       <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
       <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
       <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
@@ -274,6 +278,7 @@ input,textarea,select{max-width:100%;}
   <div class="card" id="secPad" style="display:none;">
     <div class="card-title" id="padTit">Padrões</div>
     <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos no servidor e valem em qualquer aparelho.</div>
+    <div id="padAviso" class="pad-aviso" style="display:none;"></div>
     <div id="impBox"></div>
     <div id="padPl"></div>
     <div id="padCd" style="display:none;">
@@ -897,7 +902,7 @@ function c3Defaults() {
     tt:true
   };
 }
-var c3S = c3Load();
+var c3S = c3Load(null);   // começa pelo texto de fábrica; o Padrão salvo no servidor entra em padCarregar(). O localStorage só vale como reserva (sem servidor).
 var c2Aberto = {};   // blocos abertos no editor
 var c2ItAberto = {}; // itens abertos
 var CD_UN = {mensal:'Mensal', unico:'Único', unidade:'Por unidade'};
@@ -1096,9 +1101,17 @@ function c3PathBody(body, P, key, defaultFn) {
 }
 
 // ===== Especial Milao: textos editaveis (Padroes = valem para as proximas propostas; "Personalizar este cliente" = so para aquele link) =====
+var NV_SNAP = null;        // base de uma proposta duplicada (copia da antiga); os Padroes (c3S) NAO sao tocados por Duplicar
 var NV_MI = {};            // textos so deste cliente (por cima dos Padroes); vai no link e na copia (snapshot.form.mc)
 var MI_CLI_ABERTO = false;
 var MI_HOOKS = {pad:[], cli:[]};   // atualizam o destaque automatico e a pre-visualizacao quando Valor total / meses mudam
+function miSrc() {
+  var el = $('miCliSrc'); if (!el) return;
+  var n = Object.keys(NV_MI).length;
+  el.textContent = n ? 'alterado (' + n + ' campo' + (n > 1 ? 's' : '') + ', só este cliente)' : 'padrão';
+  el.className = 'mi-src' + (n ? ' alt' : '');
+  el.title = n ? 'Textos alterados só para este cliente. Os Padrões não mudam.' : (PAD_FONTE === 'servidor' ? 'Textos do Padrão salvo no servidor' : PAD_FONTE === 'reserva' ? 'Sem servidor: usando a cópia deste navegador' : 'Nenhum Padrão salvo ainda: texto de fábrica');
+}
 function miHook() { MI_HOOKS.pad.concat(MI_HOOKS.cli).forEach(function(f) { try { f(); } catch (e) {} }); }
 var MI_MESF = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 function miFmt(n) { return n.toLocaleString('pt-BR', {minimumFractionDigits:(n % 1 ? 2 : 0), maximumFractionDigits:2}); }
@@ -1110,14 +1123,21 @@ function miAuto() {
   return 'R$ ' + miFmt(pm) + '/mês, de ' + MI_MESF[a - 1] + ' a ' + MI_MESF[b - 1] + ' (' + n + (n === 1 ? ' parcela' : ' parcelas') + ', R$ ' + miFmt(tot) + ')';
 }
 // fonte dos textos: Padroes (c3S.mi) ou este cliente (NV_MI por cima de c3S.mi)
+function c3SBase() {
+  // base da proposta que esta sendo montada: os Padroes, ou (Duplicar) a copia da proposta antiga com os TEXTOS do Milao vindos do Padrao atual
+  if (!NV_SNAP) return c3S;
+  var b = copia(NV_SNAP);
+  MI_TXT.concat(['stoff', 'dm', 'dest']).forEach(function(k) { b.mi[k] = c3S.mi[k]; });
+  return b;
+}
 function miFonte(cli, refaz) {
-  var M = c3S.mi;
+  var M = cli ? c3SBase().mi : c3S.mi;
   return {
     cli: !!cli, refaz: refaz, hooks: cli ? MI_HOOKS.cli : MI_HOOKS.pad,
     val: function(k) { var v = (cli && NV_MI[k] !== undefined) ? NV_MI[k] : M[k]; return v == null ? '' : v; },
     txt: function(k) { return String(this.val(k) || '') || miDef(k); },
-    set: function(k, v) { if (cli) NV_MI[k] = v; else M[k] = v; },
-    reset: function(k) { if (cli) delete NV_MI[k]; else M[k] = (typeof M[k] === 'boolean') ? false : ''; }
+    set: function(k, v) { if (cli) { NV_MI[k] = v; miSrc(); } else M[k] = v; },
+    reset: function(k) { if (cli) { delete NV_MI[k]; miSrc(); } else M[k] = (typeof M[k] === 'boolean') ? false : ''; }
   };
 }
 function miPreview(F) {
@@ -1150,12 +1170,16 @@ function miTexto(cont, F, k, label, o, prev) {
   var f = c2e('div', 'field'), head = c2e('div', 'mi-lh');
   head.appendChild(c2e('label', 'label', label));
   var rb = c2e('button', 'mi-rs', 'Restaurar texto padrão'); rb.type = 'button'; head.appendChild(rb); f.appendChild(head);
+  var chip = null;
+  if (F.cli) { chip = c2e('span', 'mi-src'); head.firstChild.appendChild(chip); }   // "padrão" ou "alterado" (só deste cliente)
+  var marca = function() { if (!chip) return; var a = NV_MI[k] !== undefined; chip.textContent = a ? 'alterado' : 'padrão'; chip.className = 'mi-src' + (a ? ' alt' : ''); chip.title = a ? 'Alterado só para este cliente' : 'Vem do Padrão'; };
+  marca();
   var inp = o.ta ? c2e('textarea', 'inp cd-ta') : c2e('input', 'inp');
   if (!o.ta) inp.type = 'text';
   inp.maxLength = o.max || 160;
   inp.value = F.txt(k);
-  inp.addEventListener('input', function() { F.set(k, inp.value === miDef(k) ? '' : inp.value); prev.refresh(); });
-  rb.addEventListener('click', function() { F.reset(k); inp.value = F.txt(k); prev.refresh(); });
+  inp.addEventListener('input', function() { F.set(k, inp.value === miDef(k) ? '' : inp.value); marca(); prev.refresh(); });
+  rb.addEventListener('click', function() { F.reset(k); inp.value = F.txt(k); marca(); prev.refresh(); });
   f.appendChild(inp);
   if (o.hint) f.appendChild(c2e('div', 'cd-hint', o.hint));
   cont.appendChild(f);
@@ -1217,6 +1241,7 @@ function miDest(cont, F, prev) {
 // "Personalizar este cliente" (so no Cardapio, com a aba Especial Milao marcada)
 function miCliRender() {
   var fld = $('miCliField'); if (!fld) return;
+  miSrc();
   var vis = AREA === 'cd' && $('nvMi').checked;
   fld.style.display = vis ? '' : 'none';
   var body = $('miCliBody'); body.textContent = '';
@@ -1362,11 +1387,12 @@ function c3Gal(txt) {
 }
 
 function gerarCardapio() {
+  var C = c3SBase();   // Padrões, ou a cópia de uma proposta duplicada (com os textos do Milão do Padrão atual)
   var nome = document.getElementById('fNome').value.trim();
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
-  var S3 = Object.assign({}, c3S, {av:Object.assign({}, c3S.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, c3S.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, c3S.mi, NV_MI, {on:document.getElementById('nvMi').checked})}), abas = [];
+  var S3 = Object.assign({}, C, {av:Object.assign({}, C.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, C.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, C.mi, NV_MI, {on:document.getElementById('nvMi').checked})}), abas = [];
   if (!S3.av.on && !S3.rc.on && !S3.mi.on) { alert('Marque pelo menos uma aba para este cliente.'); return; }
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
   if (!abas.length) { alert('Ligue ao menos 1 aba.'); return; }
@@ -1381,7 +1407,7 @@ function gerarCardapio() {
     var lista = [];
     for (var i = 0; i < sv.length; i++) {
       var r = c3Out(sv[i]); if (r.erro) { alert(r.erro); return; }
-      if (r.c.id === 't' && !c3S.tt) {  // TikTok: sem o rótulo "a confirmar"
+      if (r.c.id === 't' && !C.tt) {  // TikTok: sem o rótulo "a confirmar"
         if (r.c.apoio) r.c.apoio = r.c.apoio.replace(/,?\s*a confirmar/i, '');
         r.c.ops.concat(r.c.extras).forEach(function(x) { if (/^a confirmar$/i.test(x.nota || '')) delete x.nota; });
       }
@@ -1428,12 +1454,12 @@ function gerarCardapio() {
     if (M.sv && mSd) mi.sdia = mSd;   // sem "Exibir valor por dia", o valor fica só no admin
     data.mi = mi;
   }
-  var PG = c3S.pg || {}, pe = parseInt(PG.max, 10);
+  var PG = C.pg || {}, pe = parseInt(PG.max, 10);
   if (!(pe >= 2 && pe <= 24)) { alert('Máximo de parcelas no cartão: use um número de 2 a 24.'); return; }
   data.pg = {max:pe};
   ['av','rc','m1','m2'].forEach(function(k) { var v = String(PG[k] || '').trim(); if (v) data.pg[k] = v.slice(0, 300); });
   if (abas.length === 1) data.um = 1;
-  data.fr = String(c3S.fr == null ? '' : c3S.fr).trim().slice(0, 160);
+  data.fr = String(C.fr == null ? '' : C.fr).trim().slice(0, 160);
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var lh = btoa(unescape(encodeURIComponent(String(expira) + nome))).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24);
   data.expira = expira; data.lh = lh;
@@ -1449,12 +1475,12 @@ function gerarCardapio() {
     var link = window.location.origin + '/proposta.html?d=' + encoded;
     if (link.length > 12000) throw new Error('longo');
     return sha256hex(encoded).then(function(h) {
-      snapCd = {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:copia(c3S), mc:copia(NV_MI)}};
+      snapCd = {tipo:'cd', link:link, form:{nome:nome, nv:[document.getElementById('nvAv').checked, document.getElementById('nvRc').checked, document.getElementById('nvMi').checked], vEnt:vEnt, obs:obs, vid:vid, snap:copia(C), mc:copia(NV_MI)}};
       return adm('criar', {proposta:{cliente:nome, v1:v1, v2:'', v3:'', planos:[false,false,false], validade:diasSel, link_hash:lh, expira_em:new Date(expira).toISOString(), d_hash:h, tipo:'cd', email:em, snapshot:snapCd}});
     }).then(function(r) {
       if (!r.ok) { alert('Não foi possível salvar a proposta: ' + (r.erro || 'erro')); return; }
       mostraResultado(link, {nome:nome, expira:expira});
-      NV_MI = {}; miCliRender();   // os textos "só deste cliente" não passam para o próximo
+      NV_MI = {}; NV_SNAP = null; miCliRender();   // textos "só deste cliente" e a base duplicada não passam para o próximo
       histLocal(r.id, snapCd);
       carregarHistorico();
     });
@@ -1511,11 +1537,8 @@ var PL_FAB = function() {
   var m = function(v) { return [0, 1, 2].map(function(i) { return mk((i + 1) + 'º Pacote', '', v[i], ITENS_DEF[i], NI_DEF[i]); }); };
   return {arq:m(['2.690', '2.990', '3.290']), loja:m(['2.990', '3.690', '4.390'])};
 };
-var PAD_PL = (function() {
-  var f = PL_FAB(), sv = lsGet('sp_pad_pl', null);
-  if (sv && sv.arq && sv.loja && sv.arq.length === 3 && sv.loja.length === 3) return sv;
-  return f;
-})();
+var PAD_PL = PL_FAB();   // fábrica primeiro; o Padrão do servidor entra em padCarregar(). O localStorage só vale como reserva (sem servidor).
+var PAD_FONTE = 'fabrica';   // de onde vieram os Padrões agora: 'servidor', 'fabrica' (nada salvo ainda) ou 'reserva' (cópia deste navegador, sem servidor)
 function modeloAplica(m) {
   PL_MODELO = m;
   $('mdArq').classList.toggle('on', m === 'arq'); $('mdLoja').classList.toggle('on', m === 'loja');
@@ -1562,7 +1585,7 @@ function padPlRender() {
   var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
   var ok = c2e('div', 'pad-ok');
   sv.addEventListener('click', function() {
-    padSalvar([['planos_arquiteto', PAD_PL.arq], ['planos_loja', PAD_PL.loja]], 'sp_pad_pl', PAD_PL, ok);
+    padSalvar([['planos_arquiteto', PAD_PL.arq], ['planos_loja', PAD_PL.loja]], 'sp_bk_pl', PAD_PL, ok);
     modeloAplica(PL_MODELO);
   });
   var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
@@ -1573,7 +1596,7 @@ function padCdBotoes() {
   var c = $('padCdBtns'); c.textContent = '';
   var sv = c2e('button', 'btn-main', 'Salvar como novo padrão'); sv.type = 'button';
   var ok = c2e('div', 'pad-ok');
-  sv.addEventListener('click', function() { padSalvar([['cardapio', c3S]], 'sp_pad_cd', c3S, ok); });
+  sv.addEventListener('click', function() { padSalvar([['cardapio', c3S]], 'sp_bk_cd', c3S, ok); });
   var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
   rs.addEventListener('click', function() { if (confirm('Voltar o cardápio aos valores de fábrica? (Só vale depois de salvar.)')) { c3S = c3Defaults(); c3Render(); } });
   c.appendChild(sv); c.appendChild(ok); c.appendChild(rs);
@@ -1582,29 +1605,65 @@ function padCdBotoes() {
 
 // ---- padroes no servidor (Supabase, via /api/admin). Sem conexao, cai no navegador e avisa.
 function padSalvar(pares, chaveLocal, tudo, ok) {
-  ok.textContent = 'Salvando…';
+  ok.className = 'pad-ok'; ok.textContent = 'Salvando…';
   Promise.all(pares.map(function(x) { return adm('padrao_set', {chave:x[0], dados:copia(x[1])}); })).then(function(rs) {
-    if (!rs.every(function(r) { return r && r.ok; })) throw new Error('falhou');
-    ok.textContent = 'Padrão salvo no servidor. Vale em qualquer aparelho, para as próximas propostas.';
-    impMostrar();
+    var ruim = rs.filter(function(r) { return !(r && r.ok); })[0];
+    if (ruim !== undefined) { var er = new Error('falhou'); er.detalhe = ruim && ruim.erro; throw er; }
+    // confere de volta: o Padrão só conta como salvo se o servidor devolve o que foi gravado
+    return adm('padroes_get').then(function(r) {
+      var P = (r && r.ok && r.padroes) || {};
+      if (!pares.every(function(x) { return P[x[0]] && P[x[0]].dados; })) { var er = new Error('conferencia'); throw er; }
+      try { localStorage.removeItem(chaveLocal); } catch (e) {}
+      PAD_FONTE = 'servidor'; padAviso(''); miSrc();
+      var h = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo'});
+      ok.textContent = 'Padrão salvo às ' + h + ' (conferido no servidor). Vale em qualquer aparelho, para as próximas propostas.';
+      impMostrar();
+    });
   }).catch(function(e) {
     if (e && e.message === 'sessao') return;
-    ok.textContent = lsSet(chaveLocal, tudo) ? 'Sem conexão com o servidor: salvo só neste navegador. Salve de novo quando voltar.' : 'Não foi possível salvar.';
+    var guardou = lsSet(chaveLocal, tudo);
+    ok.className = 'pad-ok pad-err';
+    ok.textContent = 'NÃO foi salvo no servidor' + (e && e.detalhe ? ' (' + e.detalhe + ')' : (e && e.message === 'conferencia' ? ' (o servidor não confirmou a gravação)' : ' (sem resposta do servidor)')) + '. ' +
+      (guardou ? 'Ficou só uma cópia de reserva neste navegador. Salve de novo.' : 'Também não deu para guardar neste navegador.') + ' Outros aparelhos e as próximas propostas ainda não veem esta mudança.';
   });
 }
+function padAviso(t) { var el = $('padAviso'); if (!el) return; el.textContent = t || ''; el.style.display = t ? 'block' : 'none'; }
 function padValido(a) { return Array.isArray(a) && a.length === 3 && a.every(function(p) { return p && Array.isArray(p.inc) && Array.isArray(p.nao); }); }
+function padReserva() {
+  // sem servidor: usa a cópia deste navegador (reserva; a mais recente "reserva" ou a antiga). Nunca vale quando o servidor responde.
+  var pl = lsGet('sp_bk_pl', null) || lsGet('sp_pad_pl', null), cd = lsGet('sp_bk_cd', null) || lsGet('sp_pad_cd', null), usou = false;
+  if (pl && padValido(pl.arq) && padValido(pl.loja)) { PAD_PL = pl; usou = true; }
+  if (cd && cd.av && cd.rc && cd.mi) { c3S = c3Load(cd); usou = true; }
+  PAD_FONTE = usou ? 'reserva' : 'fabrica';
+  return usou;
+}
+function padAplica() {
+  modeloAplica(PL_MODELO);
+  if (AREA === 'cd') nvSync();
+  subSet(SUB);
+  miSrc();
+  impMostrar();
+}
+// ordem: Padrão salvo no servidor, depois o texto de fábrica. A cópia do navegador só entra se o servidor não responder.
 function padCarregar() {
   return adm('padroes_get').then(function(r) {
-    var P = (r && r.ok && r.padroes) || {};
+    return (r && r.ok) ? r : Promise.reject(new Error('servidor'));
+  }).then(function(r) {
+    var P = r.padroes || {};
     var a = P.planos_arquiteto && P.planos_arquiteto.dados, l = P.planos_loja && P.planos_loja.dados, c = P.cardapio && P.cardapio.dados;
+    PAD_PL = PL_FAB(); c3S = c3Load(null);   // parte da fábrica e aplica o que o servidor tem
     if (padValido(a)) PAD_PL.arq = a;
     if (padValido(l)) PAD_PL.loja = l;
     if (c && c.av && c.rc && c.mi) c3S = c3Load(c);
-    modeloAplica(PL_MODELO);
-    if (AREA === 'cd') nvSync();
-    subSet(SUB);
-    impMostrar();
-  }).catch(function(e) { if (e && e.message !== 'sessao') impMostrar(); });
+    PAD_FONTE = (padValido(a) || padValido(l) || (c && c.av && c.rc && c.mi)) ? 'servidor' : 'fabrica';
+    padAviso(PAD_FONTE === 'fabrica' ? 'Nenhum Padrão foi salvo no servidor ainda: valem os textos e valores de fábrica. Edite em Padrões e clique em "Salvar como novo padrão".' : '');
+    padAplica();
+  }, function(e) {
+    if (e && e.message === 'sessao') return;
+    var usou = padReserva();
+    padAviso('Não foi possível ler os Padrões do servidor.' + (usou ? ' Usando a cópia de reserva deste navegador; ela pode estar desatualizada.' : ' Usando os valores de fábrica.') + ' Recarregue a página quando a conexão voltar.');
+    padAplica();
+  });
 }
 window.padCarregar = padCarregar;
 
@@ -1613,7 +1672,13 @@ function impLocal() {
   var pl = lsGet('sp_pad_pl', null), cd = lsGet('sp_pad_cd', null), h = histGet();
   var pad = {};
   if (pl && pl.arq && pl.loja) { pad.planos_arquiteto = pl.arq; pad.planos_loja = pl.loja; }
-  if (cd && cd.av && cd.rc && cd.mi) pad.cardapio = cd;
+  if (cd && cd.av && cd.rc && cd.mi) {
+    // o texto antigo do Milão (e as chaves de texto) NUNCA são importados: só valores e catálogo. Os textos ficam os do Padrão do servidor ou os de fábrica.
+    cd = copia(cd);
+    MI_TXT.concat(['stoff', 'dm', 'dest']).forEach(function(k) { delete cd.mi[k]; });
+    if (cd.pg) { delete cd.pg.m1; delete cd.pg.m2; }
+    pad.cardapio = cd;
+  }
   var hist = (h.order || []).filter(function(id) { return h.m[id]; }).map(function(id) { return {id:id, tipo:h.m[id].tipo === 'cd' ? 'cardapio' : 'planos', snapshot:h.m[id]}; });
   return {pad:pad, hist:hist};
 }
@@ -1625,7 +1690,7 @@ function impMostrar() {
   if (!np && !nh) return;
   var w = c2e('div', 'imp-box');
   w.appendChild(c2e('div', 'imp-t', 'Dados salvos neste navegador'));
-  w.appendChild(c2e('div', 'cd-hint', np + ' padrão(ões) e ' + nh + ' proposta(s) com cópia completa. Importe para o servidor para ver em qualquer aparelho. Nada é apagado daqui até você confirmar.'));
+  w.appendChild(c2e('div', 'cd-hint', np + ' padrão(ões) e ' + nh + ' proposta(s) com cópia completa. Importe para o servidor para ver em qualquer aparelho. Padrões que já existem no servidor NÃO são substituídos, e os textos antigos do Milão nunca são importados. Nada é apagado daqui até você confirmar.'));
   var b = c2e('button', 'btn-out', 'Importar deste navegador'); b.type = 'button'; b.style.cssText = 'margin-top:8px;width:100%;';
   var st = c2e('div', 'pad-ok');
   b.addEventListener('click', function() { impEnviar(L, b, st, w); });
@@ -1634,9 +1699,8 @@ function impMostrar() {
 function impEnviar(L, b, st, w) {
   b.disabled = true; st.textContent = 'Importando…';
   adm('padroes_get').then(function(r) {
-    var P = (r && r.padroes) || {}, conf = Object.keys(L.pad).filter(function(k) { return P[k]; }), sobre = false;
-    if (conf.length) sobre = confirm('Já existem padrões no servidor (' + conf.length + '). OK = substituir pelos deste navegador. Cancelar = manter os do servidor.');
-    return adm('importar', {padroes:L.pad, historico:L.hist, sobrescrever:sobre});
+    // nunca sobrescreve: o que já está no servidor fica como está (o banco também só insere o que não existe)
+    return adm('importar', {padroes:L.pad, historico:L.hist, sobrescrever:false});
   }).then(function(r) {
     if (!r || !r.ok) throw new Error('falhou');
     var x = r.resultado || {};
@@ -1657,7 +1721,7 @@ function impEnviar(L, b, st, w) {
 
 // ---- areas e secoes
 function areaSet(a) {
-  window.NV_DUP = false; AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
+  window.NV_DUP = false; NV_SNAP = null; AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
   $('atPl').classList.toggle('on', !card); $('atCd').classList.toggle('on', card);
   [$('divCk1').parentNode, $('fld1'), $('fld2'), $('fld3'), $('itog1').parentNode, $('fModelo')].forEach(function(el) { el.style.display = card ? 'none' : ''; });
   $('cdBlock').style.display = card ? 'block' : 'none';
@@ -1714,7 +1778,7 @@ function duplicarProposta(i) {
 function duplicarCom(p, L) {
   var a = areaDe(p);
   window.NV_DUP = false;
-  NV_MI = {};
+  NV_MI = {}; NV_SNAP = null;
   areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
   $('fNome').value = p.cliente; $('fEmail').value = '';
   if (a === 'pl') {
@@ -1730,7 +1794,8 @@ function duplicarCom(p, L) {
     }
   } else if (L && L.form) {
     var g = L.form;
-    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { c3S = copia(g.snap); var dd = c3Defaults(); c3S.mi = Object.assign(dd.mi, c3S.mi); c3S.pg = Object.assign(dd.pg, {av:(c3S.pg||{}).av||'', rc:(c3S.pg||{}).rc||'', m1:(c3S.pg||{}).m1||'', m2:(c3S.pg||{}).m2||''}); c3Migra(c3S); if (c3S.fr == null) c3S.fr = dd.fr; }
+    // a copia da proposta antiga vira a BASE desta proposta (NV_SNAP); os Padrões (c3S) ficam como estão e os textos do Milão vêm do Padrão atual
+    if (g.snap && g.snap.av && g.snap.rc && g.snap.mi) { var sn = copia(g.snap), dd = c3Defaults(); sn.mi = Object.assign(dd.mi, sn.mi); sn.pg = Object.assign(dd.pg, {av:(sn.pg||{}).av||'', rc:(sn.pg||{}).rc||'', m1:(sn.pg||{}).m1||'', m2:(sn.pg||{}).m2||''}); c3Migra(sn); if (sn.fr == null) sn.fr = dd.fr; NV_SNAP = sn; }
     window.NV_DUP = true;
     ['nvAv', 'nvRc', 'nvMi'].forEach(function(id, j) { var on = !!(g.nv || [true, true, false])[j]; $(id).checked = on; $(id.replace('nv', 'nvDiv')).classList.toggle('on', on); });
     $('cdVEntrada').value = g.vEnt || ''; $('cdObs').value = g.obs || ''; $('cdVidAbertura').value = g.vid || '';
