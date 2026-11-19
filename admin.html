@@ -86,6 +86,24 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .hist-right{display:flex;align-items:center;gap:6px;}
 .badge-ab{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(25,140,60,0.12);color:#1a7a3c;}
 .badge-wt{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(110,44,20,0.08);color:var(--gray);}
+.badge-at{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#1a7a3c;color:#fff;}
+.badge-ex{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#b3261e;color:#fff;}
+.hist-nome.exp{opacity:.65;}
+.hist-msg{margin:6px 0 10px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:rgba(25,140,60,0.12);color:#1a7a3c;}
+.hist-msg.err{background:#fbe3e0;color:#b3261e;font-weight:600;}
+.hmodal{position:fixed;inset:0;z-index:9999;background:rgba(40,20,10,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px;}
+@media(min-width:601px){.hmodal{align-items:center;}}
+.hbox{background:#F4EADD;border-radius:16px;width:100%;max-width:440px;max-height:88vh;overflow:auto;padding:18px 16px;box-shadow:0 10px 40px rgba(0,0,0,.3);}
+.hbox h3{margin:0 0 4px;font-size:16px;color:#6E2C14;}
+.hbox .hsub{font-size:12px;color:var(--gray);margin-bottom:12px;line-height:1.4;}
+.hbox label.hck{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;border-bottom:1px solid var(--brl);font-size:14px;min-height:44px;cursor:pointer;}
+.hbox label.hck input{width:22px;height:22px;flex:none;margin:0;accent-color:#6E2C14;}
+.hbox label.hck small{display:block;font-size:11px;color:var(--gray);}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.hbtns button{flex:1 1 130px;min-height:44px;border-radius:10px;border:1.5px solid #6E2C14;background:transparent;color:#6E2C14;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.hbtns button.pri{background:#6E2C14;color:#F4EADD;}
+.hbtns button.perigo{background:#b3261e;border-color:#b3261e;color:#fff;}
+.hbtns button:disabled{opacity:.45;cursor:default;}
 .hist-arrow{font-size:15px;color:var(--gray2);transition:transform 0.25s;}
 .hist-arrow.open{transform:rotate(90deg);}
 .hist-del{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:18px;padding:2px 5px;line-height:1;}
@@ -292,6 +310,7 @@ input,textarea,select{max-width:100%;}
   </div>
   <div class="card" id="secHist" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title" id="histTit">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
+    <div id="histMsg" class="hist-msg" role="status" style="display:none;"></div>
     <div id="histLista"><div class="loading">Carregando…</div></div>
   </div>
 </div>
@@ -313,7 +332,7 @@ function adm(acao, dados) {
     body: JSON.stringify(Object.assign({acao:acao}, dados||{}))
   }).then(function(r){
     if (r.status === 401) { logout(true); alert('Sua sessão expirou. Entre novamente.'); throw new Error('sessao'); }
-    return r.json();
+    return r.json().catch(function(){ return {ok:false, erro:'resposta inválida do servidor (HTTP ' + r.status + ')'}; });
   });
 }
 function sha256hex(t) {
@@ -401,19 +420,116 @@ function encode(data) {
   return b64.replace(/\+/g,'-').replace(/\//g,'_');
 }
 
-function encerrarProposta(id) {
-  adm('encerrar', {id:id}).then(function(r){
-    if(r.ok){alert('Proposta encerrada.');carregarHistorico();}
-    else{alert('Erro: '+(r.erro||''));}
-  }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão.'); });
+// ===== Histórico: ações com resultado real (a lista sempre é recarregada do servidor) =====
+var BRTZ = {timeZone:'America/Sao_Paulo'};
+function fmtDH(iso) { var d = new Date(iso); return d.toLocaleDateString('pt-BR', Object.assign({day:'2-digit', month:'2-digit'}, BRTZ)) + ' às ' + d.toLocaleTimeString('pt-BR', Object.assign({hour:'2-digit', minute:'2-digit'}, BRTZ)); }
+function propAtiva(p) { return p.status ? p.status === 'ativa' : Date.parse(p.expira_em) > Date.now(); }
+function histMsg(t, erro) { var e = document.getElementById('histMsg'); if (!e) return; e.textContent = t || ''; e.className = 'hist-msg' + (erro ? ' err' : ''); e.style.display = t ? 'block' : 'none'; }
+function erroTxt(r, falhaRede) {
+  if (falhaRede) return 'sem conexão com o servidor';
+  var m = (r && r.erro) || 'erro desconhecido';
+  if (r && r.detalhe) m += ' — ' + r.detalhe;
+  return m;
+}
+function hFechar() { var m = document.getElementById('hModal'); if (m) m.remove(); }
+// janela simples (tudo por DOM/textContent: nada de HTML vindo de dados)
+function hModal(titulo, sub, montar, botoes) {
+  hFechar();
+  var ov = document.createElement('div'); ov.className = 'hmodal'; ov.id = 'hModal';
+  var bx = document.createElement('div'); bx.className = 'hbox'; bx.setAttribute('role', 'dialog');
+  var h = document.createElement('h3'); h.textContent = titulo; bx.appendChild(h);
+  if (sub) { var s2 = document.createElement('div'); s2.className = 'hsub'; s2.textContent = sub; bx.appendChild(s2); }
+  var corpo = document.createElement('div'); bx.appendChild(corpo); if (montar) montar(corpo);
+  var bt = document.createElement('div'); bt.className = 'hbtns'; bx.appendChild(bt);
+  var refs = {};
+  botoes.forEach(function(d){
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = d.t; if (d.c) b.className = d.c;
+    b.addEventListener('click', function(){ d.f(b); }); bt.appendChild(b); refs[d.id || d.t] = b;
+  });
+  ov.appendChild(bx);
+  ov.addEventListener('click', function(e){ if (e.target === ov) hFechar(); });
+  document.body.appendChild(ov);
+  return refs;
+}
+function propPorId(id) { for (var i = 0; i < _lista.length; i++) if (_lista[i].id === id) return _lista[i]; return null; }
+function hFinal(txt, erro) { return carregarHistorico().then(function(){ histMsg(txt, erro); }); }
+
+// uma ação sobre uma proposta; devolve {ok, erro}
+function hAcao(acao, dados) {
+  return adm(acao, dados).then(function(r){ return r && r.ok ? {ok:true} : {ok:false, erro:erroTxt(r)}; })
+    .catch(function(e){ if (e && e.message === 'sessao') throw e; return {ok:false, erro:erroTxt(null, true)}; });
 }
 
+function encerrarProposta(id) {
+  var p = propPorId(id), nome = p ? p.cliente : 'a proposta';
+  if (!confirm('Expirar "' + nome + '" agora? O cliente não conseguirá mais abrir o link (você pode reativar depois).')) return;
+  histMsg('Expirando…');
+  hAcao('encerrar', {id:id}).then(function(r){
+    return hFinal(r.ok ? '"' + nome + '" expirada.' : 'NÃO foi possível expirar "' + nome + '": ' + r.erro, !r.ok);
+  }).catch(function(){});
+}
+
+// "Encerrar todas": escolhe pelo nome quais expirar (propostas reais vêm desmarcadas)
 function encerrarTodas() {
-  if(!confirm('Encerrar TODAS as propostas agora? Nenhum cliente poderá mais acessar nenhuma proposta ativa.')) return;
-  adm('encerrar_todas').then(function(r){
-    if(r.ok){alert('Todas as propostas foram encerradas.');carregarHistorico();}
-    else{alert('Erro: '+(r.erro||''));}
-  }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão.'); });
+  var area = AREA === 'cd' ? 'cd' : 'pl';
+  var at = _lista.filter(function(p){ return areaDe(p) === area && propAtiva(p); });
+  if (!at.length) { histMsg('Nenhuma proposta ativa nesta área.'); return; }
+  var cks = [];
+  var refs = hModal('Expirar propostas', 'Só as marcadas serão expiradas. Propostas de teste (nomes que começam com "ZZ" ou "Teste") vêm marcadas; as demais, não.',
+    function(c){
+      at.forEach(function(p){
+        var l = document.createElement('label'); l.className = 'hck';
+        var i = document.createElement('input'); i.type = 'checkbox'; i.checked = /^(zz|teste)/i.test(String(p.cliente).trim()); i.dataset.id = p.id;
+        var d = document.createElement('div'); d.appendChild(document.createTextNode(p.cliente));
+        var sm = document.createElement('small'); sm.textContent = 'ativa até ' + fmtDH(p.expira_em); d.appendChild(sm);
+        l.appendChild(i); l.appendChild(d); c.appendChild(l); cks.push(i);
+        i.addEventListener('change', atualiza);
+      });
+    },
+    [{t:'Cancelar', f:hFechar},
+     {t:'Expirar', id:'ok', c:'perigo', f:function(){
+        var ids = cks.filter(function(i){ return i.checked; }).map(function(i){ return i.dataset.id; });
+        if (!ids.length) return;
+        hFechar(); histMsg('Expirando ' + ids.length + '…');
+        var feitas = 0, falhas = [];
+        ids.reduce(function(pr, id){ return pr.then(function(){ return hAcao('encerrar', {id:id}).then(function(r){ if (r.ok) feitas++; else falhas.push((propPorId(id)||{}).cliente + ': ' + r.erro); }); }); }, Promise.resolve())
+          .then(function(){
+            var txt = feitas + (feitas === 1 ? ' proposta expirada.' : ' propostas expiradas.');
+            if (falhas.length) txt += ' NÃO expirou: ' + falhas.join('; ');
+            return hFinal(txt, falhas.length > 0);
+          }).catch(function(){});
+     }}]);
+  function atualiza() { var n = cks.filter(function(i){ return i.checked; }).length; refs.ok.textContent = 'Expirar selecionadas (' + n + ')'; refs.ok.disabled = !n; }
+  atualiza();
+}
+
+// "×": duas opções
+function histOpcoes(id) {
+  var p = propPorId(id); if (!p) return;
+  var ativa = propAtiva(p);
+  var bts = [];
+  if (ativa) bts.push({t:'Expirar agora', c:'pri', f:function(){ hFechar(); encerrarProposta(id); }});
+  bts.push({t:'Apagar do histórico', c:'perigo', f:function(){
+    hFechar(); histMsg('Apagando…');
+    hAcao('ocultar', {id:id}).then(function(r){
+      return hFinal(r.ok ? '"' + p.cliente + '" apagada do histórico (o link foi expirado).' : 'NÃO foi possível apagar "' + p.cliente + '": ' + r.erro, !r.ok);
+    }).catch(function(){});
+  }});
+  bts.push({t:'Cancelar', f:hFechar});
+  hModal(p.cliente, '"Expirar agora" bloqueia o link, mas a proposta continua no histórico. "Apagar do histórico" tira da lista e também expira o link.', null, bts);
+}
+
+// reativar / estender validade, a partir de agora
+function histReativar(id) {
+  var p = propPorId(id); if (!p) return;
+  var bts = [1, 2, 3, 5, 7].map(function(n){ return {t:n + (n === 1 ? ' dia' : ' dias'), c:'pri', f:function(){
+    hFechar(); histMsg('Atualizando validade…');
+    hAcao('reativar', {id:id, dias:n}).then(function(r){
+      return hFinal(r.ok ? '"' + p.cliente + '" ativa por mais ' + n + (n === 1 ? ' dia' : ' dias') + ' (a partir de agora).' : 'NÃO foi possível reativar "' + p.cliente + '": ' + r.erro, !r.ok);
+    }).catch(function(){});
+  }}; });
+  bts.push({t:'Cancelar', f:hFechar});
+  hModal('Reativar / estender: ' + p.cliente, (propAtiva(p) ? 'Ativa até ' : 'Expirou em ') + fmtDH(p.expira_em) + '. Escolha por quanto tempo o link volta a valer, contando a partir de agora.', null, bts);
 }
 
 function gerarLink() {
@@ -466,12 +582,13 @@ function gerarLink() {
 
 function carregarHistorico() {
   document.getElementById('histLista').innerHTML = '<div class="loading">Atualizando…</div>';
-  adm('listar').then(function(r){
+  return adm('listar').then(function(r){
     var lista = (r && r.ok && r.lista) || [];
-    if (!lista.length) { document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
+    if (!lista.length) { _lista = []; document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
     _lista = lista;
     renderHistorico(lista);
-  }).catch(function(e){ if(e.message!=='sessao') document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar.</div>'; });
+    if (r && r.ok === false) document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar: ' + esc(erroTxt(r)) + '</div>';
+  }).catch(function(e){ if(e.message!=='sessao') document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar (sem conexão).</div>'; });
 }
 
 function renderHistorico(lista) {
@@ -483,13 +600,15 @@ function renderHistorico(lista) {
     var dt = new Date(p.criado_em);
     var ds = dt.toLocaleDateString('pt-BR') + ' às ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     var pl = p.planos || [true,true,true];
+    var ativa = propAtiva(p);
+    var sel = ativa ? '<span class="badge-at">Ativa</span>' : '<span class="badge-ex">Expirada</span>';
     var badge = p.ac > 0
       ? '<span class="badge-ab">Aberto • ' + (p.dv > 0 ? p.dv + (p.dv===1?' disp. • ':' disp. • ') : '') + p.ac + (p.ac===1?' abertura':' aberturas') + '</span>'
       : '<span class="badge-wt">Aguardando</span>';
     h += '<div class="hist-item">';
     h += '<div class="hist-hdr" data-hist="' + i + '">';
-    h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome">' + esc(p.cliente) + '</span>' + badge + '</div><div class="hist-data">' + ds + '</div></div>';
-    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Excluir">×</button></div>';
+    h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome' + (ativa ? '' : ' exp') + '">' + esc(p.cliente) + '</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">' + sel + badge + '</div><div class="hist-data">' + ds + '</div></div>';
+    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Opções: expirar ou apagar" aria-label="Opções: expirar ou apagar">×</button></div>';
     h += '</div>';
     h += '<div class="hist-body" id="hb' + i + '">';
     if (area === 'cd') {
@@ -500,8 +619,9 @@ function renderHistorico(lista) {
       if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
     }
     h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
+    h += '<div class="hist-info"><strong>' + (ativa ? 'Ativa até' : 'Expirou em') + '</strong>' + esc(fmtDH(p.expira_em)) + '</div>';
     if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button></div>';
+    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button>' : '') + '</div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
@@ -596,22 +716,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('ha'+i).classList.toggle('open');
       }
     }
-    // Encerrar proposta
-    if (t.dataset.enc) {
-      e.stopPropagation();
-      if (!confirm('Encerrar esta proposta? O cliente não conseguirá mais acessá-la.')) return;
-      encerrarProposta(t.dataset.enc);
-      return;
-    }
-    // Excluir proposta
-    if (t.dataset.del) {
-      e.stopPropagation();
-      if (!confirm('Excluir esta proposta?')) return;
-      adm('excluir', {id:t.dataset.del}).then(function(r){
-        if(!r.ok) alert('Erro: '+(r.erro||''));
-        carregarHistorico();
-      }).catch(function(){});
-    }
+    // Expirar proposta (a confirmação e o resultado ficam em encerrarProposta)
+    if (t.dataset.enc) { e.stopPropagation(); encerrarProposta(t.dataset.enc); return; }
+    // "×": abre as opções (Expirar agora / Apagar do histórico)
+    if (t.dataset.del) { e.stopPropagation(); histOpcoes(t.dataset.del); return; }
+    // Reativar / estender validade
+    if (t.dataset.rea) { e.stopPropagation(); histReativar(t.dataset.rea); return; }
     // Duplicar proposta
     if (t.dataset.dup !== undefined) { duplicarProposta(+t.dataset.dup); }
   });

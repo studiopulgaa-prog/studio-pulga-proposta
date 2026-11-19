@@ -84,6 +84,16 @@ export default async function handler(req, res) {
         if (!UUID.test(b.id || '')) return ruim();
         await rpc('adm_excluir', { p_id: b.id });
         return res.json({ ok: true });
+      case 'ocultar': // "Apagar do histórico": esconde e expira o link (a linha continua no banco)
+        if (!UUID.test(b.id || '')) return ruim();
+        await rpc('adm_ocultar', { p_id: b.id });
+        return res.json({ ok: true });
+      case 'reativar': { // volta a valer por N dias a partir de agora
+        const dias = parseInt(b.dias, 10);
+        if (!UUID.test(b.id || '') || ![1, 2, 3, 5, 7].includes(dias)) return ruim();
+        await rpc('adm_reativar', { p_id: b.id, p_dias: dias });
+        return res.json({ ok: true });
+      }
       case 'link':
         if (!/^[a-z0-9-]{1,120}$/.test(b.slug || '') || !LINK_OK.test(b.url || '') || String(b.url).length > 8000) return ruim();
         await rpc('adm_link', { p_slug: b.slug, p_url: b.url });
@@ -93,6 +103,9 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error('admin', b.acao, e);
-    return res.status(500).json({ ok: false, erro: 'erro interno' });
+    // mostra o motivo real do banco (mensagem do Postgres; nunca contém segredos), para o painel exibir um erro útil
+    let detalhe = '';
+    try { const j = JSON.parse(String(e && e.message)); detalhe = String(j.message || '').slice(0, 160); } catch (x) { detalhe = ''; }
+    return res.status(500).json({ ok: false, erro: 'erro interno', detalhe });
   }
 }
