@@ -1,6 +1,6 @@
 // api/admin.js — todas as acoes do painel passam por aqui (exige sessao valida)
 import { rpc } from './_email.js';
-import { sessaoValida, LINK_OK } from './_seg.js';
+import { sessaoValida, revogarSessao, cookieLimpo, lerCookie, origemOk, LINK_OK } from './_seg.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const txt = (v, n) => String(v == null ? '' : v).slice(0, n);
@@ -13,8 +13,17 @@ const TIPO = { pl: 'planos', cd: 'cardapio', planos: 'planos', cardapio: 'cardap
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
-  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
   const b = req.body || {};
+  // a pagina pergunta se ja ha sessao (o cookie HttpOnly nao e legivel por script)
+  if (b.acao === 'ping') return res.json({ ok: true, logado: await sessaoValida(req) });
+  // "Sair": revoga a sessao no banco e apaga o cookie
+  if (b.acao === 'sair') {
+    if (lerCookie(req) && !origemOk(req)) return res.status(403).json({ ok: false });
+    try { await revogarSessao(req); } catch (e) { console.error('sair', e); return res.status(500).json({ ok: false }); }
+    res.setHeader('Set-Cookie', cookieLimpo());
+    return res.json({ ok: true });
+  }
+  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
   const ruim = () => res.status(400).json({ ok: false, erro: 'dados invalidos' });
   try {
     switch (b.acao) {

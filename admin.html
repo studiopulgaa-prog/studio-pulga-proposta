@@ -293,25 +293,21 @@ input,textarea,select{max-width:100%;}
 </div>
 <script>
 // Seguranca: a senha e conferida no servidor (/api/admin-login) e nunca fica guardada no navegador.
-// Sessao normal: 12h (so nesta aba). "Manter conectado": token de 30 dias assinado pelo servidor e revogavel ("Sair" encerra).
-var LS_LONGO = 'sp_token_l';
-function lerLongo() {
-  try {
-    var o = JSON.parse(localStorage.getItem(LS_LONGO) || 'null');
-    if (o && typeof o.t === 'string' && o.exp > Date.now()) return o.t;
-    localStorage.removeItem(LS_LONGO);
-  } catch (e) {}
-  return '';
-}
-var TOKEN = sessionStorage.getItem('sp_token') || lerLongo();
-if (TOKEN) { try { sessionStorage.setItem('sp_token', TOKEN); } catch (e) {} }   // admin-email.js le o token daqui
+// Sessao normal: 12h (token so nesta aba, em sessionStorage).
+// "Manter conectado (30 dias)": a sessao fica num cookie HttpOnly+Secure+SameSite=Strict criado pelo servidor; o script nao le nem guarda nada
+// (por isso nao ha token em localStorage nem sessionStorage). "Sair" revoga no servidor e apaga o cookie.
+try { localStorage.removeItem('sp_token_l'); } catch (e) {}   // resto de versoes de teste
+var TOKEN = sessionStorage.getItem('sp_token') || '';
+var COOKIE_SESSAO = false;   // true = ha sessao de 30 dias no cookie (invisivel para o script)
 function adm(acao, dados) {
+  var h = {'Content-Type':'application/json'};
+  if (TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
   return fetch('/api/admin', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+    method: 'POST', credentials: 'same-origin',
+    headers: h,
     body: JSON.stringify(Object.assign({acao:acao}, dados||{}))
   }).then(function(r){
-    if (r.status === 401) { logout(); alert('Sua sessão expirou. Entre novamente.'); throw new Error('sessao'); }
+    if (r.status === 401) { logout(true); alert('Sua sessão expirou. Entre novamente.'); throw new Error('sessao'); }
     return r.json();
   });
 }
@@ -515,12 +511,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('loginCard').style.display='none';
     document.getElementById('adminWrap').style.display='block';
     carregarHistorico(); if (window.padCarregar) padCarregar();
+  } else {
+    // sem token nesta aba: pergunta ao servidor se ha sessao de 30 dias (cookie HttpOnly)
+    fetch('/api/admin', {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:'{"acao":"ping"}'})
+    .then(function(r){ return r.json(); })
+    .then(function(r){
+      if (r && r.logado && !TOKEN) {
+        COOKIE_SESSAO = true;
+        document.getElementById('loginCard').style.display='none';
+        document.getElementById('adminWrap').style.display='block';
+        carregarHistorico(); if (window.padCarregar) padCarregar();
+      }
+    }).catch(function(){});
   }
 
   // Login
   document.getElementById('btnLogin').addEventListener('click', doLogin);
   document.getElementById('loginSenha').addEventListener('keydown', function(e){ if(e.keyCode===13) doLogin(); });
-  document.getElementById('btnSair').addEventListener('click', logout);
+  document.getElementById('btnSair').addEventListener('click', function(){ logout(); });
 
   // Validade
   [1,2,3,5,7].forEach(function(d){
@@ -631,15 +639,18 @@ function doLogin() {
   btn.disabled = true; btn.textContent = 'Entrando…'; err.style.display = 'none';
   var manter = !!document.getElementById('loginManter').checked, av = document.getElementById('loginAviso');
   av.style.display = 'none';
-  fetch('/api/admin-login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:campo.value, manter:manter})})
+  fetch('/api/admin-login', {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:campo.value, manter:manter})})
   .then(function(r){ return r.json(); })
   .then(function(r){
-    if (r.ok && r.token) {
-      TOKEN = r.token;
-      sessionStorage.setItem('sp_token', TOKEN);
-      try { localStorage.removeItem(LS_LONGO); } catch (e) {}
-      if (manter && r.longo && r.exp) { try { localStorage.setItem(LS_LONGO, JSON.stringify({t:TOKEN, exp:r.exp})); } catch (e) {} }
-      else if (manter) { av.textContent = 'Entrou, mas só por esta sessão: a opção de 30 dias não está disponível agora.'; av.style.display = 'block'; }
+    if (r.ok && (r.token || r.longo)) {
+      if (r.longo && !r.token) {            // 30 dias: o servidor ja gravou o cookie HttpOnly; nada fica no navegador para o script ler
+        TOKEN = ''; COOKIE_SESSAO = true;
+        sessionStorage.removeItem('sp_token');
+      } else {
+        TOKEN = r.token; COOKIE_SESSAO = false;
+        sessionStorage.setItem('sp_token', TOKEN);
+        if (manter) { av.textContent = 'Entrou, mas só por esta sessão: a opção de 30 dias não está disponível agora.'; av.style.display = 'block'; }
+      }
       document.getElementById('loginCard').style.display = 'none';
       document.getElementById('adminWrap').style.display = 'block';
       carregarHistorico(); if (window.padCarregar) padCarregar();
@@ -650,16 +661,21 @@ function doLogin() {
   }).catch(function(){ err.textContent = 'Erro de conexão.'; err.style.display = 'block'; })
   .then(function(){ campo.value = ''; btn.disabled = false; btn.textContent = 'Entrar'; });
 }
-function logout() {
-  // avisa o servidor para revogar a sessao longa deste aparelho (se der erro, o token local some do mesmo jeito)
-  if (TOKEN) { try { fetch('/api/admin-logout', {method:'POST', headers:{'Authorization':'Bearer ' + TOKEN}, keepalive:true}).catch(function(){}); } catch (e) {} }
-  TOKEN = '';
-  sessionStorage.removeItem('sp_token');
-  sessionStorage.removeItem('sp_logado');
-  try { localStorage.removeItem(LS_LONGO); } catch (e) {}
-  document.getElementById('adminWrap').style.display = 'none';
-  document.getElementById('loginCard').style.display = 'block';
-  document.getElementById('loginSenha').value = '';
+function logout(semRede) {
+  // revoga a sessao no servidor (apaga tambem o cookie de 30 dias). Com sessao de 30 dias, so sai da tela se o servidor confirmar.
+  var pede = (!semRede && (TOKEN || COOKIE_SESSAO));
+  var h = {'Content-Type':'application/json'};
+  if (TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
+  var pre = pede ? fetch('/api/admin', {method:'POST', credentials:'same-origin', headers:h, body:'{"acao":"sair"}'}).then(function(r){ return r.ok; }).catch(function(){ return false; }) : Promise.resolve(true);
+  return pre.then(function(ok){
+    if (!ok && COOKIE_SESSAO) { alert('Não foi possível sair agora (sem conexão). Tente de novo.'); return; }
+    TOKEN = ''; COOKIE_SESSAO = false;
+    sessionStorage.removeItem('sp_token');
+    sessionStorage.removeItem('sp_logado');
+    document.getElementById('adminWrap').style.display = 'none';
+    document.getElementById('loginCard').style.display = 'block';
+    document.getElementById('loginSenha').value = '';
+  });
 }
 function selDias(d, btn) {
   diasSel = d;

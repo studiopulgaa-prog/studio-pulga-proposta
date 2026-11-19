@@ -2,7 +2,8 @@
   "version": 2,
   "rewrites": [
     { "source": "/p/:slug*", "destination": "/p.html" },
-    { "source": "/p", "destination": "/p.html" }
+    { "source": "/p", "destination": "/p.html" },
+    { "source": "/api/admin/email", "destination": "/api/email-admin" }
   ],
   "headers": [
     {

@@ -2,7 +2,10 @@
 (function () {
   function api(body) {
     var token = sessionStorage.getItem('sp_token') || '';
-    return fetch('/api/email-admin', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) })
+    var h = { 'Content-Type': 'application/json' };
+    if (token) h['Authorization'] = 'Bearer ' + token;
+    // /api/admin/email = mesma funcao de e-mail, mas dentro do caminho onde o cookie de 30 dias (HttpOnly) e enviado
+    return fetch('/api/admin/email', { method: 'POST', credentials: 'same-origin', headers: h, body: JSON.stringify(body) })
       .then(function (r) { return r.json().catch(function () { return { ok: false, erro: 'resposta invalida' }; }); });
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
