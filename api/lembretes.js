@@ -1,5 +1,5 @@
 // api/lembretes.js — cron do Supabase (já existente: 9h e 18h de Brasília). Protegido por CRON_SECRET.
-// 9h: sequência da proposta (lembrete + último aviso) e e-mails sazonais (api/_sequencia.js); às segundas, resumo semanal para EMAIL_TESTE.
+// 9h: sequência da proposta (lembrete + último aviso) e e-mails sazonais (api/_sequencia.js); às segundas, resumo semanal para EMAIL_RESUMO (ou EMAIL_TESTE).
 // A chamada das 18h ("noite") não envia nada.
 // Fase SIMULAÇÃO (padrão): sem SEQUENCIA_ATIVA=1 no Vercel nada vai para clientes; o cron só REGISTRA o que enviaria (aparece no painel e no resumo).
 // Fase LIGADA: SEQUENCIA_ATIVA=1. Trava: no máximo 20 e-mails automáticos por dia.
@@ -11,7 +11,8 @@ import { emailValido } from './_resend.js';
 
 
 export async function resumoSemanal({ agora, ativo }) {
-  const para = String(process.env.EMAIL_TESTE || '').trim();
+  // resumo vai para EMAIL_RESUMO (Gmail da Studio); sem ela, para EMAIL_TESTE
+  const para = String(process.env.EMAIL_RESUMO || process.env.EMAIL_TESTE || '').trim();
   if (!emailValido(para)) return { enviado: false, motivo: 'sem_EMAIL_TESTE' };
   const st = await rpc('email_resumo_dados', { p_desde: new Date(agora - 7 * 86400000).toISOString() });
   if (st && st.ja_enviado_hoje) return { enviado: false, motivo: 'ja_enviado' };
