@@ -3,7 +3,8 @@
   "rewrites": [
     { "source": "/p/:slug*", "destination": "/p.html" },
     { "source": "/p", "destination": "/p.html" },
-    { "source": "/api/admin/email", "destination": "/api/email-admin" }
+    { "source": "/api/admin/email", "destination": "/api/email-admin" },
+    { "source": "/api/admin/enviar-email", "destination": "/api/enviar-email" }
   ],
   "headers": [
     {

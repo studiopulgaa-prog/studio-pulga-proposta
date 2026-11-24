@@ -1,7 +1,7 @@
 // api/enviar-proposta.js — e-mail que o CLIENTE recebe ao clicar em "Escolher Plano".
 // Seguranca: nome e valores vem do banco (nao do navegador), so links do proprio dominio,
 // e no maximo 3 envios por proposta.
-import nodemailer from 'nodemailer';
+import { enviarEmail } from './_resend.js';
 import { rpc, esc, unsubUrl, WA } from './_email.js';
 import { LINK_OK } from './_seg.js';
 
@@ -56,19 +56,18 @@ export default async function handler(req, res) {
 </div></body></html>`;
 
     try { await rpc('srv_email_cliente_inc', { p_lh: lh }); } catch (e) { console.error('contador de envios', e); }
-    const transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com', port: 587, secure: false,
-      auth: { user: process.env.BREVO_USER, pass: process.env.BREVO_PASS },
-    });
-    const info = await transporter.sendMail({
-      from: process.env.BREVO_FROM || 'Studio Pulga <studio.pulgaa@gmail.com>',
-      replyTo: process.env.REPLY_TO || 'contato@studiopulga.com.br',
-      to: email,
-      subject: `${nome}, sua proposta Studio Pulga: ${planName}`,
+    const r = await enviarEmail({
+      para: email,
+      assunto: `${nome}, sua proposta Studio Pulga: ${planName}`,
       html,
-      text: `Olá, ${nome}. Você escolheu o plano ${planName} (R$ ${planPrice}/mês).${link ? '\nVer proposta: ' + link : ''}\nWhatsApp: ${wa}`,
-      headers: { 'List-Unsubscribe': `<${unsubUrl(lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
+      texto: `Olá, ${nome}. Você escolheu o plano ${planName} (R$ ${planPrice}/mês).${link ? '\nVer proposta: ' + link : ''}\nWhatsApp: ${wa}`,
+      cabecalhos: { 'List-Unsubscribe': `<${unsubUrl(lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
     });
+    if (!r.ok) {
+      console.error('Erro ao enviar email:', r.codigo);
+      return res.status(r.codigo === 'sem_chave' ? 503 : 500).json({ sucesso: false, erro: r.codigo === 'sem_chave' ? 'E-mail não configurado' : 'Erro ao enviar e-mail' });
+    }
+    const info = { messageId: r.id };
     return res.status(200).json({ sucesso: true, messageId: info.messageId });
   } catch (erro) {
     console.error('Erro ao enviar email:', erro);
