@@ -49,6 +49,8 @@ export default async function handler(req, res) {
     const env = await enviarEmail({ para: r.email, assunto: m.assunto, html: m.html, texto: m.texto, idempotencia: `proposta-${b.id}-${Math.floor(Date.now() / 60000)}` });
     const reg = await rpc('adm_email_resultado', { p_id: b.id, p_ok: env.ok, p_erro: env.ok ? '' : env.erro });
     if (!env.ok) return res.status(502).json({ ok: false, erro: env.erro, codigo: env.codigo });
+    // entra na sequência de lembretes (a data deste primeiro e-mail é a base do cálculo); falha aqui não desfaz o envio
+    try { await rpc('seq_registrar_link', { p_id: b.id, p_link: link }); } catch (e) { console.error('seq_registrar_link', e && e.message); }
     return res.json({ ok: true, enviado_em: reg && reg.enviado_em, para: r.email });
   } catch (e) {
     console.error('enviar-email', e && e.message);

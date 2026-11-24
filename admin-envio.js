@@ -59,8 +59,36 @@
   };
   window.envioConfigurar = function (id, email) {   // logo apos salvar a proposta (antes de mostrar o resultado)
     window.envioGerado(id, email);
+    var mu = document.getElementById('fMulher');
+    if (mu && mu.checked && typeof adm === 'function') adm('mulher', {id: id, valor: true}).catch(function () {});  // marca "cliente mulher" (opcional)
     window.SP_AUTOENVIO = (cb && cb.checked && email) ? function () {
       envioEmail(id, {email: email, semConfirmar: true, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = '✉ Reenviar por e-mail'; }});
     } : null;
+  };
+
+  // ---- Histórico: "Cliente fechou / Reabrir lembretes" e "Cliente mulher" ----
+  function aviso(msg, erro) { if (typeof histMsg === 'function') histMsg(msg, !!erro); }
+  function recarregar(msg) { if (typeof carregarHistorico === 'function') carregarHistorico().then(function () { aviso(msg, false); }); else aviso(msg, false); }
+  window.seqFechou = function (id) {
+    var p = typeof propPorId === 'function' ? propPorId(id) : null;
+    var fechada = p && p.seq_status === 'fechada';
+    var rodar = function () {
+      hFechar();
+      adm('seq_status', {id: id, status: fechada ? 'ativa' : 'fechada'}).then(function (r) {
+        if (r && r.ok) recarregar(fechada ? 'Lembretes religados para esta proposta.' : 'Pronto: nenhum e-mail automático vai mais para esta proposta.');
+        else aviso('Não foi possível: ' + ((r && r.erro) || 'erro'), true);
+      }).catch(function () {});
+    };
+    hModal(fechada ? 'Reabrir os lembretes?' : 'Marcar como fechada?',
+      fechada ? 'Os lembretes automáticos voltam a valer para esta proposta.' : 'Para todos os e-mails automáticos desta proposta (lembrete, último aviso e e-mails de datas especiais).', null,
+      [{t: 'Cancelar', f: hFechar}, {t: fechada ? 'Reabrir' : 'Marcar como fechada', c: 'pri', f: rodar}]);
+  };
+  window.seqMulher = function (id) {
+    var p = typeof propPorId === 'function' ? propPorId(id) : null;
+    var novo = !(p && p.cliente_mulher);
+    adm('mulher', {id: id, valor: novo}).then(function (r) {
+      if (r && r.ok) recarregar(novo ? 'Marcada como cliente mulher.' : 'Marcação de cliente mulher removida.');
+      else aviso('Não foi possível: ' + ((r && r.erro) || 'erro'), true);
+    }).catch(function () {});
   };
 })();

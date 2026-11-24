@@ -235,7 +235,7 @@ input,textarea,select{max-width:100%;}
     <div class="card-sub">Preencha e gere o link exclusivo para o cliente.</div>
     <div class="field" id="tipoField" style="display:none;"><label class="label">Tipo de proposta</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="tpPlanos">Planos (atual)</button><button type="button" class="cd-seg" id="tpCardapio">Cardápio</button></div></div>
     <div class="field"><label class="label">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
-    <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"><label class="cd-hint" style="display:flex;gap:8px;align-items:center;margin-top:8px;cursor:pointer;"><input type="checkbox" id="fEnviarGerar" style="width:20px;height:20px;margin:0;accent-color:#6E2C14;"><span>Enviar por e-mail ao gerar (precisa do e-mail acima)</span></label></div>
+    <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"><label class="cd-hint" style="display:flex;gap:8px;align-items:center;margin-top:8px;cursor:pointer;"><input type="checkbox" id="fEnviarGerar" style="width:20px;height:20px;margin:0;accent-color:#6E2C14;"><span>Enviar por e-mail ao gerar (precisa do e-mail acima)</span></label><label class="cd-hint" style="display:flex;gap:8px;align-items:center;margin-top:8px;cursor:pointer;"><input type="checkbox" id="fMulher" style="width:20px;height:20px;margin:0;accent-color:#6E2C14;"><span>Cliente mulher (só para o e-mail do Dia da Mulher)</span></label></div>
     <div class="field" id="fModelo"><label class="label">Modelo</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="mdArq">Arquiteto</button><button type="button" class="cd-seg" id="mdLoja">Loja</button></div><div class="cd-hint">Os valores e itens abaixo vêm dos Padrões do modelo. Você pode ajustar só para este cliente.</div></div>
     <div class="field">
       <label class="label">Planos a exibir</label>
@@ -626,8 +626,13 @@ function renderHistorico(lista) {
       h += '<div class="hist-info"><strong>E-mail</strong>' + esc(p.email) + '</div>';
       h += '<div class="hist-info"><strong>Envio</strong>' + (p.envio_erro ? '<span style="color:#b3261e;font-weight:600;">Erro: ' + esc(p.envio_erro) + '</span>' : (p.enviado_em ? '<span style="color:#1a7a3c;font-weight:600;">Enviado em ' + esc(fmtDH(p.enviado_em)) + '</span>' : 'Ainda não enviado')) + (p.envio_erro && p.enviado_em ? ' <span style="color:var(--gray);">(último envio ok: ' + esc(fmtDH(p.enviado_em)) + ')</span>' : '') + '</div>';
     }
+    if (p.email) {
+      var sq = p.seq_status === 'fechada' ? '<span style="color:#b3261e;font-weight:600;">Parados (marcada como fechada)</span>' : p.seq_status === 'descadastrada' ? '<span style="color:#b3261e;font-weight:600;">Parados (o cliente pediu para não receber)</span>' : 'Lembretes ligados (9h–11h, dia útil)';
+      h += '<div class="hist-info"><strong>Sequência</strong>' + sq + '</div>';
+      h += '<div class="hist-info"><strong>Cliente mulher</strong>' + (p.cliente_mulher ? 'Sim' : 'Não') + '</div>';
+    }
     if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (p.email && ativa ? '<button class="btn-out" data-mail="' + esc(p.id) + '">✉ ' + (p.enviado_em ? 'Reenviar por e-mail' : 'Enviar por e-mail') + '</button>' : '') + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button>' : '') + '</div>';
+    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (p.email && ativa ? '<button class="btn-out" data-mail="' + esc(p.id) + '">✉ ' + (p.enviado_em ? 'Reenviar por e-mail' : 'Enviar por e-mail') + '</button>' : '') + (p.email && p.seq_status !== 'descadastrada' ? '<button class="btn-out" data-fech="' + esc(p.id) + '">' + (p.seq_status === 'fechada' ? '↺ Reabrir lembretes' : '✓ Cliente fechou') + '</button>' : '') + (p.email ? '<button class="btn-out" data-mul="' + esc(p.id) + '">♀ ' + (p.cliente_mulher ? 'Desmarcar cliente mulher' : 'Marcar cliente mulher') + '</button>' : '') + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button>' : '') + '</div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
@@ -728,6 +733,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (t.dataset.del) { e.stopPropagation(); histOpcoes(t.dataset.del); return; }
     // Enviar a proposta por e-mail (Resend)
     if (t.dataset.mail) { e.stopPropagation(); envioEmail(t.dataset.mail); return; }
+    // Sequência: "Cliente fechou" (para os e-mails) e "Cliente mulher"
+    if (t.dataset.fech) { e.stopPropagation(); if (window.seqFechou) seqFechou(t.dataset.fech); return; }
+    if (t.dataset.mul) { e.stopPropagation(); if (window.seqMulher) seqMulher(t.dataset.mul); return; }
     // Reativar / estender validade
     if (t.dataset.rea) { e.stopPropagation(); histReativar(t.dataset.rea); return; }
     // Duplicar proposta
