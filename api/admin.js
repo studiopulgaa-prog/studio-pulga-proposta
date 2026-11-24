@@ -98,8 +98,12 @@ export default async function handler(req, res) {
         if (!UUID.test(b.id || '') || typeof b.valor !== 'boolean') return ruim();
         await rpc('adm_mulher', { p_id: b.id, p_valor: b.valor });
         return res.json({ ok: true });
+      case 'nicho': // Arquiteto/Designer | Loja | Outro (Milão e Dia do Arquiteto só vão para Arquiteto/Designer)
+        if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'outro'].includes(b.valor)) return ruim();
+        await rpc('adm_nicho', { p_id: b.id, p_nicho: b.valor });
+        return res.json({ ok: true });
       case 'seq_status': { // "Fechou": para todos os e-mails da proposta; "Reabrir" volta a valer (não reativa quem se descadastrou)
-        if (!UUID.test(b.id || '') || !['fechada', 'ativa'].includes(b.status)) return ruim();
+        if (!UUID.test(b.id || '') || !['fechada', 'ativa', 'pausada'].includes(b.status)) return ruim();
         const r = await rpc('seq_status', { p_id: b.id, p_status: b.status });
         if (!r || !r.ok) return res.status(409).json({ ok: false, erro: r && r.motivo === 'descadastrada' ? 'O cliente pediu para não receber e-mails.' : 'Proposta não encontrada.' });
         return res.json({ ok: true });

@@ -1,5 +1,5 @@
 // api/_email.js — utilitarios compartilhados do envio de e-mails (nao e uma rota)
-import { enviarEmail } from './_resend.js';
+import { enviarRegistrado } from './_envio.js';
 import crypto from 'crypto';
 
 export const SUPA = 'https://ixclkelqjpfkucejbzuq.supabase.co';
@@ -111,10 +111,7 @@ export function montar(tipo, { cliente, link, lh, expira }) {
 // Envio pelo Resend (antes: SMTP Brevo). Mesma assinatura; lanca erro claro se falhar.
 export async function enviar({ to, tipo, dados, bcc }) {
   const m = montar(tipo, dados);
-  const r = await enviarEmail({
-    para: to, assunto: m.subject, html: m.html, texto: m.text, bcc,
-    cabecalhos: { 'List-Unsubscribe': `<${unsubUrl(dados.lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
-  });
+  const r = await enviarRegistrado({ para: to, assunto: m.subject, html: m.html, texto: m.text, bcc, lh: dados.lh, tipo: 'link_antigo' });
   if (!r.ok) { const e = new Error(r.erro); e.codigo = r.codigo; throw e; }
   return { messageId: r.id };
 }

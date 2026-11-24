@@ -1,7 +1,7 @@
 // api/enviar-proposta.js — e-mail que o CLIENTE recebe ao clicar em "Escolher Plano".
 // Seguranca: nome e valores vem do banco (nao do navegador), so links do proprio dominio,
 // e no maximo 3 envios por proposta.
-import { enviarEmail } from './_resend.js';
+import { enviarRegistrado } from './_envio.js';
 import { rpc, esc, unsubUrl, WA } from './_email.js';
 import { LINK_OK } from './_seg.js';
 
@@ -33,6 +33,7 @@ export default async function handler(req, res) {
 
     const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family:Arial,sans-serif;background:#F4EADD;margin:0;padding:20px;color:#6E2C14">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F4EADD">Você escolheu o plano ${esc(planName)}. Os próximos passos estão aqui.</div>
 <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden">
   <div style="background:#6E2C14;color:#F4EADD;padding:30px;text-align:center">
     <h1 style="margin:0;font-size:30px;letter-spacing:-0.02em">STUDIO PULGA</h1>
@@ -56,12 +57,11 @@ export default async function handler(req, res) {
 </div></body></html>`;
 
     try { await rpc('srv_email_cliente_inc', { p_lh: lh }); } catch (e) { console.error('contador de envios', e); }
-    const r = await enviarEmail({
+    const r = await enviarRegistrado({ lh, tipo: 'escolha',
       para: email,
       assunto: `${nome}, sua proposta Studio Pulga: ${planName}`,
       html,
       texto: `Olá, ${nome}. Você escolheu o plano ${planName} (R$ ${planPrice}/mês).${link ? '\nVer proposta: ' + link : ''}\nWhatsApp: ${wa}`,
-      cabecalhos: { 'List-Unsubscribe': `<${unsubUrl(lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
     });
     if (!r.ok) {
       console.error('Erro ao enviar email:', r.codigo);

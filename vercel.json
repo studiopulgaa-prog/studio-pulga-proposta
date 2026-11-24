@@ -1,10 +1,14 @@
 {
   "version": 2,
+  "functions": {
+    "api/lembretes.js": { "maxDuration": 60 }
+  },
   "rewrites": [
     { "source": "/p/:slug*", "destination": "/p.html" },
     { "source": "/p", "destination": "/p.html" },
     { "source": "/api/admin/email", "destination": "/api/email-admin" },
-    { "source": "/api/admin/enviar-email", "destination": "/api/enviar-email" }
+    { "source": "/api/admin/enviar-email", "destination": "/api/enviar-email" },
+    { "source": "/api/admin/emails", "destination": "/api/emails-painel" }
   ],
   "headers": [
     {

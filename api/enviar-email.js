@@ -2,7 +2,8 @@
 // para o cookie de 30 dias, que so vai para /api/admin/*, chegar aqui). Protegido pela sessao do admin (+ conferencia de Origin no cookie).
 import { rpc, SITE } from './_email.js';
 import { sessaoValida, LINK_OK } from './_seg.js';
-import { enviarEmail, emailProposta, emailValido } from './_resend.js';
+import { emailProposta, emailValido } from './_resend.js';
+import { enviarRegistrado } from './_envio.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MOTIVO = {
@@ -10,6 +11,7 @@ const MOTIVO = {
   expirada: [409, 'A proposta está expirada. Reative a validade antes de enviar.'],
   sem_email: [400, 'Esta proposta não tem e-mail do cliente.'],
   sem_link: [409, 'Esta proposta não tem link guardado; gere uma nova.'],
+  suprimido: [409, 'Este contato está bloqueado: o e-mail foi rejeitado ou marcado como spam antes.'],
 };
 
 export default async function handler(req, res) {
@@ -46,7 +48,7 @@ export default async function handler(req, res) {
     }
     const link = `${SITE}/p/${slug}`;
     const m = emailProposta({ cliente: r.cliente, link, expira: r.expira_em });
-    const env = await enviarEmail({ para: r.email, assunto: m.assunto, html: m.html, texto: m.texto, idempotencia: `proposta-${b.id}-${Math.floor(Date.now() / 60000)}` });
+    const env = await enviarRegistrado({ para: r.email, assunto: m.assunto, html: m.html, texto: m.texto, lh: r.lh, propostaId: b.id, tipo: 'link', chave: r.lh ? `link:${r.lh}` : null, idempotencia: `proposta-${b.id}-${Math.floor(Date.now() / 60000)}` });
     const reg = await rpc('adm_email_resultado', { p_id: b.id, p_ok: env.ok, p_erro: env.ok ? '' : env.erro });
     if (!env.ok) return res.status(502).json({ ok: false, erro: env.erro, codigo: env.codigo });
     // entra na sequência de lembretes (a data deste primeiro e-mail é a base do cálculo); falha aqui não desfaz o envio
