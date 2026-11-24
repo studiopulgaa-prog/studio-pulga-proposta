@@ -1,7 +1,9 @@
 // api/_resend.js — envio de e-mail pelo Resend (nao e uma rota)
 // A chave vem SOMENTE de process.env.RESEND_API_KEY (Vercel). Nunca vai para codigo, log, commit ou resposta.
 export const REMETENTE = 'Studio Pulga <contato@studiopulga.com.br>';
-export const RESPONDER_PARA = 'studio.pulgaa@gmail.com';
+export const RESPONDER_PADRAO = 'studio.pulgaa@gmail.com';
+// Reply-To: variavel RESPONDER_A (Vercel) se existir e for valida; senao o Gmail da Studio
+export const responderPara = () => (emailValido(process.env.RESPONDER_A) ? process.env.RESPONDER_A.trim() : RESPONDER_PADRAO);
 const EMAIL_OK = /^[^\s@<>",;]+@[^\s@<>",;]+\.[^\s@<>",;]+$/;
 
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -15,7 +17,7 @@ function bloqueadoPelaTrava(para) {
 
 // enviarEmail({para, assunto, html, texto?, idempotencia?}) -> {ok:true, id} | {ok:false, codigo, erro}
 // Pronto para a fase 2 (lembretes de cobranca): so chamar com outro assunto/html. Nunca dispara sozinho.
-export async function enviarEmail({ para, assunto, html, texto, idempotencia }) {
+export async function enviarEmail({ para, assunto, html, texto, idempotencia, bcc, cabecalhos }) {
   if (!process.env.RESEND_API_KEY) return { ok: false, codigo: 'sem_chave', erro: 'E-mail não configurado: falta a variável RESEND_API_KEY no Vercel.' };
   if (!emailValido(para)) return { ok: false, codigo: 'email_invalido', erro: 'E-mail do cliente inválido.' };
   if (bloqueadoPelaTrava(para)) return { ok: false, codigo: 'trava', erro: 'Envio bloqueado: este ambiente só envia para endereços de teste.' };
@@ -28,7 +30,7 @@ export async function enviarEmail({ para, assunto, html, texto, idempotencia }) 
     if (idempotencia) headers['Idempotency-Key'] = String(idempotencia).slice(0, 256);
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST', headers, signal: ctrl.signal,
-      body: JSON.stringify({ from: REMETENTE, to: [para], subject: assunto, html, text: texto || undefined, reply_to: RESPONDER_PARA }),
+      body: JSON.stringify({ from: REMETENTE, to: [para], subject: assunto, html, text: texto || undefined, reply_to: responderPara(), bcc: bcc && emailValido(bcc) ? [bcc] : undefined, headers: cabecalhos || undefined }),
     });
     const j = await r.json().catch(() => ({}));
     if (r.ok && j && j.id) return { ok: true, id: j.id };

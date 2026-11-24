@@ -1,5 +1,5 @@
 // api/_email.js — utilitarios compartilhados do envio de e-mails (nao e uma rota)
-import nodemailer from 'nodemailer';
+import { enviarEmail } from './_resend.js';
 import crypto from 'crypto';
 
 export const SUPA = 'https://ixclkelqjpfkucejbzuq.supabase.co';
@@ -108,22 +108,13 @@ export function montar(tipo, { cliente, link, lh, expira }) {
   return { subject: t.subject, html, text: `${texto}\n\nPara parar de receber: ${unsubUrl(lh)}` };
 }
 
+// Envio pelo Resend (antes: SMTP Brevo). Mesma assinatura; lanca erro claro se falhar.
 export async function enviar({ to, tipo, dados, bcc }) {
   const m = montar(tipo, dados);
-  const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com', port: 587, secure: false,
-    auth: { user: process.env.BREVO_USER, pass: process.env.BREVO_PASS },
+  const r = await enviarEmail({
+    para: to, assunto: m.subject, html: m.html, texto: m.text, bcc,
+    cabecalhos: { 'List-Unsubscribe': `<${unsubUrl(dados.lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
   });
-  const msg = {
-    // enquanto o dominio nao estiver autenticado no Brevo, o padrao e o Gmail verificado
-    from: process.env.BREVO_FROM || 'Studio Pulga <studio.pulgaa@gmail.com>',
-    to,
-    subject: m.subject,
-    html: m.html,
-    text: m.text,
-    headers: { 'List-Unsubscribe': `<${unsubUrl(dados.lh)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
-  };
-  msg.replyTo = process.env.REPLY_TO || 'contato@studiopulga.com.br';
-  if (bcc) msg.bcc = bcc;
-  return transporter.sendMail(msg);
+  if (!r.ok) { const e = new Error(r.erro); e.codigo = r.codigo; throw e; }
+  return { messageId: r.id };
 }
