@@ -1,66 +1,31 @@
-// api/lembretes.js — chamado pelo agendador do Supabase as 9h (turno=manha) e 18h (turno=noite), horario de Brasilia.
-import { rpc, enviar } from './_email.js';
-
-const DIA = 86400000;
-const diaBR = (ts) => Math.round(Date.parse(new Date(ts - 3 * 3600000).toISOString().slice(0, 10)) / DIA);
-
-// agenda proporcional a data real de expiracao: [dia, tipo]
-function agenda(envDia, expDia) {
-  const s = [];
-  const vence = expDia - 1;
-  if (vence > envDia) s.push([vence, 'vence']);
-  const gap = expDia - envDia;
-  if (gap >= 3) { const c = envDia + Math.ceil(gap / 2); if (c < vence) s.push([c, 'curiosidade']); }
-  s.push([expDia + 1, 'expirada']);
-  s.push([envDia + 15, 'desconto']);
-  return s.sort((a, b) => a[0] - b[0]);
-}
+// api/lembretes.js — cron do Supabase (já existente: 9h e 18h de Brasília). Protegido por CRON_SECRET.
+// Roda a sequência da proposta (lembrete + último aviso) e os e-mails sazonais, via api/_sequencia.js.
+// Só envia entre 9h e 11h em dia útil; a chamada das 18h ("noite") não envia nada.
+// Segurança: só ENVIA se a variável SEQUENCIA_ATIVA=1 estiver no Vercel; sem ela, apenas SIMULA (devolve o que enviaria).
+//   Simulação com data fictícia: ?simular=1&agora=2027-01-05T12:00:00Z  (a data fictícia só vale com simular=1; nunca envia).
+import { rpc } from './_email.js';
+import { rodar } from './_sequencia.js';
 
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
   if (!process.env.CRON_SECRET || req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ ok: false });
   }
-  const noite = (req.query && req.query.turno) === 'noite';
-  const agora = Date.now();
-  const hoje = diaBR(agora);
-  const resultado = [];
+  const q = req.query || {};
+  const simular = q.simular === '1';
+  let agora = Date.now();
+  if (simular && q.agora) {
+    const t = Date.parse(q.agora);
+    if (!(t === t)) return res.status(400).json({ ok: false, erro: 'data invalida' });
+    agora = t;
+  }
+  if (q.turno === 'noite' && !simular) return res.json({ ok: true, turno: 'noite', enviados: [], aviso: 'sem envios fora das 9h-11h' });
+  const ativo = !simular && process.env.SEQUENCIA_ATIVA === '1';
   try {
-    const itens = await rpc('email_pendentes', {});
-    for (const e of itens) {
-      try {
-        // proposta apagada: para a sequencia
-        if (!e.expira_em) { await rpc('email_status', { p_lh: e.lh, p_status: 'fechada' }); continue; }
-        const expMs = Date.parse(e.expira_em);
-        const envDia = diaBR(Date.parse(e.enviados.link));
-        const expDia = diaBR(expMs);
-        const dados = { cliente: e.cliente, link: e.link, lh: e.lh, expira: e.expira_em };
-
-        if (noite) {
-          // 2a versao do aviso "expira amanha", so se a das 9h saiu hoje
-          if (hoje === expDia - 1 && e.enviados.vence && !e.enviados.vence18 && agora < expMs) {
-            await enviar({ to: e.email, tipo: 'vence18', dados });
-            await rpc('email_marcar_enviado', { p_lh: e.lh, p_tipo: 'vence18' });
-            resultado.push({ lh: e.lh, tipo: 'vence18' });
-          }
-          continue;
-        }
-
-        const devidos = agenda(envDia, expDia).filter(([d, t]) => d <= hoje && !e.enviados[t] && !e.enviados[t + '_pulado']);
-        if (!devidos.length) continue;
-        const [, tipo] = devidos[devidos.length - 1];
-        for (const [, t] of devidos.slice(0, -1)) await rpc('email_marcar_enviado', { p_lh: e.lh, p_tipo: t + '_pulado' });
-        if ((tipo === 'curiosidade' || tipo === 'vence') && agora > expMs) { await rpc('email_marcar_enviado', { p_lh: e.lh, p_tipo: tipo + '_pulado' }); continue; }
-        await enviar({ to: e.email, tipo, dados });
-        await rpc('email_marcar_enviado', { p_lh: e.lh, p_tipo: tipo });
-        resultado.push({ lh: e.lh, tipo });
-      } catch (err) {
-        console.error('lembrete falhou', e.lh, err);
-        resultado.push({ lh: e.lh, erro: err.message });
-      }
-    }
-    return res.json({ ok: true, turno: noite ? 'noite' : 'manha', enviados: resultado });
+    const r = await rodar({ agora, rpc, ativo });
+    return res.json({ ok: true, modo: ativo ? 'envio' : 'simulacao', ...r });
   } catch (err) {
-    console.error('lembretes', err);
-    return res.status(500).json({ ok: false, erro: err.message });
+    console.error('lembretes', err && err.message);
+    return res.status(500).json({ ok: false, erro: 'erro interno' });
   }
 }

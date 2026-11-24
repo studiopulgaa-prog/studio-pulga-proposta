@@ -94,6 +94,16 @@ export default async function handler(req, res) {
         await rpc('adm_reativar', { p_id: b.id, p_dias: dias });
         return res.json({ ok: true });
       }
+      case 'mulher': // caixinha "Cliente mulher" (a campanha do Dia da Mulher só vai para as marcadas)
+        if (!UUID.test(b.id || '') || typeof b.valor !== 'boolean') return ruim();
+        await rpc('adm_mulher', { p_id: b.id, p_valor: b.valor });
+        return res.json({ ok: true });
+      case 'seq_status': { // "Fechou": para todos os e-mails da proposta; "Reabrir" volta a valer (não reativa quem se descadastrou)
+        if (!UUID.test(b.id || '') || !['fechada', 'ativa'].includes(b.status)) return ruim();
+        const r = await rpc('seq_status', { p_id: b.id, p_status: b.status });
+        if (!r || !r.ok) return res.status(409).json({ ok: false, erro: r && r.motivo === 'descadastrada' ? 'O cliente pediu para não receber e-mails.' : 'Proposta não encontrada.' });
+        return res.json({ ok: true });
+      }
       case 'link':
         if (!/^[a-z0-9-]{1,120}$/.test(b.slug || '') || !LINK_OK.test(b.url || '') || String(b.url).length > 8000) return ruim();
         await rpc('adm_link', { p_slug: b.slug, p_url: b.url });
