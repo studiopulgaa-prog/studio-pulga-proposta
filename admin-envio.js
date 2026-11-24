@@ -61,6 +61,8 @@
     window.envioGerado(id, email);
     var mu = document.getElementById('fMulher');
     if (mu && mu.checked && typeof adm === 'function') adm('mulher', {id: id, valor: true}).catch(function () {});  // marca "cliente mulher" (opcional)
+    var ni = document.getElementById('fNicho');   // nicho (escolhido ou automático pelo modelo)
+    if (ni && typeof adm === 'function') adm('nicho', {id: id, valor: ni.value || 'arquiteto'}).catch(function () {});
     window.SP_AUTOENVIO = (cb && cb.checked && email) ? function () {
       envioEmail(id, {email: email, semConfirmar: true, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = '✉ Reenviar por e-mail'; }});
     } : null;
@@ -71,7 +73,7 @@
   function recarregar(msg) { if (typeof carregarHistorico === 'function') carregarHistorico().then(function () { aviso(msg, false); }); else aviso(msg, false); }
   window.seqFechou = function (id) {
     var p = typeof propPorId === 'function' ? propPorId(id) : null;
-    var fechada = p && p.seq_status === 'fechada';
+    var fechada = p && (p.seq_status === 'fechada' || p.seq_status === 'pausada');
     var rodar = function () {
       hFechar();
       adm('seq_status', {id: id, status: fechada ? 'ativa' : 'fechada'}).then(function (r) {
