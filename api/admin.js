@@ -29,6 +29,22 @@ export default async function handler(req, res) {
     switch (b.acao) {
       case 'listar':
         return res.json({ ok: true, lista: await rpc('adm_listar', {}) });
+      case 'listar2': { // histórico paginado: limite, cursor e filtros (tipo, situação, busca, testes)
+        const r = await rpc('adm_listar2', {
+          p_limite: Math.min(Math.max(parseInt(b.limite, 10) || 20, 1), 200),
+          p_cursor: /^[0-9T:.\-Z]{10,40}\|[0-9a-f-]{36}$/i.test(b.cursor || '') ? b.cursor : null,
+          p_tipo: ['planos', 'cardapio'].includes(b.tipo) ? b.tipo : null,
+          p_status: ['ativas', 'escolheram', 'expiradas', 'canceladas'].includes(b.status) ? b.status : null,
+          p_busca: b.busca ? txt(b.busca, 60) : null,
+          p_testes: b.testes === true,
+        });
+        return res.json(r && r.ok ? r : { ok: false, erro: 'falha ao listar' });
+      }
+      case 'eventos': // linha do tempo da proposta, com data e hora
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json(await rpc('adm_eventos', { p_id: b.id, p_limite: Math.min(Math.max(parseInt(b.limite, 10) || 200, 1), 500) }));
+      case 'atividades': // últimas atividades de todos os clientes (Início no computador)
+        return res.json({ ok: true, lista: await rpc('adm_atividades', { p_limite: Math.min(Math.max(parseInt(b.limite, 10) || 12, 1), 50) }) });
       case 'criar': {
         const p = b.proposta || {};
         if (!p.cliente || !/^[A-Za-z0-9]{6,64}$/.test(p.link_hash || '') || !/^[0-9a-f]{64}$/.test(p.d_hash || '') || !Number.isFinite(Date.parse(p.expira_em))) return ruim();
@@ -121,9 +137,13 @@ export default async function handler(req, res) {
         if (!UUID.test(b.id || '') || typeof b.valor !== 'boolean') return ruim();
         await rpc('adm_mulher', { p_id: b.id, p_valor: b.valor });
         return res.json({ ok: true });
-      case 'nicho': // Arquiteto/Designer | Loja | Outro (Milão e Dia do Arquiteto só vão para Arquiteto/Designer)
-        if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'outro'].includes(b.valor)) return ruim();
+      case 'nicho': // Arquiteto/Designer | Loja | Construtora | Outro (Milão e Dia do Arquiteto só vão para Arquiteto/Designer)
+        if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'construtora', 'outro'].includes(b.valor)) return ruim();
         await rpc('adm_nicho', { p_id: b.id, p_nicho: b.valor });
+        return res.json({ ok: true });
+      case 'nicho_confirmar': // grava o nicho e marca como confirmado pelo Isaque (some o selo "Nicho?")
+        if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'construtora', 'outro'].includes(b.valor)) return ruim();
+        await rpc('adm_nicho_confirmar', { p_id: b.id, p_nicho: b.valor });
         return res.json({ ok: true });
       case 'seq_status': { // "Fechou": para todos os e-mails da proposta; "Reabrir" volta a valer (não reativa quem se descadastrou)
         if (!UUID.test(b.id || '') || !['fechada', 'ativa', 'pausada'].includes(b.status)) return ruim();

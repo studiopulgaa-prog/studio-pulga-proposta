@@ -11,15 +11,19 @@
   var nomeLx = function () { return tipoLx() === 'cardapio' ? ' · Cardápio' : tipoLx() === 'planos' ? ' · Planos' : ''; };
 
   // ---------- Apagar histórico (lote) ----------
+  // as quantidades vêm do servidor (a lista do admin agora carrega em páginas)
   function apagarHistorico() {
-    var lista = (typeof _lista !== 'undefined' ? _lista : []).filter(function (p) { return (p.tipo || 'planos') === tipoArea(); });
+    histMsg('Contando as propostas…');
+    adm('listar2', {tipo: tipoArea(), testes: true, limite: 1}).then(function (r) {
+      if (!(r && r.ok)) return histMsg('Não foi possível contar as propostas: ' + erroTxt(r), true);
+      histMsg(''); apagarModal(r.contagens || {});
+    }).catch(function () {});
+  }
+  function apagarModal(C) {
     var conta = function (f, ativas) {
-      return lista.filter(function (p) {
-        var at = p.status === 'ativa', ca = p.status === 'cancelada', ex = p.status === 'expirada';
-        if (f === 'canceladas') return ca;
-        if (f === 'expiradas') return ex;
-        return ca || ex || (ativas && at);
-      }).length;
+      if (f === 'canceladas') return C.canceladas || 0;
+      if (f === 'expiradas') return C.expiradas || 0;
+      return (C.canceladas || 0) + (C.expiradas || 0) + (ativas ? (C.ativas || 0) : 0);
     };
     var refs = hModal('Apagar histórico · ' + nomeArea(), 'As propostas escolhidas saem da lista, o link delas para de abrir e elas ficam 30 dias na Lixeira (dá para restaurar).', function (c) {
       var h = '<div class="label" style="margin-top:4px;">O que apagar</div>';

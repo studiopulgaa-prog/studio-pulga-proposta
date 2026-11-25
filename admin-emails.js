@@ -7,7 +7,7 @@
   var dh = function (iso) { return typeof fmtDH === 'function' ? fmtDH(iso) : String(iso || '').slice(0, 16).replace('T', ' '); };
   var SEM = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
   var dia = function (s) { var d = new Date(s + 'T12:00:00Z'); return SEM[d.getUTCDay()] + ' ' + s.slice(8, 10) + '/' + s.slice(5, 7); };
-  var NICHO = {arquiteto: 'Arquiteto/Designer', loja: 'Loja', outro: 'Outro'};
+  var NICHO = {arquiteto: 'Arquiteto/Designer', loja: 'Loja', construtora: 'Construtora', outro: 'Outro'};
   var TIPO = {link: 'Sua proposta', lembrete: 'Lembrete', ultimo_aviso: 'Último aviso', campanha: 'Sazonal', teste: 'Teste', resumo: 'Resumo semanal', escolha: 'Confirmação do plano', link_antigo: 'Link (envio antigo)'};
   var ST = {enviado: ['Enviado', '#6b5a50', 'rgba(110,44,20,.08)'], entregue: ['Entregue', '#fff', '#1a7a3c'], atrasado: ['Atrasado', '#fff', '#b36b00'],
     rejeitado: ['Rejeitado', '#fff', '#b3261e'], spam: ['Spam', '#fff', '#b3261e'], erro: ['Erro', '#fff', '#b3261e'], simulado: ['Simulado', '#4a3a33', '#EAD8C5']};
@@ -29,7 +29,9 @@
   function nichoAuto() {
     var sel = $('fNicho'); if (!sel || nichoMexido) return;
     var cd = typeof AREA !== 'undefined' && AREA === 'cd';
-    sel.value = cd ? 'arquiteto' : ((typeof PL_MODELO !== 'undefined' && PL_MODELO === 'loja') ? 'loja' : 'arquiteto');
+    // Cardápio: o nicho não é preenchido sozinho (obrigatório escolher). Planos: vem do modelo (Arquiteto/Loja).
+    sel.value = cd ? '' : ((typeof PL_MODELO !== 'undefined' && PL_MODELO === 'loja') ? 'loja' : 'arquiteto');
+    if (window.nvAtualiza) nvAtualiza();
   }
   if ($('fNicho')) {
     $('fNicho').addEventListener('change', function () { nichoMexido = true; });
@@ -120,7 +122,7 @@
       }
       botoes.push({t: 'Fechar', f: hFechar});
       hModal('E-mails · ' + (t.cliente || ''), (t.email || 'sem e-mail') + ' · E-mails automáticos: ' + stTxt + (t.modo !== 'envio' ? ' · (modo simulação)' : ''), function (corpo) {
-        var h = '<label class="label" for="tlNicho">Nicho</label><select class="inp" id="tlNicho">' + Object.keys(NICHO).map(function (k) { return '<option value="' + k + '"' + (t.nicho === k ? ' selected' : '') + '>' + NICHO[k] + '</option>'; }).join('') + '</select><div id="tlNichoMsg" class="hist-info" style="margin-top:4px;">' + (t.nicho_auto ? 'Automático (pelo modelo). Mude se precisar.' : '') + '</div>';
+        var h = '<label class="label" for="tlNicho">Nicho</label><select class="inp" id="tlNicho">' + Object.keys(NICHO).map(function (k) { return '<option value="' + k + '"' + (t.nicho === k ? ' selected' : '') + '>' + NICHO[k] + '</option>'; }).join('') + '</select><div id="tlNichoMsg" class="hist-info" style="margin-top:4px;">' + (t.nicho_ok === false || t.nicho_auto ? 'Ainda não confirmado. Escolha para confirmar.' : '') + '</div>';
         h += '<div class="sec-sep">Linha do tempo</div>';
         var lg = t.log || [];
         h += lg.length ? lg.map(function (l) { return '<div class="hist-info" style="display:block;border-bottom:1px solid var(--brl);padding:6px 0;">' + badge(l.status) + ' <strong>' + esc(tipoTxt(l)) + '</strong><br><span>' + esc(dh(l.criado_em)) + '</span>' + (l.erro && l.status !== 'entregue' ? '<br><span style="color:#b3261e;">' + esc(l.erro) + '</span>' : '') + '</div>'; }).join('') : '<div class="hist-info">Nenhum e-mail registrado ainda.</div>';
@@ -129,7 +131,7 @@
         corpo.innerHTML = h;
         corpo.querySelector('#tlNicho').addEventListener('change', function () {
           var v = this.value, msg = corpo.querySelector('#tlNichoMsg'); msg.style.color = ''; msg.textContent = 'Salvando…';
-          adm('nicho', {id: id, valor: v}).then(function (r) {
+          adm('nicho_confirmar', {id: id, valor: v}).then(function (r) {
             msg.style.color = r && r.ok ? '#1a7a3c' : '#b3261e'; msg.textContent = r && r.ok ? 'Nicho salvo: ' + NICHO[v] + '.' : 'Não foi salvo: ' + ((r && r.erro) || 'erro');
             if (r && r.ok && typeof carregarHistorico === 'function') carregarHistorico();
           }).catch(function () {});
