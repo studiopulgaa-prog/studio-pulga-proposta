@@ -2,7 +2,9 @@
 // para o cookie de 30 dias, que so vai para /api/admin/*, chegar aqui). Protegido pela sessao do admin (+ conferencia de Origin no cookie).
 import { rpc, SITE } from './_email.js';
 import { sessaoValida, LINK_OK } from './_seg.js';
-import { emailProposta, emailValido } from './_resend.js';
+import { emailValido } from './_resend.js';
+import { emailPropostaC } from './_sequencia.js';
+import { aplicarGerais } from './_conteudo.js';
 import { enviarRegistrado } from './_envio.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -48,7 +50,9 @@ export default async function handler(req, res) {
       await rpc('adm_link', { p_slug: slug, p_url: r.link });
     }
     const link = `${SITE}/p/${slug}`;
-    const m = emailProposta({ cliente: r.cliente, link, expira: r.expira_em });
+    let C = null;   // textos publicados na aba Conteúdo (falha aqui: segue com o texto de fábrica)
+    try { C = await rpc('conteudo_atual', {}); } catch (e) { console.error('conteudo_atual', e && e.message); }
+    const m = aplicarGerais(emailPropostaC({ cliente: r.cliente, link, expira: r.expira_em }, C), C);
     const env = await enviarRegistrado({ para: r.email, assunto: m.assunto, html: m.html, texto: m.texto, lh: r.lh, propostaId: b.id, tipo: 'link', chave: r.lh ? `link:${r.lh}` : null, idempotencia: `proposta-${b.id}-${Math.floor(Date.now() / 60000)}` });
     const reg = await rpc('adm_email_resultado', { p_id: b.id, p_ok: env.ok, p_erro: env.ok ? '' : env.erro });
     if (!env.ok) return res.status(502).json({ ok: false, erro: env.erro, codigo: env.codigo });

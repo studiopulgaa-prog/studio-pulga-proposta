@@ -7,6 +7,7 @@ import { enviarRegistrado, registrar } from './_envio.js';
 import { unsubUrl, WA, SITE } from './_email.js';
 import { LINK_OK } from './_seg.js';
 import { CAMPANHAS, FERIADOS, MAX_POR_ANO, MIN_DIAS_ENTRE, TOLERANCIA_DIAS, FINAL, BOTAO_PADRAO } from './_campanhas.js';
+import { textoEmail, trocaVars, linhaHtml, paragrafos, semNegrito, campanhasDe, aplicarGerais } from './_conteudo.js';
 
 const DIA = 86400000, H = 3600000, BR = 3 * H; // Brasília = UTC-3 (sem horário de verão)
 export const JANELA = { ini: 9, fim: 11 };      // envia de 9:00 até 10:59
@@ -25,17 +26,23 @@ const util_antes = (d, minimo) => { while (d > minimo && !ehUtil(d)) d--; return
 const util_depois = (d) => { while (!ehUtil(d)) d++; return d; };
 const enviado = (en, ...chaves) => chaves.some((k) => en && en[k]);
 
+// situação de follow-up (vem do banco). Sem o campo (dados antigos): "escolheu" = já mandou o pedido por e-mail.
+const escolheu = (p) => (p.follow === undefined ? Number(p.emails_cliente) > 0 : p.follow === 'escolheu' || p.follow === 'fechou');
+const paraLembretes = (p) => escolheu(p) || p.follow === 'perdido';
+
 export function planoPropostas(dados, agora) {
   const hoje = diaBR(agora), out = [];
   for (const e of (dados && dados.propostas) || []) {
     const en = e.enviados || {};
     if (e.pe_status !== 'ativa' || !en.link) continue;                    // fechada, descadastrada, teste ou sem e-mail do link
     if (!emailValido(e.email) || !e.expira_em) continue;
-    if (Number(e.emails_cliente) > 0) continue;                           // o cliente já escolheu plano
+    if (paraLembretes(e)) continue;                                       // escolheu, fechou ou perdido: sem lembretes
     if (!LINK_OK.test(e.pe_link || '')) continue;
     const expMs = Date.parse(e.expira_em);
     if (!(agora < expMs)) continue;                                       // não há e-mail de "expirou"
-    const envDia = diaBR(Date.parse(en.link)), expDia = diaBR(expMs), gap = expDia - envDia;
+    // "Ainda não decidiu": a contagem recomeça na data da marcação (lembretes religados)
+    const inicio = e.follow === 'nao_decidiu' && e.follow_em ? Math.max(Date.parse(en.link), Date.parse(e.follow_em)) : Date.parse(en.link);
+    const envDia = diaBR(inicio), expDia = diaBR(expMs), gap = expDia - envDia;
     if (!(gap >= 1)) continue;
     // dia-alvo do último aviso: véspera do vencimento (ou o próprio dia, se a validade é de 1-2 dias e vence à tarde/noite)
     const venceDeManha = horaBR(expMs) < 12;
@@ -86,7 +93,7 @@ export function planoCampanhas(dados, agora, campanhas = CAMPANHAS) {
   const out = [];
   for (const [email, props] of porEmail) {
     if (!emailValido(email) || bloqueados.has(email)) continue;
-    if (props.some((p) => ['fechada', 'descadastrada', 'pausada'].includes(p.pe_status) || Number(p.emails_cliente) > 0)) continue;
+    if (props.some((p) => ['fechada', 'descadastrada', 'pausada'].includes(p.pe_status) || escolheu(p))) continue;   // escolheu/fechou: sem sazonais (perdido continua)
     if (props.some((p) => !p.expira_em || Date.parse(p.expira_em) > agora)) continue;       // ainda tem proposta válida: não é caso de sazonal
     const base = props.slice().sort((a, b) => Date.parse(b.expira_em) - Date.parse(a.expira_em))[0];
     if (!base.lh) continue;
@@ -101,6 +108,8 @@ export function planoCampanhas(dados, agora, campanhas = CAMPANHAS) {
       if (minhas.some((m) => m.campanha === c.id && Number(m.ano) === x.ano)) continue;     // nunca repetir
       if (c.publico === 'arquitetos' && nichoDe(base) !== 'arquiteto') continue;              // Milão e Dia do Arquiteto: só Arquiteto/Designer
       if (c.publico === 'mulheres' && !props.some((p) => p.mulher === true)) continue;       // sem marcação, não envia
+      if (c.publico === 'construtoras' && nichoDe(base) !== 'construtora') continue;
+      if (c.publico === 'lojas' && nichoDe(base) !== 'loja') continue;
       if (hoje - ultimo < MIN_DIAS_ENTRE) continue;                                          // mínimo de dias entre e-mails
       if (qtdAno >= MAX_POR_ANO) continue;                                                   // máximo por ano
       out.push({ parte: 'B', email, lh: base.lh, id: base.id, cliente: base.cliente, tipo: 'campanha', campanha: c.id, ano: x.ano });
@@ -155,7 +164,47 @@ export function emailUltimoAviso({ cliente, link, expira, lh, variante }) {
   return { assunto, html, texto: virarTexto([`Olá, ${nome}!`, p1], 'Ver minha proposta', link, lh) };
 }
 
+// ---------- versões com os textos da aba "Conteúdo" (só quando algo foi publicado; senão os modelos acima) ----------
+const corpoHtml = (t, v) => paragrafos(trocaVars(t, v)).map((x) => para(linhaHtml(x))).join('');
+const corpoTexto = (t, v) => paragrafos(semNegrito(trocaVars(t, v)));
+function emailEditado(tipo, { cliente, link, expira, lh }, C, kicker) {
+  const T = textoEmail(C, tipo), nome = primeiroNome(cliente), v = { nome, data: fmtValidade(expira), link, item: '', valor: '' };
+  const assunto = semNegrito(trocaVars(T.assunto, v)).replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+  const html = moldura({ assunto, pre: semNegrito(trocaVars(T.pre, v)), kicker, lh, corpo: oi(nome) + corpoHtml(T.corpo, v) + botao(link, 'Ver minha proposta') });
+  return { assunto, html, texto: virarTexto([`Olá, ${nome}!`, ...corpoTexto(T.corpo, v)], 'Ver minha proposta', link, lh) };
+}
+export function emailLembreteC(it, C) { return textoEmail(C, 'lembrete').mudou ? emailEditado('lembrete', it, C, 'SUA PROPOSTA') : emailLembrete(it); }
+export function emailUltimoAvisoC(it, C) {
+  const tipo = it.variante === 'hoje' ? 'ultimo_hoje' : it.variante === 'amanha' ? 'ultimo_amanha' : null;   // "vence em [data]" (fim de semana) segue o texto de fábrica
+  return tipo && textoEmail(C, tipo).mudou ? emailEditado(tipo, it, C, 'ÚLTIMA CHAMADA') : emailUltimoAviso(it);
+}
+// "Sua proposta" (envio do link): mesmo modelo de _resend.js, trocando assunto, pré-cabeçalho e o texto de abertura
+export function emailPropostaC(base, C) {
+  const m = emailProposta(base), T = textoEmail(C, 'link');
+  if (!T.mudou) return m;
+  const nome = primeiroNome(base.cliente), v = { nome, data: fmtValidade(base.expira), link: base.link, item: '', valor: '' };
+  const assunto = semNegrito(trocaVars(T.assunto, v)).replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+  const intro = 'Preparei uma proposta exclusiva para você. É só tocar no botão abaixo para ver todos os detalhes.';
+  const pIntro = `<p style="margin:0 0 16px;font-size:16px;line-height:1.65;color:#4a3a33">${intro}</p>`;
+  let html = m.html.replace(`<title>${esc(m.assunto)}</title>`, `<title>${esc(assunto)}</title>`)
+    .replace(/(<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F4EADD">)[^<]*(<\/div>)/, (x, a, b) => a + esc(semNegrito(trocaVars(T.pre, v))) + b)
+    .replace(pIntro, corpoHtml(T.corpo, v));
+  const texto = m.texto.replace(`Preparei uma proposta exclusiva para você: ${base.link}`, corpoTexto(T.corpo, v).join('\n\n') + `\n\n${base.link}`);
+  return { assunto, html, texto };
+}
+// campanha escrita na aba Conteúdo: [Nome], **negrito** e quebras
+function emailCampanhaMd({ cliente, lh, camp }) {
+  const nome = primeiroNome(cliente), c = camp, v = { nome, data: '', link: '', item: '', valor: '' };
+  const assunto = semNegrito(trocaVars(c.assunto, v)).replace(/[\r\n]+/g, ' ').trim().slice(0, 200);
+  const msg = whatsapp(`Olá! Recebi o e-mail da Studio Pulga (${assunto.replace(/[^\p{L}\p{N} ,.!?'-]/gu, '').trim()}) e quero conversar.`);
+  const ps = [...c.corpo.map((t) => trocaVars(t, v)), FINAL];
+  const html = moldura({ assunto, pre: semNegrito(ps[0]).slice(0, 90), kicker: 'ESTAMOS POR AQUI', lh,
+    corpo: oi(nome) + ps.map((t) => para(linhaHtml(t))).join('') + botao(msg, c.botao || BOTAO_PADRAO) });
+  return { assunto, html, texto: virarTexto([`Olá, ${nome}!`, ...ps.map(semNegrito)], c.botao || BOTAO_PADRAO, msg, lh) };
+}
+
 export function emailCampanha({ cliente, lh, camp }) {
+  if (camp && camp.md) return emailCampanhaMd({ cliente, lh, camp });
   const nome = primeiroNome(cliente), c = camp;
   const msg = whatsapp(`Olá! Recebi o e-mail da Studio Pulga (${c.assunto.replace(/[^\p{L}\p{N} ,.!?'-]/gu, '').trim()}) e quero conversar.`);
   const ps = [...c.corpo, FINAL];
@@ -171,9 +220,11 @@ export const chaveDe = (it) => (it.parte === 'A' ? `seq:${it.lh}:${it.tipo}` : `
 const ROTULO = { lembrete: 'Lembrete', ultimo_aviso: 'Último aviso' };
 export const rotuloItem = (it, campanhas = CAMPANHAS) => (it.parte === 'B' ? 'Sazonal: ' + ((campanhas.find((c) => c.id === it.campanha) || {}).assunto || it.campanha) : ROTULO[it.tipo] || it.tipo);
 
-export function montarItem(it, campanhas = CAMPANHAS) {
-  if (it.parte === 'B') return emailCampanha({ cliente: it.cliente, lh: it.lh, camp: campanhas.find((c) => c.id === it.campanha) });
-  return it.tipo === 'lembrete' ? emailLembrete(it) : emailUltimoAviso(it);
+export function montarItem(it, campanhas = CAMPANHAS, C = null) {
+  let m;
+  if (it.parte === 'B') m = emailCampanha({ cliente: it.cliente, lh: it.lh, camp: campanhas.find((c) => c.id === it.campanha) });
+  else m = it.tipo === 'lembrete' ? emailLembreteC(it, C) : emailUltimoAvisoC(it, C);
+  return aplicarGerais(m, C);
 }
 
 // o que sai hoje (com a trava diária e sem o que já falhou 3 vezes)
@@ -189,6 +240,7 @@ export function planoDoDia(dados, agora, campanhas = CAMPANHAS, jaHoje = 0) {
 // previsão dos próximos dias úteis (painel e resumo semanal): simula as reservas sem tocar no banco
 export function previsao(dados, agora, dias = 7, campanhas = CAMPANHAS) {
   const d = JSON.parse(JSON.stringify(dados || {}));
+  campanhas = campanhasDe(d.conteudo, campanhas);
   d.campanhas = d.campanhas || [];
   const out = [];
   let dia = diaBR(agora);
@@ -214,6 +266,8 @@ export async function rodar({ agora, rpc, enviar = enviarRegistrado, ativo = fal
   const res = { agora: new Date(agora).toISOString(), dia: diaStr(diaBR(agora)), hora: horaBR(agora), util: ehUtil(diaBR(agora)), enviados: [], pulados: [] };
   if (!ignorarJanela && !dentroDaJanela(agora)) { res.fora_da_janela = true; return res; }
   const dados = await rpc('seq_dados', {});
+  const C = (dados && dados.conteudo) || null;   // textos publicados na aba Conteúdo (sem nada publicado: os de fábrica)
+  campanhas = campanhasDe(C, campanhas);
   const { itens, adiados, desistidos } = planoDoDia(dados, agora, campanhas, ativo ? Number(dados.enviados_hoje || 0) : 0);
   for (const it of desistidos) res.pulados.push({ chave: chaveDe(it), motivo: 'falhou_3_vezes' });
   if (adiados.length) {
@@ -227,7 +281,7 @@ export async function rodar({ agora, rpc, enviar = enviarRegistrado, ativo = fal
     if (!ativo) {
       res.enviados.push({ ...rotulo, para: it.email, simulado: true });
       if (registrarSimulacao) await registrar({ modo: 'simulacao', status: 'simulado', tipo: it.tipo, chave, lh: it.lh, proposta_id: it.id || null,
-        email: it.email, assunto: montarItem(it, campanhas).assunto, campanha: it.campanha || null });
+        email: it.email, assunto: montarItem(it, campanhas, C).assunto, campanha: it.campanha || null });
       continue;
     }
     try {
@@ -235,7 +289,7 @@ export async function rodar({ agora, rpc, enviar = enviarRegistrado, ativo = fal
         ? await rpc('seq_reservar', { p_lh: it.lh, p_tipo: it.tipo })
         : await rpc('seq_reservar_campanha', { p_email: it.email, p_campanha: it.campanha, p_ano: it.ano, p_lh: it.lh });
       if (!reservou) { res.pulados.push({ ...rotulo, motivo: 'ja_enviado' }); continue; }
-      const m = montarItem(it, campanhas);
+      const m = montarItem(it, campanhas, C);
       const tent = Number(((dados.falhas || {})[chave]) || 0);
       const r = await enviar({
         para: it.email, assunto: m.assunto, html: m.html, texto: m.texto, lh: it.lh, propostaId: it.id || null,
@@ -258,15 +312,18 @@ export async function rodar({ agora, rpc, enviar = enviarRegistrado, ativo = fal
 }
 
 // ---------- "Enviar teste para mim": os modelos com dados fictícios ----------
-export function modelosTeste(campanhas = CAMPANHAS) {
+// C = textos da aba Conteúdo (publicados ou o rascunho que está sendo editado); sem C, os de fábrica
+export function modelosTeste(campanhas = CAMPANHAS, C = null) {
   const exp = new Date(Date.now() + 3 * DIA).toISOString(), link = `${SITE}/p/exemplo-teste`, lh = 'teste';
   const base = { cliente: 'Cliente Teste', link, expira: exp, lh };
+  campanhas = campanhasDe(C, campanhas);
+  const G = (f) => () => aplicarGerais(f(), C);
   const lista = [
-    { id: 'sua-proposta', nome: 'Sua proposta (envio do link)', f: () => emailProposta(base) },
-    { id: 'lembrete', nome: 'Lembrete (metade da validade)', f: () => emailLembrete(base) },
-    { id: 'ultimo-amanha', nome: 'Último aviso (vence amanhã)', f: () => emailUltimoAviso({ ...base, variante: 'amanha' }) },
-    { id: 'ultimo-hoje', nome: 'Último aviso (vence hoje)', f: () => emailUltimoAviso({ ...base, variante: 'hoje' }) },
-    ...campanhas.map((c) => ({ id: 'camp-' + c.id, nome: 'Sazonal: ' + c.assunto, f: () => emailCampanha({ cliente: 'Cliente Teste', lh, camp: c }) })),
+    { id: 'sua-proposta', nome: 'Sua proposta (envio do link)', f: G(() => emailPropostaC(base, C)) },
+    { id: 'lembrete', nome: 'Lembrete (metade da validade)', f: G(() => emailLembreteC(base, C)) },
+    { id: 'ultimo-amanha', nome: 'Último aviso (vence amanhã)', f: G(() => emailUltimoAvisoC({ ...base, variante: 'amanha' }, C)) },
+    { id: 'ultimo-hoje', nome: 'Último aviso (vence hoje)', f: G(() => emailUltimoAvisoC({ ...base, variante: 'hoje' }, C)) },
+    ...campanhas.map((c) => ({ id: 'camp-' + c.id, nome: 'Sazonal: ' + c.assunto, f: G(() => emailCampanha({ cliente: 'Cliente Teste', lh, camp: c })) })),
   ];
   return lista;
 }

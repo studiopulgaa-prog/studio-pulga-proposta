@@ -55,8 +55,19 @@
   function acs(p) { return p.acs || {}; }
   function nAb(p) { var A = acs(p); return Number(A.aberturas != null ? A.aberturas : p.ac) || 0; }
   function nDv(p) { var A = acs(p); return Number(A.dispositivos != null ? A.dispositivos : p.dv) || 0; }
-  function escolha(p) { var A = acs(p); return A.escolheu || (Number(p.emails_cliente) > 0 ? 'plano' : ''); }
-  function fechada(p) { return p.seq_status === 'fechada'; }
+  // escolha do cliente: vem do servidor (follow-up + clique registrado com item e valor). Sem follow (dados antigos): resumo de acessos.
+  function escolha(p) {
+    if (p.follow === undefined) { var A = acs(p); return A.escolheu || (Number(p.emails_cliente) > 0 ? 'plano' : ''); }
+    if (p.follow !== 'escolheu' && p.follow !== 'fechou') return '';
+    return (p.escolha && p.escolha.item) || acs(p).escolheu || (p.follow === 'escolheu' ? 'plano' : '');
+  }
+  function valorEsc(p) { return p.escolha && p.escolha.valor ? p.escolha.valor : ''; }
+  function fechada(p) { return p.follow === 'fechou' || p.seq_status === 'fechada'; }
+  function followDe(p) { return p.follow || (fechada(p) ? 'fechou' : escolha(p) ? 'escolheu' : 'aguardando'); }
+  var FOLLOW_N = {aguardando: 'Aguardando', nao_decidiu: 'Ainda não decidiu', escolheu: 'Escolheu', fechou: 'Fechou', perdido: 'Perdido'};
+  function semContato(p) { return st(p) === 'ativa' && !p.email && !p.whatsapp; }
+  function fmtWa(w) { var d = String(w || '').replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, ''); if (d.length < 10) return w || ''; return '(' + d.slice(0, 2) + ') ' + (d.length === 11 ? d.slice(2, 3) + ' ' + d.slice(3, 7) + '-' + d.slice(7) : d.slice(2, 6) + '-' + d.slice(6)); }
+  window.fmtWa = fmtWa;
   function tipoP(p) { return areaDe(p) === 'cd' ? 'cardapio' : 'planos'; }
   function modeloTxt(p) {
     if (tipoP(p) === 'cardapio') return 'Cardápio';
@@ -68,10 +79,10 @@
     [p.v1, p.v2, p.v3].forEach(function (v, i) { if (pl[i] && v) o.push('P' + (i + 1) + ' R$ ' + v); });
     return o.join(' · ');
   }
-  function escolhaTxt(p) { var e = escolha(p); return e === 'plano' ? 'Escolheu um plano' : 'Escolheu ' + e; }
+  function escolhaTxt(p) { var e = escolha(p); return e === 'plano' ? 'Escolheu um plano' : 'Escolheu: ' + e + (valorEsc(p) ? ' (' + valorEsc(p) + ')' : ''); }
 
   // ---------- navegação ----------
-  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', emails: 'scrEmails', ajustes: 'scrAjustes'};
+  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes'};
   function irPara(t, semRolar) {
     if (!SEC[t]) t = 'inicio';
     var antes = TELA; TELA = t;
@@ -84,14 +95,16 @@
     document.body.classList.toggle('tem-foot', t === 'nova');
     if (t === 'nova' && antes !== 'nova' && AREA === 'cd' && !window.NV_DUP) { nvSync(); nvAbasDoModelo(); }
     if (t === 'nova') nvAtualiza();
-    if (t === 'ajustes') ajRender();
+    if (t === 'ajustes') { ajRender(); if (window.pxRender) pxRender(); }
+    if (t === 'conteudo' && window.ctCarregar) ctCarregar();
+    if (t !== 'conteudo') document.body.classList.remove('ct-pv-on');
     if (t === 'emails' && window.carregarPainelEmails) carregarPainelEmails();
     if (t === 'inicio') { renderInicio(); emailsSemana(false); atividades(false); }
     if (t === 'propostas') { renderLista(); if (largo()) renderDetalhe(); }
     if (!semRolar) window.scrollTo(0, 0);
   }
   window.irPara = irPara;
-  window.appEntrou = function () { document.body.classList.remove('lg'); irPara('inicio'); };
+  window.appEntrou = function () { document.body.classList.remove('lg'); irPara('inicio'); if (window.ctPublicados) ctPublicados(); };
   window.appRender = function () {
     renderInicio(); renderLista();
     if (TELA === 'detalhe') { if (propPorId(DET_ID)) renderDetalhe(); else irPara('propostas'); }
@@ -114,15 +127,17 @@
     return Promise.all([
       adm('listar2', {status: 'ativas', limite: 200, testes: true}),
       adm('listar2', {status: 'escolheram', limite: 100, testes: true}),
-      adm('listar2', Object.assign(filtros(), {limite: n}))
+      adm('listar2', Object.assign(filtros(), {limite: n})),
+      adm('listar2', {status: 'expiradas', limite: 60, testes: false}),
+      adm('listar2', {status: 'canceladas', limite: 30, testes: true})   // a proposta aberta no Detalhe continua atualizada depois de cancelar
     ]).then(function (rs) {
       if (seq !== LIS.seq) return;
       LIS.carregando = false;
       var ruim = rs.filter(function (r) { return !(r && r.ok); })[0];
       if (ruim) { LIS.ok = false; LIS.erro = erroTxt2(ruim); renderLista(); histMsg('Não foi possível carregar as propostas: ' + LIS.erro, true); return; }
-      INI.ativas = rs[0].lista; INI.esc = rs[1].lista;
+      INI.ativas = rs[0].lista; INI.esc = rs[1].lista; INI.exp = rs[3].lista;
       LIS.ok = true; LIS.erro = ''; LIS.ids = rs[2].lista.map(function (p) { return p.id; }); LIS.prox = rs[2].proximo || null; LIS.cont = rs[2].contagens || {}; LIS.testes = rs[2].testes || 0;
-      junta([rs[0].lista, rs[1].lista, rs[2].lista]);
+      junta([rs[0].lista, rs[1].lista, rs[2].lista, rs[3].lista, rs[4].lista]);
       appRender(_lista);
       if (TELA === 'inicio') atividades(true);
     }).catch(function (e) { LIS.carregando = false; if (e && e.message !== 'sessao') { LIS.ok = false; LIS.erro = 'sem conexão'; renderLista(); histMsg('Sem conexão com o servidor.', true); } });
@@ -147,7 +162,7 @@
   function saudacao() { var h = +partes(Date.now()).hour; return h >= 5 && h < 12 ? 'bom dia' : h >= 12 && h < 18 ? 'boa tarde' : 'boa noite'; }
   function renderInicio() {
     var t = limpa($('inTit')); t.appendChild(document.createTextNode(saudacao() + ', ')); t.appendChild(E('strong', null, 'Isaque'));
-    var vist = {}, base = INI.ativas.concat(INI.esc).map(function (p) { return propPorId(p.id) || p; })
+    var vist = {}, base = INI.ativas.concat(INI.esc, INI.exp || []).map(function (p) { return propPorId(p.id) || p; })
       .filter(function (p) { if (vist[p.id]) return false; vist[p.id] = 1; return !ehTeste(p); });
     var at = base.filter(function (p) { return st(p) === 'ativa'; });
     $('inAtivas').textContent = at.length;
@@ -158,14 +173,20 @@
     base.forEach(function (p) {
       var s = st(p); if (s === 'cancelada') return;
       var mot = [], prio = 9, ac = null, ic = 'eye', cls = '';
-      var esc = escolha(p), rest = Date.parse(p.expira_em) - Date.now();
-      if (esc && !fechada(p) && p.seq_status !== 'descadastrada') { mot.push(escolhaTxt(p)); prio = 1; ic = 'check'; cls = 'ok'; ac = {t: 'Fechou', c: 'ok', f: function () { seqFechou(p.id); }}; }
-      if (s === 'ativa' && rest > 0 && rest <= 86400000) { mot.push('Vence ' + quando(p.expira_em)); if (prio > 2) { prio = 2; ic = 'clock'; ac = {t: 'Renovar', f: function () { histReativar(p.id); }}; } }
+      var esc = escolha(p), rest = Date.parse(p.expira_em) - Date.now(), fol = followDe(p), acoes = [];
+      if (fol === 'escolheu' && p.seq_status !== 'descadastrada') { mot.push(escolhaTxt(p) + ' — confirmar fechamento'); prio = 1; ic = 'check'; cls = 'ok'; ac = {t: 'Fechou', c: 'ok', f: function () { mudaFollow(p, 'fechou'); }}; }
+      if (s === 'ativa' && rest > 0 && rest <= 86400000 && fol !== 'fechou' && fol !== 'perdido') { mot.push('Vence ' + quando(p.expira_em)); if (prio > 2) { prio = 2; ic = 'clock'; ac = {t: 'Renovar', f: function () { histReativar(p.id); }}; } }
       if (s === 'ativa' && nDv(p) > 3) { mot.push('Aberta em ' + nDv(p) + ' aparelhos'); if (prio > 3) { prio = 3; ic = 'phone'; cls = 'al'; } }
-      if (s === 'ativa' && nAb(p) > 0 && !esc) { mot.push('Abriu ' + nAb(p) + 'x, não escolheu'); if (prio > 4) prio = 4; }
+      var ult = Math.max(Date.parse(acs(p).ultimo || '') || NaN, Date.parse(p.follow_em || '') || 0);   // uma marcação sua também conta como resposta
+      var parado = nAb(p) > 0 && !esc && fol !== 'fechou' && fol !== 'perdido' && isFinite(ult) && Date.now() - ult >= 5 * 86400000;
+      if (parado) {
+        mot.push('Abriu e não respondeu há ' + Math.floor((Date.now() - ult) / 86400000) + ' dias');
+        if (prio > 3.5) { prio = 3.5; ic = 'clock'; cls = 'al'; acoes = [{t: 'WhatsApp', f: function () { abrirWhats(p); }}, {t: 'Ainda não decidiu', f: function () { mudaFollow(p, 'nao_decidiu'); }}]; }
+      } else if (s === 'ativa' && nAb(p) > 0 && !esc && fol !== 'fechou' && fol !== 'perdido') { mot.push('Abriu ' + nAb(p) + 'x, não escolheu'); if (prio > 4) prio = 4; }
+      if (s !== 'ativa' && !parado && !(fol === 'escolheu')) return;   // das expiradas, só "abriu e não respondeu" e "escolheu"
       if (semNicho(p)) { mot.push('Confirmar nicho'); if (prio > 5) { prio = 5; ic = 'tag'; } if (!ac) ac = {t: 'Confirmar nicho', f: function () { nichoMulher(p); }}; }
       if (!mot.length) return;
-      itens.push({p: p, mot: mot, prio: prio, ac: ac, ic: ic, cls: cls, rest: rest});
+      itens.push({p: p, mot: mot, prio: prio, ac: ac, acoes: acoes, ic: ic, cls: cls, rest: rest});
     });
     itens.sort(function (a, b) { return a.prio - b.prio || a.rest - b.rest; });
     $('inAtN').textContent = itens.length ? String(itens.length) : '';
@@ -180,9 +201,10 @@
       tx.setAttribute('aria-label', 'Abrir ' + x.p.cliente + ': ' + x.mot.join(', '));
       tx.addEventListener('click', function () { abrirDetalhe(x.p.id, 'inicio'); });
       r.appendChild(ic); r.appendChild(tx);
-      var a = x.ac || {t: 'Ver', f: function () { abrirDetalhe(x.p.id, 'inicio'); }};
-      var bt = B('lst-a' + (a.c ? ' ' + a.c : ''), null, a.t, a.f); bt.setAttribute('aria-label', a.t + ': ' + x.p.cliente);
-      r.appendChild(bt); box.appendChild(r);
+      var lista = x.acoes && x.acoes.length ? x.acoes : [x.ac || {t: 'Ver', f: function () { abrirDetalhe(x.p.id, 'inicio'); }}];
+      var bx = E('div', 'lst-as'); if (lista.length > 1) r.classList.add('dupla');
+      lista.forEach(function (a) { var bt = B('lst-a' + (a.c ? ' ' + a.c : ''), null, a.t, a.f); bt.setAttribute('aria-label', a.t + ': ' + x.p.cliente); bx.appendChild(bt); });
+      r.appendChild(bx); box.appendChild(r);
     });
     if (itens.length > 8) { var m = B('btn-out', null, 'Ver todas as propostas', function () { irPara('propostas'); }); m.style.cssText = 'width:100%;margin-top:8px;'; w.appendChild(m); }
   }
@@ -272,7 +294,9 @@
     var s = st(p);
     if (s === 'cancelada') return E('span', 'pill cn', 'Cancelada');
     if (s === 'expirada') return E('span', 'pill ex', 'Expirada');
-    if (escolha(p)) return E('span', 'pill ok', escolha(p) === 'plano' ? 'Escolheu' : 'Escolheu ' + escolha(p));
+    if (fechada(p)) return E('span', 'pill ok', 'Fechou');
+    if (escolha(p)) { var et = escolha(p) === 'plano' ? 'Escolheu' : 'Escolheu: ' + escolha(p), pe = E('span', 'pill ok pill-esc', et.length > 34 ? et.slice(0, 33) + '…' : et); pe.title = escolhaTxt(p); return pe; }
+    if (p.follow === 'perdido') return E('span', 'pill cn', 'Perdido');
     var r = Date.parse(p.expira_em) - Date.now(), d = diaNum(Date.parse(p.expira_em)) - diaNum(Date.now());
     if (r > 0 && d <= 1) return E('span', 'pill vc', d === 0 ? 'Vence hoje' : 'Vence amanhã');
     return E('span', 'pill at', 'Ativa');
@@ -293,8 +317,11 @@
     b.appendChild(E('span', 'pill', ab ? 'Abriu ' + ab + 'x' : 'Não abriu'));
     if (dv) b.appendChild(E('span', 'pill', dv + (dv === 1 ? ' dispositivo' : ' dispositivos')));
     if (dv > 3) { var a = E('span', 'pill al'); a.appendChild(Ic('alert', 14)); a.appendChild(document.createTextNode(dv + ' aparelhos')); a.title = 'Aberta em mais de 3 aparelhos: o link pode ter sido repassado'; b.appendChild(a); }
-    if (escolha(p) && st(p) !== 'ativa') b.appendChild(E('span', 'pill ok', escolhaTxt(p)));
-    if (fechada(p)) b.appendChild(E('span', 'pill ok', 'Cliente fechou'));
+    if (escolha(p) && (st(p) !== 'ativa' || fechada(p))) b.appendChild(E('span', 'pill ok', escolhaTxt(p)));
+    if (fechada(p) && st(p) !== 'ativa') b.appendChild(E('span', 'pill ok', 'Fechou'));
+    if (p.follow === 'perdido' && st(p) !== 'ativa') b.appendChild(E('span', 'pill cn', 'Perdido'));
+    if (p.follow === 'nao_decidiu') b.appendChild(E('span', 'pill', 'Ainda não decidiu'));
+    if (semContato(p)) { var sc = E('span', 'pill al', 'Sem contato'); sc.title = 'Sem e-mail e sem WhatsApp'; b.appendChild(sc); }
     c.appendChild(b);
     c.setAttribute('aria-label', p.cliente + ', ' + modeloTxt(p) + ', ' + validadeTxt(p) + ', ' + (ab ? 'abriu ' + ab + ' vezes' : 'não abriu'));
     if (largo() && DET_ID === p.id) { c.classList.add('sel'); c.setAttribute('aria-current', 'true'); }
@@ -361,7 +388,8 @@
     w.appendChild(E('span', 'mk', '// ' + modeloTxt(p).toLowerCase()));
     w.appendChild(E('h1', 'tt', p.cliente));
     var vt = valoresTxt(p); if (vt) w.appendChild(E('div', 'dt-meta', vt));
-    var pb = E('div', 'pc-b'); pb.appendChild(pillStatus(p)); if (ehTeste(p)) pb.appendChild(E('span', 'pill ts', 'Teste')); if (semNicho(p)) pb.appendChild(E('span', 'pill ni', 'Nicho?')); if (fechada(p)) pb.appendChild(E('span', 'pill ok', 'Cliente fechou')); w.appendChild(pb);
+    var pb = E('div', 'pc-b'); pb.appendChild(pillStatus(p)); if (ehTeste(p)) pb.appendChild(E('span', 'pill ts', 'Teste')); if (semNicho(p)) pb.appendChild(E('span', 'pill ni', 'Nicho?')); if (semContato(p)) pb.appendChild(E('span', 'pill al', 'Sem contato')); w.appendChild(pb);
+    if (escolha(p)) w.appendChild(E('div', 'dt-esc', escolhaTxt(p) + (p.escolha && p.escolha.em ? ' · ' + quando(p.escolha.em) : '')));
     // validade
     var vd = E('div', 'vd'), vl = E('div', 'vd-l'), bar = E('div', 'vd-b'), fil = E('div');
     if (s === 'cancelada') { vl.appendChild(E('span', null, 'Cancelada ' + (p.cancelada_em ? quando(p.cancelada_em) : ''))); vl.appendChild(E('span', null, 'link bloqueado')); fil.style.width = '0'; }
@@ -376,21 +404,21 @@
     // 3 ações
     var acts = E('div', 'acts'), ativa = s === 'ativa', semLink = !link;
     var bc = B('btn-out', 'copy', 'Copiar link', function () { if (link) copiar(link, bc); }); bc.disabled = semLink;
-    var bw = B('btn-out', 'wa', 'WhatsApp', function () { if (link) window.open('https://wa.me/?text=' + encodeURIComponent(mensagemWA(p, link)), '_blank', 'noopener'); }); bw.disabled = semLink || !ativa;
+    var bw = B('btn-out', 'wa', 'WhatsApp', function () { abrirWhats(p); }); bw.disabled = !(linkCliente(p) || p.tem_snapshot || snapDe(p.id)) || s === 'cancelada';
     var be = B('btn-out', 'mail', 'E-mail'); be.disabled = !p.email || !ativa; if (!be.disabled) be.setAttribute('data-mail', p.id);
     acts.appendChild(bc); acts.appendChild(bw); acts.appendChild(be); w.appendChild(acts);
     var notas = [];
     if (semLink) notas.push(p.tem_snapshot || snapDe(p.id) ? 'Carregando o link…' : 'O link desta proposta antiga não foi guardado.');
-    if (!ativa) notas.push('WhatsApp e e-mail só para proposta ativa.');
-    else if (!p.email) notas.push('Sem e-mail cadastrado.');
+    if (!ativa) notas.push('E-mail só para proposta ativa.');
     if (notas.length) w.appendChild(E('div', 'acts-n', notas.join(' ')));
     // atividade (eventos com data e hora; registros antigos em resumo)
     var cols = E('div', 'dt-cols'), c1 = E('div'), c2 = E('div'); cols.appendChild(c1); cols.appendChild(c2); w.appendChild(cols);
+    blocoFollow(p, c2); blocoContato(p, c2);
     var hd = E('div', 'sec-hd'); hd.appendChild(E('h2', 'sec', 'Atividade do cliente'));
     var ab = nAb(p), dv = nDv(p); hd.appendChild(E('span', null, ab ? ab + (ab === 1 ? ' abertura' : ' aberturas') + (dv ? ' · ' + dv + (dv === 1 ? ' dispositivo' : ' dispositivos') : '') : '')); c1.appendChild(hd);
     var tl = E('div', 'tl'); c1.appendChild(tl);
     if (dv > 3) tl.appendChild(tlItem('al', 'Aberta em ' + dv + ' aparelhos', 'O link pode ter sido repassado.'));
-    if (escolha(p) && !(EV[p.id] && (EV[p.id].eventos || []).some(function (e) { return e.tipo === 'escolheu_plano'; }))) tl.appendChild(tlItem('ok', escolhaTxt(p), fechada(p) ? 'Marcada como cliente fechou' : 'Falta marcar "Cliente fechou"'));
+    if (escolha(p) && !(EV[p.id] && (EV[p.id].eventos || []).some(function (e) { return e.tipo === 'escolheu_plano'; }))) tl.appendChild(tlItem('ok', escolhaTxt(p), fechada(p) ? 'Fechou' : 'Falta confirmar o fechamento'));
     var X = EV[p.id];
     if (!X) tl.appendChild(tlItem('mu', 'Carregando a atividade…', null));
     else if (X.erro) tl.appendChild(tlItem('mu', 'Não foi possível carregar a atividade agora.', null));
@@ -417,22 +445,146 @@
       infoL(inf, 'Para', p.email);
       if (p.envio_erro) infoL(inf, 'Envio', 'Erro: ' + p.envio_erro + (p.enviado_em ? ' (último ok ' + quando(p.enviado_em) + ')' : ''), 'err-t');
       else infoL(inf, 'Envio', p.enviado_em ? 'Enviado ' + quando(p.enviado_em) : 'Ainda não enviado', p.enviado_em ? 'ok-t' : null);
-      var sq = p.suprimido ? ['Bloqueado (rejeitado ou spam)', 'err-t'] : p.seq_status === 'fechada' ? ['Parados: cliente fechou', 'ok-t'] : p.seq_status === 'pausada' ? ['Pausados', 'al-t'] : p.seq_status === 'descadastrada' ? ['Parados: o cliente pediu para sair', 'err-t'] : ['Lembretes ligados (9h–11h, dia útil)', null];
+      var fo = followDe(p);
+      var sq = p.suprimido ? ['Bloqueado (rejeitado ou spam)', 'err-t'] : p.seq_status === 'descadastrada' ? ['Parados: o cliente pediu para sair', 'err-t'] : fo === 'fechou' || p.seq_status === 'fechada' ? ['Parados: fechou (lembretes e datas especiais)', 'ok-t'] : fo === 'escolheu' ? ['Parados: o cliente escolheu ' + (escolha(p) === 'plano' ? 'um plano' : escolha(p)), 'ok-t'] : fo === 'perdido' ? ['Lembretes parados (perdido). Datas especiais continuam.', 'al-t'] : p.seq_status === 'pausada' ? ['Pausados', 'al-t'] : p.seq_status === 'descadastrada' ? ['Parados: o cliente pediu para sair', 'err-t'] : ['Lembretes ligados (9h–11h, dia útil)', null];
       infoL(inf, 'Automáticos', sq[0], sq[1]);
       var bt = B('btn-out', 'mail', 'E-mails desta proposta'); bt.setAttribute('data-tl', p.id); bt.style.cssText = 'width:100%;margin-top:8px;'; c1.appendChild(bt);
     }
     // gerenciar
     var h3 = E('div', 'sec-hd'); h3.appendChild(E('h2', 'sec', 'Gerenciar')); h3.appendChild(E('span')); c2.appendChild(h3);
     var gr = E('div', 'gr'); c2.appendChild(gr);
-    if (p.seq_status !== 'descadastrada') { var bf = B('btn-out', fechada(p) ? 'restore' : 'check', fechada(p) ? 'Desfazer "Cliente fechou" (religar lembretes)' : 'Cliente fechou'); bf.setAttribute('data-fech', p.id); gr.appendChild(bf); }
     var br = B('btn-out', 'refresh', s === 'cancelada' ? 'Reativar proposta' : s === 'expirada' ? 'Reativar validade' : 'Renovar validade'); br.setAttribute('data-rea', p.id); gr.appendChild(br);
     var bd = B('btn-out', 'dup', 'Duplicar'); bd.setAttribute('data-dup', String(idx)); gr.appendChild(bd);
-    if (p.email && p.seq_status !== 'descadastrada' && !p.suprimido && !fechada(p)) gr.appendChild(B('btn-out', p.seq_status === 'pausada' ? 'play' : 'pause', p.seq_status === 'pausada' ? 'Retomar e-mails desta proposta' : 'Pausar e-mails desta proposta', function () { pausar(p); }));
+    if (p.email && p.seq_status !== 'descadastrada' && !p.suprimido && !fechada(p) && followDe(p) !== 'escolheu' && followDe(p) !== 'perdido') gr.appendChild(B('btn-out', p.seq_status === 'pausada' ? 'play' : 'pause', p.seq_status === 'pausada' ? 'Retomar e-mails desta proposta' : 'Pausar e-mails desta proposta', function () { pausar(p); }));
     gr.appendChild(B('btn-out', 'tag', (semNicho(p) ? 'Confirmar nicho · ' : 'Nicho e cliente mulher · ') + (NICHO_N[p.nicho] || 'Arquiteto/Designer') + (p.cliente_mulher ? ' · mulher' : ''), function () { nichoMulher(p); }));
     var rz = E('div', 'risco'); c2.appendChild(rz);
     if (s !== 'cancelada') { var bx = B('btn-enc', 'ban', 'Cancelar proposta'); bx.setAttribute('data-enc', p.id); rz.appendChild(bx); }
     rz.appendChild(B('btn-enc', 'trash', 'Mover para a lixeira', function () { paraLixeira(p); }));
   }
+  // ---- follow-up ----
+  var FOLLOW_ORD = ['aguardando', 'nao_decidiu', 'escolheu', 'fechou', 'perdido'];
+  var FOLLOW_AJ = {aguardando: 'Lembretes automáticos normais.', nao_decidiu: 'Desfaz a escolha/fechamento e religa os lembretes por e-mail.', escolheu: 'Para os lembretes e as datas especiais.', fechou: 'Para tudo: lembretes e datas especiais.', perdido: 'Para os lembretes. Datas especiais continuam (se não saiu da lista).'};
+  function blocoFollow(p, box) {
+    var hd = E('div', 'sec-hd'); hd.appendChild(E('h2', 'sec', 'Situação')); hd.appendChild(E('span', null, p.follow_em ? 'desde ' + quando(p.follow_em) : '')); box.appendChild(hd);
+    var cur = followDe(p), seg = E('div', 'fw-seg'); seg.setAttribute('role', 'radiogroup'); seg.setAttribute('aria-label', 'Situação da proposta');
+    FOLLOW_ORD.forEach(function (k) {
+      var b = B('fw-o' + (k === cur ? ' on' : ''), null, FOLLOW_N[k], function () { if (k !== cur) mudaFollow(p, k); });
+      b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', k === cur ? 'true' : 'false'); b.setAttribute('data-fw', k); seg.appendChild(b);
+    });
+    box.appendChild(seg); box.appendChild(E('div', 'fw-aj', FOLLOW_AJ[cur]));
+    var X = EV[p.id], hs = X && X.follow;
+    if (hs && hs.length) {
+      var l = E('div', 'fw-h');
+      hs.slice(0, 8).forEach(function (h) { var r = E('div'); r.appendChild(E('b', null, FOLLOW_N[h.status] || h.status)); r.appendChild(E('span', null, quando(h.em) + (h.nota ? ' · ' + h.nota : ''))); l.appendChild(r); });
+      box.appendChild(l);
+    }
+  }
+  function expiradaOuParada(p) { var s = st(p); return s !== 'ativa'; }
+  function mudaFollow(p, status, dias) {
+    var nome = p.cliente;
+    if (status === 'nao_decidiu' && !dias && expiradaOuParada(p)) return pedeDias(p);
+    var txt = {aguardando: ['Voltar para "Aguardando"?', 'Os lembretes seguem o fluxo normal.'], nao_decidiu: ['Marcar "Ainda não decidiu"?', 'Desfaz a escolha ou o fechamento e religa os lembretes por e-mail (lembrete e último aviso).'], escolheu: ['Marcar "Escolheu"?', 'Para os lembretes e os e-mails de datas especiais para este contato.'], fechou: ['Marcar "Fechou"?', 'Para tudo: lembretes e e-mails de datas especiais.'], perdido: ['Marcar "Perdido"?', 'Para os lembretes. Os e-mails de datas especiais continuam (se o cliente não saiu da lista).']}[status];
+    var roda = function () {
+      hFechar(); histMsg('Salvando…');
+      adm('follow', {id: p.id, status: status, dias: dias || null}).then(function (r) {
+        if (r && r.motivo === 'precisa_renovar') return pedeDias(p);
+        if (!(r && r.ok)) return histMsg('Não foi possível: ' + erroTxt2(r), true);
+        p.follow = r.status === 'aguardando' ? null : r.status; p.follow_em = new Date().toISOString(); if (r.expira_em) p.expira_em = r.expira_em;
+        delete EV[p.id];
+        var msg = FOLLOW_N[status] + ' — salvo' + (r.nota ? ' (' + r.nota + ')' : '') + '.';
+        return carregarHistorico().then(function () {
+          histMsg(msg); if (DET_ID === p.id) carregaEventos(p.id);
+          if (status === 'nao_decidiu' && p.whatsapp) abrirWhats(propPorId(p.id) || p, 'lembrete');
+        });
+      }).catch(function () {});
+    };
+    if (dias) return roda();
+    hModal(txt[0], nome + '. ' + txt[1], null, [{t: 'Voltar', f: hFechar}, {t: 'Confirmar', c: 'pri', f: roda}]);
+  }
+  window.mudaFollow = mudaFollow;
+  function pedeDias(p) {
+    var esc = 7;
+    var refs = hModal('Renovar por quantos dias?', p.cliente + ' está ' + (st(p) === 'cancelada' ? 'cancelada' : 'expirada') + '. Para marcar "Ainda não decidiu", o link volta a abrir por:', function (c) {
+      var g = E('div', 'fw-dias');
+      [2, 5, 7].forEach(function (d) { var b = B('fw-o' + (d === esc ? ' on' : ''), null, d + ' dias', function () { esc = d; g.querySelectorAll('.fw-o').forEach(function (x) { x.classList.toggle('on', x === b); }); o.value = ''; }); g.appendChild(b); });
+      c.appendChild(g);
+      var l = E('label', 'label', 'Outra quantidade (1 a 30)'); l.htmlFor = 'fwDias'; c.appendChild(l);
+      var o = E('input', 'inp'); o.id = 'fwDias'; o.type = 'number'; o.min = '1'; o.max = '30'; o.inputMode = 'numeric';
+      o.addEventListener('input', function () { g.querySelectorAll('.fw-o').forEach(function (x) { x.classList.remove('on'); }); }); c.appendChild(o);
+    }, [{t: 'Voltar', f: hFechar}, {t: 'Renovar e marcar', c: 'pri', f: function () {
+      var o = $('fwDias'), d = o && o.value ? parseInt(o.value, 10) : esc;
+      if (!(d >= 1 && d <= 30)) { o.focus(); return; }
+      mudaFollow(p, 'nao_decidiu', d);
+    }}]);
+    return refs;
+  }
+  // ---- contato (e-mail e WhatsApp) ----
+  function blocoContato(p, box) {
+    var hd = E('div', 'sec-hd'); hd.appendChild(E('h2', 'sec', 'Contato')); hd.appendChild(E('span')); box.appendChild(hd);
+    var inf = E('div', 'info'); box.appendChild(inf);
+    infoL(inf, 'E-mail', p.email || '—', p.email ? null : 'mu-t');
+    infoL(inf, 'WhatsApp', p.whatsapp ? fmtWa(p.whatsapp) : '—', p.whatsapp ? null : 'mu-t');
+    var b = B('btn-out', 'edit', 'Editar contato', function () { editarContato(p); }); b.style.cssText = 'width:100%;margin-top:8px;'; box.appendChild(b);
+  }
+  function editarContato(p, depois) {
+    hModal('Contato de ' + p.cliente, 'E-mail ativa os lembretes por e-mail. WhatsApp é para as mensagens que você manda.', function (c) {
+      var l1 = E('label', 'label', 'E-mail'); l1.htmlFor = 'ctEmail'; c.appendChild(l1);
+      var e = E('input', 'inp'); e.id = 'ctEmail'; e.type = 'email'; e.value = p.email || ''; e.autocomplete = 'off'; c.appendChild(e);
+      var l2 = E('label', 'label', 'WhatsApp'); l2.htmlFor = 'ctWhats'; l2.style.marginTop = '10px'; c.appendChild(l2);
+      var w = E('input', 'inp'); w.id = 'ctWhats'; w.type = 'tel'; w.inputMode = 'numeric'; w.placeholder = '(13) 9 0000-0000'; w.maxLength = 16; w.value = p.whatsapp ? fmtWa(p.whatsapp) : '';
+      w.addEventListener('input', function () { var v = mascaraWhats(w.value); if (v !== w.value) w.value = v; }); c.appendChild(w);
+      var m = E('div', 'hist-info'); m.id = 'ctMsg'; m.setAttribute('role', 'status'); m.style.marginTop = '6px'; c.appendChild(m);
+    }, [{t: 'Voltar', f: hFechar}, {t: 'Salvar', c: 'pri', f: function (bt) {
+      var em = $('ctEmail').value.trim(), wd = $('ctWhats').value.replace(/\D/g, ''), m = $('ctMsg');
+      if (em && !/^\S+@\S+\.\S+$/.test(em)) { m.textContent = 'E-mail inválido.'; m.style.color = 'var(--err)'; return; }
+      if (wd && wd.length !== 10 && wd.length !== 11) { m.textContent = 'WhatsApp: DDD + 8 ou 9 dígitos.'; m.style.color = 'var(--err)'; return; }
+      bt.disabled = true; m.style.color = ''; m.textContent = 'Salvando…';
+      adm('contato', {id: p.id, email: em, whatsapp: wd ? '55' + wd : ''}).then(function (r) {
+        bt.disabled = false;
+        if (!(r && r.ok)) { m.textContent = 'Não foi possível: ' + erroTxt2(r); m.style.color = 'var(--err)'; return; }
+        p.email = em || null; p.whatsapp = wd ? '55' + wd : null; hFechar(); histMsg('Contato salvo.');
+        carregarHistorico().then(function () { histMsg('Contato salvo.'); if (depois) depois(); });
+      }).catch(function () { bt.disabled = false; });
+    }}]);
+  }
+  window.editarContato = editarContato;
+  // ---- WhatsApp manual (wa.me com o número do cliente e texto editável) ----
+  var WA_PADRAO = {
+    envio: 'Oi, [Nome]! Preparei sua proposta exclusiva: [link]. Ela vale até [data].',
+    lembrete: 'Oi, [Nome]! Passando pra saber se ficou alguma dúvida sobre a proposta. Ela continua disponível até [data]: [link]. Bora criar com os pulguinhas?',
+    vence: 'Oi, [Nome]! Sua proposta vence amanhã ([data]). Quer fechar, ajustar ou pedir um tempinho a mais? [link]'
+  };
+  var WA_N = {envio: 'Envio do link', lembrete: 'Lembrete', vence: 'Vence amanhã'};
+  function waTextos() { var c = window.SP_CONTEUDO && SP_CONTEUDO.whatsapp; var o = {}; Object.keys(WA_PADRAO).forEach(function (k) { o[k] = (c && c[k]) || WA_PADRAO[k]; }); return o; }
+  function linkCliente(p) { return p.curto ? location.origin + '/p/' + p.curto : (LINKS[p.id] || ((snapDe(p.id) || {}).link) || ''); }
+  function situacaoWa(p) {
+    var d = diaNum(Date.parse(p.expira_em)) - diaNum(Date.now());
+    if (st(p) === 'ativa' && d === 1) return 'vence';
+    if (nAb(p) > 0 || p.follow === 'nao_decidiu') return 'lembrete';
+    return 'envio';
+  }
+  function preencheWa(t, p, link) {
+    var esc = p.escolha || {};
+    return t.replace(/\[Nome\]/gi, primeiroNome(p.cliente) || '').replace(/\[data\]/gi, fmtValidade(Date.parse(p.expira_em))).replace(/\[link\]/gi, link || '')
+      .replace(/\[item\]/gi, esc.item || '').replace(/\[valor\]/gi, esc.valor || '').replace(/\*\*/g, '*').replace(/ +([.,!?])/g, '$1').replace(/^Oi, !/, 'Oi!');
+  }
+  window.preencheWa = preencheWa;
+  function abrirWhats(p, modo) {
+    if (!p.whatsapp) return editarContato(p, function () { if (p.whatsapp) abrirWhats(p, modo); });
+    var link = linkCliente(p);
+    if (!link && (p.tem_snapshot || snapDe(p.id))) return comSnap(p, function (L) { if (L && L.link) { LINKS[p.id] = L.link; abrirWhats(p, modo); } else histMsg('O link desta proposta não foi encontrado.', true); });
+    var T = waTextos(), k = modo || situacaoWa(p), ta;
+    hModal('WhatsApp para ' + p.cliente, fmtWa(p.whatsapp) + ' · revise o texto antes de enviar.', function (c) {
+      var g = E('div', 'fw-dias');
+      Object.keys(WA_N).forEach(function (m) { var b = B('fw-o' + (m === k ? ' on' : ''), null, WA_N[m], function () { k = m; ta.value = preencheWa(T[m], p, link); g.querySelectorAll('.fw-o').forEach(function (x) { x.classList.toggle('on', x === b); }); }); b.setAttribute('data-wa', m); g.appendChild(b); });
+      c.appendChild(g);
+      ta = E('textarea', 'inp wa-ta'); ta.id = 'waTxt'; ta.rows = 6; ta.value = preencheWa(T[k], p, link); ta.setAttribute('aria-label', 'Texto da mensagem'); c.appendChild(ta);
+      var tr = B('lnk', null, 'Trocar número', function () { editarContato(p, function () { abrirWhats(p, k); }); }); c.appendChild(tr);
+    }, [{t: 'Voltar', f: hFechar}, {t: 'Abrir WhatsApp', c: 'pri', f: function () {
+      var u = 'https://wa.me/' + p.whatsapp + '?text=' + encodeURIComponent(ta.value); hFechar(); window.open(u, '_blank', 'noopener');
+    }}]);
+  }
+  window.abrirWhats = abrirWhats;
   function pausar(p) {
     var pa = p.seq_status === 'pausada';
     hModal(pa ? 'Retomar os e-mails?' : 'Pausar os e-mails desta proposta?', pa ? 'Os lembretes automáticos voltam a valer para "' + p.cliente + '".' : 'Nenhum e-mail automático vai para "' + p.cliente + '" até você retomar. O link continua abrindo.', null,
@@ -598,6 +750,8 @@
     document.querySelectorAll('#secNova [data-mdl]').forEach(function (b) { b.addEventListener('click', function () { nvModelo(b.getAttribute('data-mdl')); }); });
     $('nichoAlt').addEventListener('click', function () { var bx = $('nichoBox'), ab = bx.style.display === 'none'; bx.style.display = ab ? '' : 'none'; this.setAttribute('aria-expanded', ab ? 'true' : 'false'); this.textContent = ab ? 'Fechar' : 'Alterar'; if (ab) $('fNicho').focus(); });
     $('fNicho').addEventListener('change', nvAtualiza);
+    if ($('fWhats')) $('fWhats').addEventListener('input', function () { var v = mascaraWhats(this.value); if (v !== this.value) this.value = v; $('whatsErr').style.display = ''; });
+    if ($('fWhats')) $('fWhats').addEventListener('blur', function () { whatsOk(); });
     $('ajTog').addEventListener('click', function () { var bx = $('ajBody'), ab = bx.style.display === 'none'; bx.style.display = ab ? '' : 'none'; this.setAttribute('aria-expanded', ab ? 'true' : 'false'); });
     ['fEmail', 'fV1', 'fV2', 'fV3', 'fVO1', 'fVO2', 'fVO3', 'cdVEntrada'].forEach(function (id) { $(id).addEventListener('input', nvAtualiza); });
     ['ck1', 'ck2', 'ck3'].forEach(function (id) { $(id).addEventListener('change', nvAtualiza); $('divC' + id.slice(1)).addEventListener('click', function () { setTimeout(nvAtualiza, 0); }); });

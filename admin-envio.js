@@ -61,6 +61,8 @@
     window.envioGerado(id, email);
     var mu = document.getElementById('fMulher');
     if (mu && mu.checked && typeof adm === 'function') adm('mulher', {id: id, valor: true}).catch(function () {});  // marca "cliente mulher" (opcional)
+    var wa = document.getElementById('fWhats'), wd = wa ? wa.value.replace(/\D/g, '') : '';   // WhatsApp do cliente (opcional) -> salvo como 55 + dígitos
+    if ((wd.length === 10 || wd.length === 11) && typeof adm === 'function') adm('contato', {id: id, whatsapp: '55' + wd}).catch(function () {});
     var ni = document.getElementById('fNicho');   // nicho (escolhido ou automático pelo modelo)
     if (ni && ni.value && typeof adm === 'function') adm('nicho_confirmar', {id: id, valor: ni.value}).catch(function () {});   // nicho escolhido na Nova = confirmado
     window.SP_AUTOENVIO = (cb && cb.checked && email) ? function () {

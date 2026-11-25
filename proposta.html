@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1973272740000551');fbq('track','PageView');fbq('track','ViewContent',{content_name:'Proposta Studio Pulga'});</script>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -631,6 +630,7 @@
     <div class="c3-conf" id="c3Fin" role="dialog" aria-modal="true" aria-labelledby="c3FinT" hidden><div class="c3-conf-b c3-fin-b" id="c3FinB"></div></div>
     <div class="c3-conf" id="c3Conf" role="alertdialog" aria-modal="true" aria-labelledby="c3ConfT" hidden><div class="c3-conf-b"><p id="c3ConfT"></p><div class="c3-conf-bt"><button type="button" id="c3ConfOk">Confirmar</button><button type="button" id="c3ConfNo">Cancelar</button></div></div></div>
   </div></template>
+  <script src="/conteudo-campos.js"></script><script src="/proposta-conteudo.js"></script><script src="/proposta-pixel.js"></script>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
@@ -747,6 +747,7 @@
       }).then(function(st){
         // Servidor respondeu: a partir daqui a decisao e dele
         if(st.agora){var sv=new Date(st.agora).getTime();if(isFinite(sv))SKEW=sv-Date.now();}
+        if(window.spConteudo)spConteudo(st,'antes');   // textos publicados na aba Conteúdo do admin (proposta-conteudo.js)
         // O servidor decide: prazo vencido (expirada) vem antes; depois link inexistente/alterado.
         if(st.indisponivel===true){mostraTela('indisponivel');return;}   // cancelada ou excluída pelo Studio
         if(st.expirada===true){mostraTela('expirada');return;}
@@ -754,7 +755,9 @@
         if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
         if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
         document.documentElement.classList.add('sp-ok');   // so agora o conteudo aparece
+        if(window.spConteudoAntes)spConteudoAntes();
         renderProposta();
+        if(window.spConteudo)spConteudo(st,'depois');
       },function(){
         // Sem resposta do servidor (rede, bloqueio, erro): nao abre a proposta e nao diz "expirada"
         mostraTela('rede');
@@ -988,7 +991,6 @@
       if(d.email)msg+='\nE-mail: '+d.email;
       if(d.tel)msg+='\nTelefone: '+d.tel;
       msg+='\nProposta válida até '+ate+'.\nPodemos avançar?';
-      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Plano '+num});
       if(/^\S+@\S+\.\S+$/.test(d.email||'')){
         try{fetch('/api/enviar-proposta',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({lh:PROPOSTA.lh||'',email:d.email,planoEscolhido:'plan'+num,linkProposta:window.location.href})}).catch(function(){});}catch(x){}
       }
@@ -1227,7 +1229,6 @@
       var msg='Olá! Sou '+PROPOSTA.nome+'. Quero este pacote:\n'+t.linhas.join('\n')+
         '\n\nTotal mensal: R$ '+cdFmt(t.m)+'\nTotal único: R$ '+cdFmt(t.u)+
         '\nProposta válida até '+ate+'.\nPodemos avançar?';
-      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
       var url='https://wa.me/5513996057099?text='+encodeURIComponent(msg);
       var w=window.open(url,'_blank');
       if(!w)window.location.href=url;
@@ -1561,7 +1562,6 @@
       if(d.email)msg+='\nE-mail: '+d.email;
       if(d.tel)msg+='\nTelefone: '+d.tel;
       msg+='\nProposta válida até '+ate+'.\nPodemos avançar?';
-      if(window.fbq)fbq('track','Lead',{content_name:'Fechou Cardápio'});
       c3AbreZap(msg);
     }
 

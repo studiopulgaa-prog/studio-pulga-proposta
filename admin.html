@@ -64,7 +64,7 @@ body.lg{background:#2A0E05;}
 .scr.on{display:block;}
 .scr-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 18px;}
 .scr-hd>div{min-width:0;}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0 max(4px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-left));}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:0 max(4px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-left));}
 .nav-logo{display:none;}
 .nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:var(--nav-h);border:none;background:none;color:var(--tx2);font-size:11px;font-weight:500;padding:6px 2px;}
 .nav button svg{width:22px;height:22px;}
@@ -338,6 +338,99 @@ body.tem-foot .hist-msg{bottom:calc(var(--nav-h) + 136px + env(safe-area-inset-b
 .hist-info strong{color:var(--tx);}
 .hist-tipo{font-size:12px;font-weight:600;color:var(--tx2);}
 .pill.ni{background:#EEE3F7;color:#5B2C7A;}
+/* ===== Conteúdo ===== */
+.ct-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ct-status{font-size:13px;color:var(--tx2);flex:1 1 240px;line-height:1.4;}
+.ct-status.al{color:var(--warn);font-weight:600;}
+.ct-bb{display:flex;gap:8px;flex-wrap:wrap;}
+.ct-sel{margin-bottom:16px;}
+.ct-grid{display:block;}
+.ct-nav{display:none;}
+.ct-pv{display:none;}
+.ct-pvb{width:100%;margin-top:12px;}
+.ct-edh{margin-bottom:6px;}
+.ct-tt{font-family:var(--ft);font-weight:300;font-size:24px;letter-spacing:-0.02em;margin-bottom:6px;}
+.ct-sub{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);font-weight:600;margin:18px 0 8px;}
+.ct-f{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 12px 10px;}
+.ct-f.ct-warn{border-color:#D9A441;}
+.ct-fh{display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.ct-fh .label{margin-bottom:4px;}
+.ct-mod{font-size:11px;font-weight:600;color:var(--warn);background:var(--warnbg);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+.ct-tb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px;}
+.ct-ch{min-height:36px;min-width:36px;padding:0 10px;border:1px solid var(--line);background:var(--bg);color:var(--br);border-radius:999px;font-size:13px;font-weight:600;}
+.ct-b{font-weight:800;}
+.ct-rs{margin-left:auto;font-size:13px;min-height:36px;}
+.ct-ta{min-height:96px;resize:vertical;line-height:1.5;}
+.ct-av{font-size:12px;color:var(--warn);margin-top:6px;}
+.ct-av:empty{display:none;}
+.ct-dica{font-size:12px;color:var(--tx2);margin:6px 0 12px;}
+.ct-teste{width:100%;margin-top:4px;}
+.ct-camps{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.ct-camp{text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-height:52px;}
+.ct-camp span{font-size:12px;color:var(--tx2);}
+.ct-camp.on{border-color:var(--br);box-shadow:0 0 0 1px var(--br) inset;}
+.ct-camp.off b{color:var(--tx2);}
+.ct-cbox{margin-top:12px;}
+.ct-dt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:12px;}
+.ct-cbox select.inp{margin-bottom:12px;}
+.ct-acs{display:flex;justify-content:flex-end;}
+.ct-del{color:var(--err);}
+.ct-vers{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.ct-ver{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;}
+.ct-ver>div{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.ct-ver span,.ct-ver small{font-size:12px;color:var(--tx2);overflow-wrap:anywhere;}
+.ct-fab{width:100%;}
+.ct-err,.ct-mud{margin:6px 0 10px 18px;font-size:14px;line-height:1.5;}
+.ct-aviso{font-size:13px;background:var(--warnbg);color:var(--warn);border-radius:10px;padding:8px 10px;margin-bottom:10px;}
+.ct-aviso-a{font-size:12px;color:var(--tx2);margin:2px 0 4px 34px;}
+.ct-pvh{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);font-weight:600;margin-bottom:8px;}
+.ct-cel{width:100%;max-width:420px;margin:0 auto;}
+.ct-cel iframe{display:block;width:100%;height:calc(100vh - 150px);border:0;border-radius:18px;background:#fff;}
+.ct-mail-a{font-size:13px;font-weight:600;margin-bottom:6px;overflow-wrap:anywhere;}
+.ct-mf{display:block;width:100%;height:calc(100vh - 170px);min-height:420px;border:1px solid var(--line);border-radius:14px;background:#F4EADD;}
+.ct-zap{background:#E9DFD3;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;}
+.ct-zap-r{font-size:11px;color:var(--tx2);font-weight:600;margin-top:6px;}
+.ct-zap-b{align-self:flex-end;max-width:88%;background:#D9FDD3;color:#111;border-radius:12px 12px 2px 12px;padding:8px 10px;font-size:14px;line-height:1.4;overflow-wrap:anywhere;}
+.ct-pv-x{display:none;}
+body.ct-pv-on .ct-pv{display:block;position:fixed;inset:0;z-index:300;background:var(--bg);overflow:auto;padding:max(12px,env(safe-area-inset-top)) 12px 96px;}
+body.ct-pv-on .ct-pv-x{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:301;width:auto;}
+body.ct-pv-on{overflow:hidden;}
+@media (min-width:1100px){
+  #scrConteudo{max-width:none;}
+  .ct-sel,.ct-pvb{display:none;}
+  .ct-grid{display:grid;grid-template-columns:190px minmax(0,1fr) 410px;gap:22px;align-items:start;}
+  .ct-nav{display:flex;flex-direction:column;gap:2px;position:sticky;top:24px;}
+  .ct-pv{display:block;position:sticky;top:24px;}
+  .ct-cel{width:390px;max-width:none;height:min(780px,calc(100vh - 90px));border:9px solid #2A0E05;border-radius:34px;overflow:hidden;background:#fff;}
+  .ct-cel iframe{height:100%;border-radius:0;}
+  .ct-mf{height:min(780px,calc(100vh - 110px));}
+  body.ct-pv-on .ct-pv{position:sticky;inset:auto;z-index:auto;padding:0;overflow:visible;}
+  body.ct-pv-on .ct-pv-x{display:none;}
+  body.ct-pv-on{overflow:auto;}
+}
+.px-bts{display:flex;gap:8px;flex-wrap:wrap;}
+.px-bts .btn-out{flex:1 1 140px;}
+.ct-g{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin:12px 12px 4px;font-weight:600;}
+.ct-g:first-child{margin-top:0;}
+.ct-it{text-align:left;border:none;background:none;min-height:44px;padding:0 12px;border-radius:10px;font-size:14px;color:var(--tx);display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.ct-it.on{background:var(--soft);font-weight:600;color:var(--br);}
+.ct-dot{color:#C07A00;font-size:20px;line-height:1;}
+
+.dt-esc{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--okbg);color:var(--ok);font-weight:600;font-size:14px;}
+.fw-seg,.fw-dias{display:flex;flex-wrap:wrap;gap:6px;}
+.fw-dias{margin-bottom:10px;}
+.fw-o{border:1px solid var(--line);background:#fff;color:var(--tx);border-radius:999px;min-height:44px;padding:0 14px;font-size:14px;font-weight:500;}
+.fw-o.on{background:var(--br);border-color:var(--br);color:#fff;font-weight:600;}
+.fw-aj{font-size:13px;color:var(--tx2);margin-top:8px;}
+.fw-h{margin-top:10px;display:flex;flex-direction:column;gap:6px;font-size:13px;}
+.fw-h div{display:flex;flex-direction:column;}
+.fw-h span{color:var(--tx2);}
+.info .mu-t{color:var(--tx2);}
+.wa-ta{min-height:130px;resize:vertical;line-height:1.45;}
+.lst-as{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;}
+.lst-i.dupla{flex-wrap:wrap;}
+.lst-i.dupla .lst-tx{flex:1 1 calc(100% - 60px);}
+.lst-i.dupla .lst-as{width:100%;justify-content:flex-start;padding-left:44px;}
 .fab{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px;font-weight:500;}
 .fab .btn-out{min-width:110px;}
 details.imp-box>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--br);list-style:none;}
@@ -396,6 +489,7 @@ input,textarea,select{max-width:100%;}
     <button type="button" data-nav="inicio" aria-label="Início"><i data-i="home"></i><span>Início</span></button>
     <button type="button" data-nav="propostas" aria-label="Propostas"><i data-i="list"></i><span>Propostas</span></button>
     <button type="button" data-nav="nova" aria-label="Nova proposta"><i data-i="plus"></i><span>Nova</span></button>
+    <button type="button" data-nav="conteudo" aria-label="Conteúdo"><i data-i="edit"></i><span>Conteúdo</span></button>
     <button type="button" data-nav="emails" id="atEm" aria-label="E-mails"><i data-i="mail"></i><span>E-mails</span></button>
     <button type="button" data-nav="ajustes" aria-label="Ajustes"><i data-i="gear"></i><span>Ajustes</span></button>
   </nav>
@@ -445,6 +539,7 @@ input,textarea,select{max-width:100%;}
       <span class="blk-t">1 · Cliente</span>
       <div><label class="label" for="fNome">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex.: Ana Silva · Estúdio Ana" autocomplete="off"></div>
       <div><label class="label" for="fEmail">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ativa os lembretes por e-mail" autocomplete="off"></div>
+      <div><label class="label" for="fWhats">WhatsApp do cliente (opcional)</label><input class="inp" type="tel" id="fWhats" inputmode="numeric" placeholder="(13) 9 0000-0000" autocomplete="off" maxlength="16"><div class="err" id="whatsErr" role="alert">Confira o número: DDD + 8 ou 9 dígitos.</div></div>
       <label class="ck-l"><input type="checkbox" id="fMulher"><span>Cliente mulher (campanha do Dia da Mulher)</span></label>
       <input type="checkbox" id="fEnviarGerar" hidden aria-hidden="true" tabindex="-1">
     </div>
@@ -529,6 +624,12 @@ input,textarea,select{max-width:100%;}
     </div>
   </section>
 
+  <!-- ===== CONTEÚDO ===== -->
+  <section class="scr" id="scrConteudo" aria-labelledby="ctTit">
+    <div class="scr-hd"><div><span class="mk">// textos da proposta, dos e-mails e do WhatsApp</span><h1 class="tt" id="ctTit"><strong>Conteúdo</strong></h1></div></div>
+    <div id="ctCorpo"><div class="loading">Carregando…</div></div>
+  </section>
+
   <!-- ===== E-MAILS ===== -->
   <section class="scr" id="scrEmails" aria-labelledby="emTit">
     <div class="scr-hd"><div><span class="mk">// envios automáticos</span><h1 class="tt" id="emTit"><strong>E-mails</strong></h1></div></div>
@@ -554,6 +655,15 @@ input,textarea,select{max-width:100%;}
         </div>
         <div id="padCdBtns"></div>
       </div>
+    </div>
+    <div class="sec-hd"><h2 class="sec">Meta Pixel</h2><span></span></div>
+    <div class="card" id="pxBox">
+      <label class="label" for="pxId">ID do Pixel da Meta</label>
+      <input class="inp" type="text" id="pxId" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Só números (ex.: 1234567890123456)">
+      <div class="err" id="pxErr" role="alert">Use só números (de 5 a 20 dígitos).</div>
+      <div class="card-sub" style="margin:8px 0 10px;">Sem ID, nada da Meta carrega. O Pixel roda só na página do cliente (nunca no admin, nunca no seu aparelho) e não envia nome, e-mail nem telefone.</div>
+      <div class="px-bts"><button type="button" class="btn-out ok" id="pxSalvar">Salvar</button><button type="button" class="btn-out" id="pxTestar">Testar</button></div>
+      <div class="hist-info" id="pxMsg" role="status" style="margin-top:8px;"></div>
     </div>
     <div class="sec-hd"><h2 class="sec">Zona de risco</h2><span id="zonaArea">Planos de gestão</span></div>
     <div class="zona">
@@ -870,6 +980,9 @@ function histReativar(id) {
   hModal('Reativar / estender: ' + p.cliente, (p.status === 'cancelada' ? 'Cancelada em ' + fmtDH(p.cancelada_em) : (propAtiva(p) ? 'Ativa até ' : 'Expirou em ') + fmtDH(p.expira_em)) + '. Escolha por quanto tempo o link volta a valer, contando a partir de agora.', null, bts);
 }
 
+// WhatsApp do cliente na Nova: vazio ou DDD + 8/9 dígitos
+function whatsOk() { var w = document.getElementById('fWhats'); if (!w) return true; var d = w.value.replace(/\D/g, ''); var ok = !d || d.length === 10 || d.length === 11; var e = document.getElementById('whatsErr'); if (e) e.style.display = ok ? '' : 'block'; return ok; }
+function mascaraWhats(v) { var d = String(v).replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '').slice(0, 11); if (d.length <= 2) return d ? '(' + d : ''; var r = '(' + d.slice(0, 2) + ') '; var x = d.slice(2); if (d.length === 11) return r + x.slice(0, 1) + ' ' + x.slice(1, 5) + (x.length > 5 ? '-' + x.slice(5) : ''); return r + x.slice(0, 4) + (x.length > 4 ? '-' + x.slice(4) : ''); }
 function gerarLink() {
   if (window.CD_ATIVO) { return gerarCardapio(); } // tipo Cardapio: ver bloco de script abaixo
   var nome = document.getElementById('fNome').value.trim();
@@ -889,6 +1002,7 @@ function gerarLink() {
   var vo3 = document.getElementById('fVO3').value.trim();
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
+  if (!whatsOk()) { alert('WhatsApp do cliente inválido: use DDD + número (ex.: (13) 9 9999-0000) ou deixe em branco.'); return; }
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var itens = iS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
   var naoIncluso = niS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
@@ -1830,6 +1944,7 @@ function gerarCardapio() {
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
+  if (!whatsOk()) { alert('WhatsApp do cliente inválido: use DDD + número (ex.: (13) 9 9999-0000) ou deixe em branco.'); return; }
   var S3 = Object.assign({}, C, {av:Object.assign({}, C.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, C.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, C.mi, NV_MI, {on:document.getElementById('nvMi').checked})}), abas = [];
   if (!S3.av.on && !S3.rc.on && !S3.mi.on) { alert('Marque pelo menos uma aba para este cliente.'); return; }
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
@@ -2218,7 +2333,7 @@ function duplicarCom(p, L) {
   NV_MI = {}; NV_SNAP = null;
   if (window.nvModelo) nvModelo(a === 'cd' ? 'cd' : ((L && L.form && L.form.modelo) === 'loja' ? 'loja' : 'arq'), true); else areaSet(a === 'cd' ? 'cd' : 'pl');
   subSet('nova');
-  $('fNome').value = p.cliente; $('fEmail').value = '';
+  $('fNome').value = p.cliente; $('fEmail').value = ''; if ($('fWhats')) $('fWhats').value = '';
   if (a === 'pl') {
     var f = L && L.form;
     if (f) {
@@ -2270,6 +2385,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/admin-envio.js"></script>
 <script src="/admin-emails.js"></script>
 <script src="/admin-historico.js"></script>
+<script src="/conteudo-campos.js"></script>
+<script src="/admin-conteudo.js"></script>
 <script src="/admin-app.js"></script>
 <script src="/admin-pwa.js"></script>
 </body>

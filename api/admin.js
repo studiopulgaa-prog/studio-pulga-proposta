@@ -1,5 +1,6 @@
 // api/admin.js — todas as acoes do painel passam por aqui (exige sessao valida)
 import { rpc } from './_email.js';
+import { padrao as conteudoPadrao } from './_conteudo.js';
 import { sessaoValida, revogarSessao, cookieLimpo, lerCookie, origemOk, LINK_OK } from './_seg.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -9,6 +10,65 @@ const MAX = 200000; // tamanho maximo (caracteres) de um padrao ou de uma copia 
 const objOuLista = (v) => v !== null && typeof v === 'object';
 const tamanhoOk = (v) => { try { return JSON.stringify(v).length <= MAX; } catch (e) { return false; } };
 const TIPO = { pl: 'planos', cd: 'cardapio', planos: 'planos', cardapio: 'cardapio' };
+
+// Conteúdo editável: só texto (nada de HTML), tamanhos limitados e valores/datas conferidos no servidor.
+const CT_SECOES = ['pagina', 'emails', 'campanhas', 'whatsapp', 'gerais'];
+const CT_PUBLICO = ['todos', 'arquitetos', 'mulheres', 'construtoras', 'lojas'];
+function limpaTexto(v, max) {
+  if (typeof v !== 'string') return null;
+  const t = v.replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+  if (t.length > max) return null;
+  if (/<\s*\/?\s*[a-z!]/i.test(t)) return null;   // sem HTML/script: o negrito é **assim**
+  return t;
+}
+export function validarConteudo(d) {
+  if (!d || typeof d !== 'object' || Array.isArray(d)) return { erro: 'conteúdo inválido' };
+  const out = {};
+  for (const k of Object.keys(d)) if (!CT_SECOES.includes(k)) return { erro: 'seção desconhecida: ' + k };
+  const mapa = (o, max, campo) => {
+    if (o == null) return {};
+    if (typeof o !== 'object' || Array.isArray(o)) throw new Error(campo);
+    const r = {};
+    for (const [k, v] of Object.entries(o)) {
+      if (!/^[a-z0-9_]{1,40}$/.test(k)) throw new Error(campo + '.' + k);
+      const t = limpaTexto(v, max); if (t == null) throw new Error(campo + '.' + k);
+      r[k] = t;
+    }
+    return r;
+  };
+  try {
+    if (d.pagina) { out.pagina = {}; for (const m of Object.keys(d.pagina)) { if (!['arq', 'loja', 'cd', 'mi'].includes(m)) throw new Error('pagina.' + m); out.pagina[m] = mapa(d.pagina[m], 2000, 'pagina.' + m); } }
+    if (d.emails) { out.emails = {}; for (const m of Object.keys(d.emails)) { if (!['link', 'lembrete', 'ultimo_amanha', 'ultimo_hoje'].includes(m)) throw new Error('emails.' + m); out.emails[m] = mapa(d.emails[m], 4000, 'emails.' + m); } }
+    if (d.whatsapp) out.whatsapp = mapa(d.whatsapp, 1000, 'whatsapp');
+    if (d.gerais) {
+      out.gerais = mapa(d.gerais, 300, 'gerais');
+      for (const k of ['telefone', 'whatsapp']) if (out.gerais[k] && !/^[\d\s()+-]{8,20}$/.test(out.gerais[k])) throw new Error('gerais.' + k);
+      if (out.gerais.whatsapp) { const z = out.gerais.whatsapp.replace(/\D/g, ''); out.gerais.whatsapp = /^\d{10,11}$/.test(z) ? '55' + z : z; }
+    }
+    if (d.campanhas) {
+      const L = d.campanhas.itens;
+      if (!Array.isArray(L) || L.length > 30) throw new Error('campanhas');
+      out.campanhas = { itens: L.map((c, i) => {
+        if (!c || typeof c !== 'object') throw new Error('campanhas.' + i);
+        const id = String(c.id || ''), r = { id, ligado: c.ligado !== false };
+        if (!/^[a-z0-9-]{2,40}$/.test(id)) throw new Error('campanhas.' + i + '.id');
+        if (c.data) { if (!/^\d{4}-\d{2}-\d{2}$/.test(c.data) || !Number.isFinite(Date.parse(c.data))) throw new Error('campanhas.' + i + '.data'); r.data = c.data; }
+        else if (c.anual) { if (!/^\d{2}-\d{2}$/.test(c.anual)) throw new Error('campanhas.' + i + '.anual'); r.anual = c.anual; }
+        else throw new Error('campanhas.' + i + '.data');
+        if (!CT_PUBLICO.includes(c.publico)) throw new Error('campanhas.' + i + '.publico');
+        r.publico = c.publico;
+        for (const [k, max, obrig] of [['assunto', 200, true], ['corpo', 4000, true], ['botao', 60, false]]) {
+          if (c[k] == null || c[k] === '') { if (obrig) throw new Error('campanhas.' + i + '.' + k); continue; }
+          const t = limpaTexto(c[k], max); if (t == null || (obrig && !t.trim())) throw new Error('campanhas.' + i + '.' + k); r[k] = t;
+        }
+        return r;
+      }) };
+      if (new Set(out.campanhas.itens.map((c) => c.id)).size !== out.campanhas.itens.length) throw new Error('campanhas.id repetido');
+    }
+  } catch (e) { return { erro: 'campo inválido: ' + e.message }; }
+  if (JSON.stringify(out).length > 280000) return { erro: 'conteúdo grande demais' };
+  return { dados: out };
+}
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -141,6 +201,37 @@ export default async function handler(req, res) {
         if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'construtora', 'outro'].includes(b.valor)) return ruim();
         await rpc('adm_nicho', { p_id: b.id, p_nicho: b.valor });
         return res.json({ ok: true });
+      case 'contato': { // e-mail e WhatsApp do cliente (podem ser editados a qualquer momento; vazio apaga)
+        if (!UUID.test(b.id || '')) return ruim();
+        const em = String(b.email == null ? '' : b.email).trim(), wa = String(b.whatsapp == null ? '' : b.whatsapp).replace(/\D/g, '');
+        if (em && (em.length > 200 || !/^\S+@\S+\.\S+$/.test(em))) return res.status(400).json({ ok: false, erro: 'e-mail inválido' });
+        if (wa && !/^(55)?\d{10,11}$/.test(wa)) return res.status(400).json({ ok: false, erro: 'WhatsApp inválido (use DDD + número)' });
+        // campo ausente = mantém o que está salvo (null); presente e vazio = apaga
+        return res.json(await rpc('adm_contato', { p_id: b.id, p_email: 'email' in b ? em : null, p_whatsapp: 'whatsapp' in b ? wa : null }));
+      }
+      case 'follow': { // Aguardando · Ainda não decidiu · Escolheu · Fechou · Perdido (com registro no histórico)
+        if (!UUID.test(b.id || '') || !['aguardando', 'nao_decidiu', 'escolheu', 'fechou', 'perdido'].includes(b.status)) return ruim();
+        const dias = b.dias == null ? null : parseInt(b.dias, 10);
+        if (dias != null && !(dias >= 1 && dias <= 30)) return ruim();
+        return res.json(await rpc('adm_follow', { p_id: b.id, p_status: b.status, p_dias: dias }));
+      }
+      case 'conteudo_get':
+        return res.json({ ...(await rpc('adm_conteudo_get', {})), padrao: conteudoPadrao() });   // + textos de fábrica (e-mails, campanhas, dados gerais)
+      case 'conteudo_versao':
+        if (!Number.isInteger(b.versao) || b.versao < 1) return ruim();
+        return res.json((await rpc('adm_conteudo_versao', { p_id: b.versao })) || { ok: false });
+      case 'conteudo_rascunho':
+      case 'conteudo_publicar': {
+        const v = validarConteudo(b.dados);
+        if (v.erro) return res.status(400).json({ ok: false, erro: v.erro });
+        if (b.acao === 'conteudo_rascunho') return res.json(await rpc('adm_conteudo_rascunho', { p_dados: v.dados }));
+        return res.json(await rpc('adm_conteudo_publicar', { p_dados: v.dados, p_resumo: txt(b.resumo, 2000), p_ativas: b.ativas === true }));
+      }
+      case 'site_get':
+        return res.json({ ok: true, site: await rpc('adm_site_get', {}) });
+      case 'site_set': // ID do Pixel da Meta (só números; não é segredo). Vazio = sem Pixel.
+        if (b.chave !== 'pixel_id' || (b.valor && !/^\d{5,20}$/.test(String(b.valor)))) return ruim();
+        return res.json(await rpc('adm_site_set', { p_chave: 'pixel_id', p_valor: String(b.valor || '') }));
       case 'nicho_confirmar': // grava o nicho e marca como confirmado pelo Isaque (some o selo "Nicho?")
         if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'construtora', 'outro'].includes(b.valor)) return ruim();
         await rpc('adm_nicho_confirmar', { p_id: b.id, p_nicho: b.valor });

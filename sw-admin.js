@@ -4,7 +4,7 @@
 // Página e arquivos do admin: SEMPRE da rede primeiro; o cache só serve de reserva sem internet. /api nunca passa por cache.
 var V = new URL(self.location.href).searchParams.get('v') || 'dev';
 var CACHE = 'sp-admin-' + V;
-var ARQS = ['/admin.html', '/admin-app.js', '/admin-envio.js', '/admin-emails.js', '/admin-historico.js', '/admin-email.js', '/admin-pwa.js', '/manifest.json'];
+var ARQS = ['/admin.html', '/admin-app.js', '/admin-envio.js', '/admin-emails.js', '/admin-historico.js', '/admin-email.js', '/admin-pwa.js', '/admin-conteudo.js', '/conteudo-campos.js', '/manifest.json'];
 self.addEventListener('install', function (e) {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(function (c) { return Promise.all(ARQS.map(function (u) { return c.add(new Request(u, {cache: 'no-store'})).catch(function () {}); })); }));
