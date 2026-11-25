@@ -471,5 +471,48 @@
     if (!x) { x = B('btn-main ct-pv-x', 'Fechar prévia', function () { document.body.classList.remove('ct-pv-on'); var b = $('ctPvBtn'); if (b) b.focus(); }); x.id = 'ctPvX'; document.body.appendChild(x); }
     previa(true); x.focus();
   }
+
+  // ---------- Meta Pixel (Ajustes) ----------
+  var PX = {salvo: null};
+  window.pxRender = function () {
+    var i = $('pxId'); if (!i) return;
+    if (!i.__px) {
+      i.__px = true;
+      i.addEventListener('input', function () { var v = i.value.replace(/\D/g, ''); if (v !== i.value) i.value = v; $('pxErr').style.display = ''; });
+      $('pxSalvar').addEventListener('click', pxSalvar);
+      $('pxTestar').addEventListener('click', pxTestar);
+    }
+    adm('site_get', {}).then(function (r) {
+      if (!(r && r.ok)) { $('pxMsg').textContent = 'Não foi possível ler o ID agora.'; return; }
+      PX.salvo = (r.site && r.site.pixel_id) || '';
+      if (document.activeElement !== i) i.value = PX.salvo;
+      $('pxMsg').textContent = PX.salvo ? 'Pixel ligado na página do cliente.' : 'Sem Pixel: nada da Meta carrega.';
+    });
+  };
+  function pxSalvar() {
+    var i = $('pxId'), v = i.value.trim();
+    if (v && !/^\d{5,20}$/.test(v)) { $('pxErr').style.display = 'block'; i.focus(); return; }
+    var b = $('pxSalvar'); b.disabled = true;
+    adm('site_set', {chave: 'pixel_id', valor: v}).then(function (r) {
+      b.disabled = false;
+      if (!(r && r.ok)) { $('pxMsg').textContent = 'Não foi possível salvar: ' + ((r && r.erro) || 'erro'); return; }
+      PX.salvo = v; $('pxMsg').textContent = v ? 'Salvo. O Pixel vale a partir da próxima abertura de cada proposta.' : 'Pixel desligado: nada da Meta carrega.';
+      histMsg(v ? 'ID do Pixel salvo.' : 'Pixel desligado.');
+    }).catch(function () { b.disabled = false; });
+  }
+  function pxTestar() {
+    var i = $('pxId'), v = i.value.trim(), m = $('pxMsg');
+    if (!/^\d{5,20}$/.test(v)) { $('pxErr').style.display = 'block'; i.focus(); return; }
+    if (v !== PX.salvo) { m.textContent = 'Salve o ID antes de testar.'; return; }
+    var L = (window._lista || []).filter(function (p) { return /^(zz|teste)/i.test(String(p.cliente).trim()) && Date.parse(p.expira_em) > Date.now() && !p.cancelada_em && (p.tem_snapshot || snapDe(p.id)); });
+    if (!L.length) { m.textContent = 'Para testar, gere uma proposta de teste (nome começando com "Teste") e toque em Testar de novo.'; return; }
+    var w = window.open('about:blank', '_blank');
+    comSnap(L[0], function (s) {
+      if (!(s && s.link)) { if (w) w.close(); m.textContent = 'Não encontrei o link da proposta de teste.'; return; }
+      var u = s.link + (s.link.indexOf('?') >= 0 ? '&' : '?') + 'sp_pixel_teste=1';
+      if (w) w.location.href = u; else window.open(u, '_blank');
+      m.textContent = 'Abrimos "' + L[0].cliente + '" com o Pixel ligado. No Gerenciador de Eventos da Meta › Testar eventos, PageView e ViewContent aparecem em até 1 minuto. Esse teste não conta nos acessos.';
+    });
+  }
   window.addEventListener('beforeunload', function (e) { if (S.sujo) { e.preventDefault(); e.returnValue = ''; } });
 })();

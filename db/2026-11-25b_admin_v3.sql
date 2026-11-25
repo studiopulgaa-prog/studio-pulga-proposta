@@ -351,6 +351,7 @@ returns jsonb language sql stable security definer set search_path to 'public' a
                           and (p.d_hash is null or p.d_hash = p_dhash)),
         'zap',          (select v.dados->'gerais'->>'whatsapp' from public.conteudo_versoes v where v.id = p.conteudo_v
                           and (p.d_hash is null or p.d_hash = p_dhash)),
+        'nicho',        case when (p.d_hash is null or p.d_hash = p_dhash) then public._nicho(p) end,   -- para o Pixel (não é dado pessoal)
         'pixel',        (select s.valor from public.sp_site s where s.chave = 'pixel_id'))
        from public.propostas p where p.link_hash = p_lh
       order by p.criado_em desc limit 1),

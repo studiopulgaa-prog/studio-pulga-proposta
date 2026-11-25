@@ -89,7 +89,7 @@
       if (window.spPixelLead) spPixelLead('Pacote', t.m || t.u || null);
     } catch (e) {}
   });
-  embrulha('c3Tab', function (id) { envia('aba', id); });
+  embrulha('c3Tab', function (id) { envia('aba', id); if (window.spPixelVer) spPixelVer((window.C3_NOMES || {})[id] || id); });
   // WhatsApp (qualquer botão que abre o WhatsApp) e "Quero este pacote" do Cardápio
   var abre = window.open;
   window.open = function (url) {
@@ -103,6 +103,7 @@
           if (window.spPixelLead) spPixelLead('Especial Milão', tot || null);
         }
         envia('whatsapp', null);
+        if (window.spPixelLead) spPixelLead('WhatsApp', null);   // se veio de uma escolha, o Lead já saiu com o item
       }
     } catch (e) {}
     return abre.apply(window, arguments);
@@ -116,7 +117,7 @@
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (en) {
         var i = en.target.id.replace('plano', ''), nome = 'P' + (Number(i) + 1);
-        if (en.isIntersecting && en.intersectionRatio >= 0.6) timers[i] = setTimeout(function () { envia('viu_plano', nome); }, 1500);
+        if (en.isIntersecting && en.intersectionRatio >= 0.6) timers[i] = setTimeout(function () { envia('viu_plano', nome); if (window.spPixelVer) spPixelVer(String((window.PL_NOMES || {})[Number(i) + 1] || nome).split(' — ')[0]); }, 1500);
         else clearTimeout(timers[i]);
       });
     }, {threshold: [0, 0.6]});

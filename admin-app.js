@@ -95,7 +95,7 @@
     document.body.classList.toggle('tem-foot', t === 'nova');
     if (t === 'nova' && antes !== 'nova' && AREA === 'cd' && !window.NV_DUP) { nvSync(); nvAbasDoModelo(); }
     if (t === 'nova') nvAtualiza();
-    if (t === 'ajustes') ajRender();
+    if (t === 'ajustes') { ajRender(); if (window.pxRender) pxRender(); }
     if (t === 'conteudo' && window.ctCarregar) ctCarregar();
     if (t !== 'conteudo') document.body.classList.remove('ct-pv-on');
     if (t === 'emails' && window.carregarPainelEmails) carregarPainelEmails();

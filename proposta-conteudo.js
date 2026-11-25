@@ -89,6 +89,7 @@
         return;
       }
       MODELO = modelo();
+      if (window.spPixel) window.spPixel(ST, MODELO);   // Meta Pixel (só com ID configurado; nunca no admin)
       var pg = ST && ST.conteudo && typeof ST.conteudo === 'object' ? ST.conteudo : null;
       OVER = pg && pg[MODELO] && typeof pg[MODELO] === 'object' ? pg[MODELO] : null;
       if (!OVER && !PREVIA) return;   // nada publicado: não toca em nada

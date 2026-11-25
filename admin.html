@@ -408,6 +408,8 @@ body.ct-pv-on{overflow:hidden;}
   body.ct-pv-on .ct-pv-x{display:none;}
   body.ct-pv-on{overflow:auto;}
 }
+.px-bts{display:flex;gap:8px;flex-wrap:wrap;}
+.px-bts .btn-out{flex:1 1 140px;}
 .ct-g{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin:12px 12px 4px;font-weight:600;}
 .ct-g:first-child{margin-top:0;}
 .ct-it{text-align:left;border:none;background:none;min-height:44px;padding:0 12px;border-radius:10px;font-size:14px;color:var(--tx);display:flex;align-items:center;justify-content:space-between;gap:6px;}
@@ -653,6 +655,15 @@ input,textarea,select{max-width:100%;}
         </div>
         <div id="padCdBtns"></div>
       </div>
+    </div>
+    <div class="sec-hd"><h2 class="sec">Meta Pixel</h2><span></span></div>
+    <div class="card" id="pxBox">
+      <label class="label" for="pxId">ID do Pixel da Meta</label>
+      <input class="inp" type="text" id="pxId" inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Só números (ex.: 1234567890123456)">
+      <div class="err" id="pxErr" role="alert">Use só números (de 5 a 20 dígitos).</div>
+      <div class="card-sub" style="margin:8px 0 10px;">Sem ID, nada da Meta carrega. O Pixel roda só na página do cliente (nunca no admin, nunca no seu aparelho) e não envia nome, e-mail nem telefone.</div>
+      <div class="px-bts"><button type="button" class="btn-out ok" id="pxSalvar">Salvar</button><button type="button" class="btn-out" id="pxTestar">Testar</button></div>
+      <div class="hist-info" id="pxMsg" role="status" style="margin-top:8px;"></div>
     </div>
     <div class="sec-hd"><h2 class="sec">Zona de risco</h2><span id="zonaArea">Planos de gestão</span></div>
     <div class="zona">
