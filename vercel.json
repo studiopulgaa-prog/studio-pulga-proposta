@@ -3,6 +3,9 @@
   "functions": {
     "api/lembretes.js": {
       "maxDuration": 60
+    },
+    "api/wa.js": {
+      "maxDuration": 60
     }
   },
   "redirects": [
@@ -93,6 +96,22 @@
     {
       "source": "/api/admin/emails",
       "destination": "/api/emails-painel"
+    },
+    {
+      "source": "/api/whatsapp/webhook",
+      "destination": "/api/wa?r=webhook"
+    },
+    {
+      "source": "/api/asaas/webhook",
+      "destination": "/api/wa?r=asaas"
+    },
+    {
+      "source": "/api/cron/regua",
+      "destination": "/api/wa?r=regua"
+    },
+    {
+      "source": "/api/admin/wa",
+      "destination": "/api/wa?r=admin"
     }
   ],
   "headers": [
@@ -238,6 +257,12 @@
           "value": "noindex, nofollow"
         }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/regua",
+      "schedule": "5 12 * * *"
     }
   ]
 }

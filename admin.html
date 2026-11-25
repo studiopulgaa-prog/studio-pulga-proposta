@@ -64,7 +64,7 @@ body.lg{background:#2A0E05;}
 .scr.on{display:block;}
 .scr-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 18px;}
 .scr-hd>div{min-width:0;}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:0 max(4px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-left));}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 max(4px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-left));}
 .nav-logo{display:none;}
 .nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:var(--nav-h);border:none;background:none;color:var(--tx2);font-size:11px;font-weight:500;padding:6px 2px;}
 .nav button svg{width:22px;height:22px;}
@@ -491,6 +491,7 @@ input,textarea,select{max-width:100%;}
     <button type="button" data-nav="nova" aria-label="Nova proposta"><i data-i="plus"></i><span>Nova</span></button>
     <button type="button" data-nav="conteudo" aria-label="Conteúdo"><i data-i="edit"></i><span>Conteúdo</span></button>
     <button type="button" data-nav="emails" id="atEm" aria-label="E-mails"><i data-i="mail"></i><span>E-mails</span></button>
+    <button type="button" data-nav="atend" aria-label="WhatsApp" style="position:relative"><i data-i="wa"></i><span>WhatsApp</span><span class="at-badge" style="display:none;position:absolute;top:6px;right:calc(50% - 22px);min-width:18px;height:18px;font-size:11px"></span></button>
     <button type="button" data-nav="ajustes" aria-label="Ajustes"><i data-i="gear"></i><span>Ajustes</span></button>
   </nav>
   <main class="main" id="main">
@@ -637,6 +638,9 @@ input,textarea,select{max-width:100%;}
   </section>
 
   <!-- ===== AJUSTES ===== -->
+  <!-- ===== WHATSAPP (atendimento) ===== -->
+  <section class="scr" id="scrAtend" aria-label="WhatsApp"></section>
+
   <section class="scr" id="scrAjustes" aria-labelledby="ajTit">
     <div class="scr-hd"><div><span class="mk">// padrões e conta</span><h1 class="tt" id="ajTit"><strong>Ajustes</strong></h1></div></div>
     <div class="segm" role="group" aria-label="Qual padrão editar" style="margin-bottom:16px;"><button type="button" data-aj="pl" class="on" aria-pressed="true">Planos de gestão</button><button type="button" data-aj="cd" aria-pressed="false">Cardápio</button></div>
@@ -2387,6 +2391,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/admin-historico.js"></script>
 <script src="/conteudo-campos.js"></script>
 <script src="/admin-conteudo.js"></script>
+<script src="/admin-atendimento.js"></script>
 <script src="/admin-app.js"></script>
 <script src="/admin-pwa.js"></script>
 </body>

@@ -82,7 +82,7 @@
   function escolhaTxt(p) { var e = escolha(p); return e === 'plano' ? 'Escolheu um plano' : 'Escolheu: ' + e + (valorEsc(p) ? ' (' + valorEsc(p) + ')' : ''); }
 
   // ---------- navegação ----------
-  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes'};
+  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes', atend: 'scrAtend'};
   function irPara(t, semRolar) {
     if (!SEC[t]) t = 'inicio';
     var antes = TELA; TELA = t;
@@ -99,12 +99,13 @@
     if (t === 'conteudo' && window.ctCarregar) ctCarregar();
     if (t !== 'conteudo') document.body.classList.remove('ct-pv-on');
     if (t === 'emails' && window.carregarPainelEmails) carregarPainelEmails();
+    if (t === 'atend' && window.atCarregar) atCarregar();
     if (t === 'inicio') { renderInicio(); emailsSemana(false); atividades(false); }
     if (t === 'propostas') { renderLista(); if (largo()) renderDetalhe(); }
     if (!semRolar) window.scrollTo(0, 0);
   }
   window.irPara = irPara;
-  window.appEntrou = function () { document.body.classList.remove('lg'); irPara('inicio'); if (window.ctPublicados) ctPublicados(); };
+  window.appEntrou = function () { document.body.classList.remove('lg'); irPara('inicio'); if (window.ctPublicados) ctPublicados(); if (window.atPainel) atPainel(); };
   window.appRender = function () {
     renderInicio(); renderLista();
     if (TELA === 'detalhe') { if (propPorId(DET_ID)) renderDetalhe(); else irPara('propostas'); }
