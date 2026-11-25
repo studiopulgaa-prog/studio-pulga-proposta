@@ -50,7 +50,7 @@
       atual = data && data.em && data.lh ? { link: link, data: data } : null;
       box.style.display = atual ? 'block' : 'none';
       msg.textContent = ''; conf.style.display = 'none';
-      if (atual) { btn.disabled = false; btn.style.display = ''; btn.textContent = '✉ Enviar por e-mail para ' + atual.data.em; }
+      if (atual) { btn.disabled = false; btn.style.display = ''; btn.textContent = 'Outras opções de envio (lembretes ou só teste)'; }
     }
     new MutationObserver(atualizar).observe(url, { childList: true, characterData: true, subtree: true });
     btn.addEventListener('click', function () {
@@ -71,35 +71,6 @@
     box.querySelector('#btnTeste').addEventListener('click', function () { enviar('teste'); });
   }
 
-  // 2) Status do e-mail e botao "Marcar como fechado" em cada proposta do historico
-  var render = window.renderHistorico;
-  if (typeof render === 'function') {
-    window.renderHistorico = function (lista) {
-      render(lista);
-      api({ acao: 'listar' }).then(function (r) {
-        if (!r.ok) return;
-        var mapa = {};
-        (r.itens || []).forEach(function (i) { mapa[i.lh] = i; });
-        lista.forEach(function (p, i) {
-          var e = mapa[p.link_hash], corpo = document.getElementById('hb' + i);
-          if (!e || !corpo) return;
-          var enviados = Object.keys(e.enviados || {}).filter(function (k) { return TIPOS[k]; }).map(function (k) { return TIPOS[k]; }).join(', ');
-          var row = document.createElement('div');
-          row.className = 'hist-info';
-          row.innerHTML = '<strong>E-mail</strong>' + esc(e.email) + ' · ' + esc(ROTULO[e.status] || e.status) + (enviados ? '<br><span style="font-size:11px;opacity:.7">Enviados: ' + enviados + '</span>' : '');
-          var acoes = corpo.querySelector('.hist-actions');
-          corpo.insertBefore(row, acoes);
-          var b = document.createElement('button');
-          b.className = 'btn-out';
-          var novo = e.status === 'ativa' ? 'fechada' : 'ativa';
-          b.textContent = e.status === 'ativa' ? '✓ Marcar como fechado' : '↺ Reativar e-mails';
-          b.addEventListener('click', function () {
-            b.disabled = true;
-            api({ acao: 'status', lh: p.link_hash, status: novo }).then(function (x) { if (x.ok) carregarHistorico(); else { alert('Erro: ' + (x.erro || '')); b.disabled = false; } });
-          });
-          if (acoes && e.status !== 'descadastrada') acoes.appendChild(b);
-        });
-      });
-    };
-  }
+  // 2) (antigo) status do e-mail dentro do Histórico em sanfona: agora fica na tela de Detalhe da proposta
+  //    ("Cliente fechou", "Pausar e-mails" e "E-mails desta proposta"), que usa a mesma marcação no servidor.
 })();

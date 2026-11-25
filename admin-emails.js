@@ -33,32 +33,16 @@
   }
   if ($('fNicho')) {
     $('fNicho').addEventListener('change', function () { nichoMexido = true; });
-    ['mdArq', 'mdLoja', 'atPl', 'atCd'].forEach(function (id) { var b = $(id); if (b) b.addEventListener('click', function () { nichoMexido = false; setTimeout(nichoAuto, 0); }); });
+    // trocar o modelo na Nova proposta volta ao nicho automático (até a pessoa escolher à mão)
+    window.nichoNovoModelo = function () { nichoMexido = false; nichoAuto(); };
     var g = $('btnGerar'); if (g) g.addEventListener('click', nichoAuto, true);   // antes de gerar (cobre o Duplicar)
     setTimeout(nichoAuto, 0);
   }
 
-  // ---------- Aba "E-mails" ----------
-  var row = document.querySelector('.at-row'), stRow = document.querySelector('.st-row');
-  if (!row) return;
-  var tab = document.createElement('button'); tab.type = 'button'; tab.className = 'cd-seg'; tab.id = 'atEm'; tab.setAttribute('role', 'tab'); tab.textContent = 'E-mails';
-  row.appendChild(tab);
-  var sec = document.createElement('div'); sec.className = 'card'; sec.id = 'secEmails'; sec.style.display = 'none';
-  sec.innerHTML = '<div class="card-title">E-mails</div><div class="card-sub">Envios automáticos, entregas e testes.</div><div id="emCorpo"><div class="card-sub">Carregando…</div></div>';
-  var depoisDe = $('secHist') || $('secNova');
-  depoisDe.parentNode.insertBefore(sec, depoisDe.nextSibling);
-  var SECS = ['secNova', 'secPad', 'secHist'];
-  function abrirAba() {
-    $('atPl').classList.remove('on'); $('atCd').classList.remove('on'); tab.classList.add('on');
-    if (stRow) stRow.style.display = 'none';
-    SECS.forEach(function (id) { if ($(id)) $(id).style.display = 'none'; });
-    if ($('result')) $('result').classList.remove('show');
-    sec.style.display = '';
-    carregarPainel();
-  }
-  function fecharAba() { tab.classList.remove('on'); sec.style.display = 'none'; if (stRow) stRow.style.display = ''; }
-  tab.addEventListener('click', abrirAba);
-  $('atPl').addEventListener('click', fecharAba); $('atCd').addEventListener('click', fecharAba);
+  // ---------- Tela "E-mails" (aberta pelo menu; ver /admin-app.js) ----------
+  var sec = $('secEmails');
+  if (!sec) return;
+  window.emailsApi = api;
 
   var H = function (t) { return '<div class="sec-sep">' + esc(t) + '</div>'; };
   var vazio = function (t) { return '<div class="hist-info">' + esc(t) + '</div>'; };
@@ -78,7 +62,7 @@
       // teste para mim
       h += H('Enviar teste para mim') + '<div class="hist-info">Vai só para ' + esc(d.email_teste || '(EMAIL_TESTE não configurado)') + ', com dados fictícios.</div>' +
         '<select class="inp" id="emModelo">' + (d.modelos || []).map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.nome) + '</option>'; }).join('') + '</select>' +
-        '<button class="btn-out" id="emTeste" style="margin-top:8px;width:100%;"' + (d.email_teste ? '' : ' disabled') + '>✉ Enviar teste para mim</button><div id="emTesteMsg" class="hist-info" style="margin-top:6px;"></div>';
+        '<button class="btn-out" id="emTeste" style="margin-top:8px;width:100%;"' + (d.email_teste ? '' : ' disabled') + '>' + ICO('send', 18) + 'Enviar teste para mim</button><div id="emTesteMsg" class="hist-info" style="margin-top:6px;"></div>';
       // próximos
       var px = d.proximos || [];
       h += H('Próximos envios (7 dias)' + (sim ? ' · simulação' : ''));
@@ -97,7 +81,7 @@
       var MOT = {rejeitado: 'E-mail rejeitado', spam: 'Marcou como spam', descadastro: 'Pediu para sair'};
       h += H('Bloqueados (não recebem mais nada)');
       h += sp.length ? sp.map(function (x) { return '<div class="hist-info"><strong>' + esc(MOT[x.motivo] || x.motivo) + '</strong>' + esc(x.email) + ' · ' + esc(dh(x.criado_em)) + '</div>'; }).join('') : vazio('Nenhum contato bloqueado.');
-      h += '<button class="btn-out" id="emAtual" style="margin-top:14px;width:100%;">↻ Atualizar</button>';
+      h += '<button class="btn-out" id="emAtual" style="margin-top:14px;width:100%;">' + ICO('refresh', 18) + 'Atualizar</button>';
       c.innerHTML = h;
       $('emAtual').onclick = carregarPainel;
       $('emTeste').onclick = function () {
@@ -131,8 +115,8 @@
       };
       var botoes = [];
       if (t.seq_status !== 'descadastrada' && !t.suprimido) {
-        if (parado) botoes.push({t: '↺ Reabrir', c: 'pri', f: acao('ativa', 'E-mails religados para esta proposta.')});
-        else { botoes.push({t: '⏸ Pausar e-mails', f: acao('pausada', 'E-mails desta proposta pausados.')}); botoes.push({t: '✓ Cliente fechou', c: 'pri', f: acao('fechada', 'Marcada como fechada: nenhum e-mail automático vai mais.')}); }
+        if (parado) botoes.push({t: 'Reabrir e-mails', c: 'pri', f: acao('ativa', 'E-mails religados para esta proposta.')});
+        else { botoes.push({t: 'Pausar e-mails', f: acao('pausada', 'E-mails desta proposta pausados.')}); botoes.push({t: 'Cliente fechou', c: 'pri', f: acao('fechada', 'Marcada como fechada: nenhum e-mail automático vai mais.')}); }
       }
       botoes.push({t: 'Fechar', f: hFechar});
       hModal('E-mails · ' + (t.cliente || ''), (t.email || 'sem e-mail') + ' · E-mails automáticos: ' + stTxt + (t.modo !== 'envio' ? ' · (modo simulação)' : ''), function (corpo) {

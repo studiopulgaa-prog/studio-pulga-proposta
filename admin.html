@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#6E2C14">
+<meta name="theme-color" content="#F4EADD">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,318 +13,563 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <title>Studio Pulga — Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;900&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F4EADD;--bg2:#EAD8C5;--br:#6E2C14;--brl:rgba(110,44,20,0.12);--gray:rgba(110,44,20,0.5);--gray2:rgba(110,44,20,0.3);}
+/* ===== Studio Pulga · Admin de propostas — visual 2026-11 (terracota/creme) ===== */
+:root{
+  --bg:#F4EADD;--card:#FFFDF9;--line:#E6D8CA;--line2:#EFE3D6;
+  --tx:#2A0E05;--tx2:#6B5A4E;--br:#6E2C14;--brh:#5A2210;--soft:#F7E6DA;
+  --ok:#2F6B3F;--okbg:#E3EEE5;--warn:#7A4A00;--warnbg:#FFF1D9;--err:#A3261E;--errbg:#FBE5E1;
+  --brl:#E6D8CA;--gray:#6B5A4E;--gray2:#7D6A5C;--bg2:#EAD8C5;
+  --fs:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--ft:'League Spartan','Inter',system-ui,sans-serif;
+  --nav-h:72px;--r:16px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:var(--br);min-height:100vh;padding:20px;}
-.wrap{max-width:560px;margin:0 auto;}
-.login{background:#fff;border:1px solid var(--brl);border-radius:20px;padding:40px 32px;text-align:center;margin-top:80px;}
-.login-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:20px;margin-bottom:6px;}
-.login-sub{font-size:13px;color:var(--gray);margin-bottom:28px;}
-.inp{width:100%;height:44px;padding:0 14px;border:1.5px solid var(--brl);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:var(--br);outline:none;background:rgba(255,255,255,0.8);transition:border 0.2s;}
-.inp:focus{border-color:var(--br);}
-.inp::placeholder{color:var(--gray2);}
-.inp:disabled{opacity:0.4;}
-.btn-main{width:100%;height:44px;border:none;border-radius:10px;background:var(--br);color:#F4EADD;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:10px;}
-.btn-main:hover{background:#5A2210;}
-.err{font-size:12px;color:#c0392b;margin-top:8px;display:none;}
-.admin{display:none;padding-top:8px;}
-.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
-.hdr-logo{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;}
-.btn-sair{background:none;border:none;font-family:'Outfit',sans-serif;font-size:12px;color:var(--gray);cursor:pointer;}
-.card{background:#fff;border:1px solid var(--brl);border-radius:20px;padding:28px 24px;margin-bottom:20px;}
-.card-title{font-family:'League Spartan',sans-serif;font-weight:700;font-size:22px;margin-bottom:4px;}
-.card-sub{font-size:13px;color:var(--gray);margin-bottom:24px;}
-.label{display:block;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:6px;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{background:var(--bg);font-family:var(--fs);font-weight:400;font-size:15px;line-height:1.45;color:var(--tx);min-height:100vh;overflow-x:hidden;}
+button,input,select,textarea{font-family:var(--fs);color:inherit;}
+button{cursor:pointer;}
+button svg,a svg{pointer-events:none;flex-shrink:0;}
+:focus-visible{outline:3px solid #B8572F;outline-offset:2px;border-radius:10px;}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.ico{width:20px;height:20px;}
+/* --- títulos --- */
+.mk{display:block;font-family:var(--ft);font-weight:300;font-size:15px;letter-spacing:-0.01em;color:var(--tx2);margin-bottom:2px;}
+.tt{font-family:var(--ft);font-weight:300;letter-spacing:-0.03em;line-height:1.1;font-size:30px;color:var(--tx);overflow-wrap:anywhere;}
+.tt strong{font-weight:700;}
+.num{font-family:var(--ft);font-weight:700;letter-spacing:-0.03em;line-height:1.1;}
+h2.sec{font-size:15px;font-weight:600;margin:0;}
+/* --- login (fundo escuro como o manifesto da proposta) --- */
+body.lg{background:#2A0E05;}
+.login{max-width:400px;margin:0 auto;padding:max(72px,calc(env(safe-area-inset-top) + 48px)) 24px 40px;color:#F4EADD;}
+.login .mk{color:rgba(244,234,221,.7);}
+.login .tt{color:#F4EADD;font-size:36px;margin-bottom:28px;}
+.login .label{color:rgba(244,234,221,.75);}
+.login .inp{background:rgba(255,253,249,.08);border-color:rgba(244,234,221,.3);color:#F4EADD;}
+.login .inp::placeholder{color:rgba(244,234,221,.5);}
+.login .btn-main{background:#F4EADD;color:#2A0E05;margin-top:14px;}
+.login .btn-main:hover{background:#fff;}
+.login .err{color:#FFB4A8;}
+.lg-manter{display:flex;align-items:center;gap:12px;text-align:left;margin-top:14px;font-size:14px;font-weight:500;cursor:pointer;min-height:44px;}
+.lg-manter input{width:22px;height:22px;accent-color:#F4EADD;flex-shrink:0;}
+.lg-aviso{font-size:13px;color:rgba(244,234,221,.8);margin-top:10px;display:none;}
+.err{font-size:13px;color:var(--err);margin-top:10px;display:none;font-weight:500;}
+/* --- casca do app --- */
+.admin{display:none;}
+.app{min-height:100vh;}
+.main{padding:max(24px,calc(env(safe-area-inset-top) + 12px)) max(20px,env(safe-area-inset-right)) calc(var(--nav-h) + 32px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));max-width:760px;margin:0 auto;}
+.scr{display:none;}
+.scr.on{display:block;}
+.scr-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 18px;}
+.scr-hd>div{min-width:0;}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0 max(4px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-left));}
+.nav-logo{display:none;}
+.nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:var(--nav-h);border:none;background:none;color:var(--tx2);font-size:11px;font-weight:500;padding:6px 2px;}
+.nav button svg{width:22px;height:22px;}
+.nav button.on{color:var(--br);font-weight:600;}
+.nav button.on svg{stroke-width:2.2;}
+@media (min-width:900px){
+  .nav{top:0;right:auto;width:232px;border-top:none;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:28px 14px;}
+  .nav-logo{display:block;font-family:var(--ft);font-weight:300;font-size:22px;letter-spacing:-0.03em;padding:0 12px 22px;}
+  .nav-logo strong{font-weight:700;}
+  .nav button{flex-direction:row;justify-content:flex-start;gap:12px;min-height:48px;font-size:15px;padding:0 14px;border-radius:12px;}
+  .nav button.on{background:var(--soft);}
+  .main{margin-left:232px;margin-right:auto;padding:40px 48px 64px;max-width:820px;}
+  .scr-wide{max-width:none;}
+}
+/* --- cartões, campos, botões --- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 16px;margin-bottom:14px;}
+.card-title{font-family:var(--ft);font-weight:300;letter-spacing:-0.03em;line-height:1.1;font-size:22px;margin-bottom:4px;}
+.card-sub{font-size:13px;color:var(--tx2);margin-bottom:16px;}
+.blk{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.blk-t{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);}
+.label{display:block;font-size:13px;font-weight:500;color:var(--tx2);margin-bottom:6px;}
 .field{margin-bottom:14px;}
-.plano-ck{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(110,44,20,0.04);border:1.5px solid var(--brl);border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all 0.2s;}
-.plano-ck.on{background:rgba(110,44,20,0.08);border-color:var(--br);}
-.plano-ck input{width:17px;height:17px;accent-color:var(--br);cursor:pointer;flex-shrink:0;}
-.plano-ck-label{font-size:13px;font-weight:600;}
-.de-para{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.de-para-label{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);margin-bottom:5px;}
-.val-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.val-btn{flex:1;min-width:56px;padding:9px 6px;border-radius:9px;border:1.5px solid var(--brl);background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:all 0.2s;text-align:center;}
-.val-btn.on{background:var(--br);color:#F4EADD;border-color:var(--br);}
-.items-toggle{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(110,44,20,0.04);border:1.5px solid var(--brl);border-radius:10px;cursor:pointer;margin-bottom:6px;transition:all 0.2s;}
-.items-toggle:hover{background:rgba(110,44,20,0.08);}
-.items-toggle-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);}
-.items-arrow{font-size:14px;color:var(--gray2);transition:transform 0.25s;}
-.items-arrow.open{transform:rotate(90deg);}
-.items-body{display:none;border:1.5px solid var(--brl);border-radius:10px;padding:12px;margin-bottom:12px;background:rgba(255,255,255,0.5);}
-.items-body.show{display:block;}
-.item-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--brl);}
-.item-row:last-child{border-bottom:none;}
-.item-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--br);cursor:pointer;flex-shrink:0;}
-.item-text{flex:1;font-size:13px;color:var(--gray);}
-.item-text.off{text-decoration:line-through;opacity:0.4;}
-.item-edit-inp{flex:1;height:28px;padding:0 8px;border:1.5px solid var(--br);border-radius:6px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--br);outline:none;}
-.ibtn{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:13px;padding:2px 3px;flex-shrink:0;line-height:1;}
-.ibtn:hover{color:var(--br);}
-.sec-sep{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin:10px 0 8px;padding-top:10px;border-top:1px solid var(--brl);}
-.add-row{display:flex;gap:8px;margin-top:10px;}
-.add-inp{flex:1;height:34px;padding:0 10px;border:1.5px solid var(--brl);border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--br);outline:none;background:rgba(255,255,255,0.7);}
-.add-inp:focus{border-color:var(--br);}
-.add-btn{height:34px;padding:0 14px;border:none;border-radius:8px;background:var(--br);color:#F4EADD;font-size:13px;font-weight:600;cursor:pointer;}
-.result{display:none;background:rgba(110,44,20,0.05);border:1.5px solid var(--brl);border-radius:12px;padding:16px;margin-top:4px;}
-.result.show{display:block;}
-.result-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;}
-.result-url{font-size:11px;color:var(--br);word-break:break-all;font-family:'Courier New',monospace;line-height:1.6;margin-bottom:12px;}
+.inp{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;font-size:15px;font-weight:400;color:var(--tx);background:var(--card);outline:none;transition:border-color .15s;}
+.inp:focus{border-color:var(--br);}
+.inp::placeholder{color:#9A877A;}
+.inp:disabled{opacity:.45;}
+select.inp{appearance:auto;}
+.btn-main{width:100%;min-height:52px;border:none;border-radius:14px;background:var(--br);color:#FFF8F1;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s;}
+.btn-main:hover{background:var(--brh);}
+.btn-main:disabled{opacity:.45;cursor:default;}
+.btn-out{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--br);font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s;}
+.btn-out:hover{border-color:var(--br);}
+.btn-out.ok{background:var(--br);color:#FFF8F1;border-color:var(--br);}
+.btn-out:disabled{opacity:.45;cursor:default;}
+.btn-enc{min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid #E7B4AE;background:transparent;color:var(--err);font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn-enc:hover{background:var(--errbg);}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
-.btn-out{padding:8px 18px;border-radius:8px;border:1.5px solid var(--br);background:transparent;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.btn-out:hover,.btn-out.ok{background:var(--br);color:#F4EADD;}
-.btn-enc{padding:8px 14px;border-radius:8px;border:1.5px solid #c0392b55;background:transparent;color:#c0392b;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.btn-enc:hover{background:#c0392b;color:#fff;}
-.btn-enc-all{padding:7px 14px;border-radius:10px;border:none;background:#c0392b;color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.btn-enc-all:hover{background:#9b2926;}
-.hist-item{border:1.5px solid var(--brl);border-radius:14px;margin-bottom:8px;overflow:hidden;}
-.hist-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:rgba(255,255,255,0.7);}
-.hist-hdr:hover{background:#fff;}
-.hist-nome{font-size:14px;font-weight:600;}
-.hist-data{font-size:11px;color:var(--gray2);margin-top:1px;}
-.hist-right{display:flex;align-items:center;gap:6px;}
-.badge-ab{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(25,140,60,0.12);color:#1a7a3c;}
-.badge-wt{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(110,44,20,0.08);color:var(--gray);}
-.badge-at{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#1a7a3c;color:#fff;}
-.badge-ex{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#b3261e;color:#fff;}
-.hist-nome.exp{opacity:.65;}
-.badge-cn{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#5f5f5f;color:#fff;}
-.badge-ch{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#6E2C14;color:#F4EADD;}
-.badge-al{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FFF4E0;color:#7a4a00;border:1px solid #f0c37a;}
-.hist-tools{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}
-.hist-tools button{padding:7px 12px;border-radius:10px;border:1.5px solid var(--brl);background:#fff;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-.hist-tools button.perigo{border-color:#e7b4ae;color:#b3261e;}
-.hist-ac{margin:6px 0 2px;padding:10px 12px;border-radius:10px;background:rgba(110,44,20,.04);font-size:12px;line-height:1.55;color:var(--gray);}
-.hist-ac strong{color:var(--br);}
-.hist-msg{margin:6px 0 10px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:rgba(25,140,60,0.12);color:#1a7a3c;}
-.hist-msg.err{background:#fbe3e0;color:#b3261e;font-weight:600;}
-.hmodal{position:fixed;inset:0;z-index:9999;background:rgba(40,20,10,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px;}
-@media(min-width:601px){.hmodal{align-items:center;}}
-.hbox{background:#F4EADD;border-radius:16px;width:100%;max-width:440px;max-height:88vh;overflow:auto;padding:18px 16px;box-shadow:0 10px 40px rgba(0,0,0,.3);}
-.hbox h3{margin:0 0 4px;font-size:16px;color:#6E2C14;}
-.hbox .hsub{font-size:12px;color:var(--gray);margin-bottom:12px;line-height:1.4;}
-.hbox label.hck{display:flex;align-items:flex-start;gap:10px;padding:10px 4px;border-bottom:1px solid var(--brl);font-size:14px;min-height:44px;cursor:pointer;}
-.hbox label.hck input{width:22px;height:22px;flex:none;margin:0;accent-color:#6E2C14;}
-.hbox label.hck small{display:block;font-size:11px;color:var(--gray);}
-.hbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-.hbtns button{flex:1 1 130px;min-height:44px;border-radius:10px;border:1.5px solid #6E2C14;background:transparent;color:#6E2C14;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
-.hbtns button.pri{background:#6E2C14;color:#F4EADD;}
-.hbtns button.perigo{background:#b3261e;border-color:#b3261e;color:#fff;}
-.hbtns button:disabled{opacity:.45;cursor:default;}
-.hist-arrow{font-size:15px;color:var(--gray2);transition:transform 0.25s;}
-.hist-arrow.open{transform:rotate(90deg);}
-.hist-del{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:18px;padding:2px 5px;line-height:1;}
-.hist-del:hover{color:#c0392b;}
-.hist-body{display:none;padding:14px 16px;border-top:1px solid var(--brl);background:rgba(110,44,20,0.02);}
-.hist-body.show{display:block;}
-.hist-info{font-size:12px;color:var(--gray);margin-bottom:5px;display:flex;gap:8px;}
-.hist-info strong{color:var(--br);min-width:72px;}
-.hist-tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(110,44,20,0.08);color:var(--br);margin-right:4px;margin-top:6px;}
-.hist-tag.off{opacity:0.3;text-decoration:line-through;}
-.hist-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-.loading{text-align:center;padding:20px;font-size:13px;color:var(--gray);}
-.empty{text-align:center;padding:24px;font-size:13px;color:var(--gray);}
-/* ===== Tipo Cardapio (novo) ===== */
-.cd-seg-row{display:flex;gap:8px;flex-wrap:wrap;}
-.cd-seg{flex:1;min-width:56px;padding:9px 6px;border-radius:9px;border:1.5px solid var(--brl);background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;transition:background .2s,color .2s,border-color .2s;text-align:center;}
-.cd-seg.on{background:var(--br);color:#F4EADD;border-color:var(--br);}
+.ib{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--br);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ib:hover{border-color:var(--br);}
+.cd-hint{font-size:13px;color:var(--tx2);margin-top:6px;line-height:1.4;}
+.sec-sep{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);margin:14px 0 8px;padding-top:12px;border-top:1px solid var(--line2);}
+.de-para{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.de-para-label{font-size:13px;font-weight:500;color:var(--tx2);margin-bottom:6px;}
+/* chips e segmentos */
+.val-row,.cd-seg-row,.chips{display:flex;gap:8px;flex-wrap:wrap;}
+.val-btn,.cd-seg,.chip{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .15s,color .15s,border-color .15s;}
+.cd-seg{flex:1;min-width:64px;border-radius:12px;}
+.val-btn.on,.cd-seg.on,.chip.on{background:var(--br);color:#FFF8F1;border-color:var(--br);}
+.chip .n{font-size:12px;opacity:.75;}
+.segm{display:flex;background:#EBDDCD;border-radius:14px;padding:3px;gap:3px;}
+.segm button{flex:1;min-height:44px;border:none;border-radius:9px;background:transparent;color:var(--tx2);font-size:14px;font-weight:500;}
+.segm button.on{background:var(--card);color:var(--tx);font-weight:600;box-shadow:0 1px 2px rgba(42,14,5,.12);}
+/* modelos (Nova) */
+.mdl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.mdl button{min-height:72px;text-align:left;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:2px;font-size:15px;font-weight:600;color:var(--tx);}
+.mdl button span{font-size:12px;font-weight:400;color:var(--tx2);}
+.mdl button.on{border:2px solid var(--br);padding:11px 13px;background:var(--soft);}
+.nicho-l{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;color:var(--tx2);min-height:44px;}
+.nicho-l b{color:var(--tx);font-weight:600;}
+.lnk{background:none;border:none;color:var(--br);font-size:14px;font-weight:600;text-decoration:underline;min-height:44px;padding:0 4px;}
+.ck-l{display:flex;align-items:center;gap:12px;font-size:14px;min-height:44px;cursor:pointer;}
+.ck-l input{width:22px;height:22px;accent-color:var(--br);flex-shrink:0;}
+.resumo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:14px;}
+.resumo .rl{display:flex;justify-content:space-between;gap:10px;}
+.resumo .rl span:first-child{color:var(--tx2);}
+.resumo .rl span:last-child{font-weight:600;text-align:right;}
+.outra{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--tx2);}
+.outra .inp{width:96px;}
+.fold-b{width:100%;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600;color:var(--br);text-align:left;}
+.fold-b svg{transition:transform .2s;}
+.fold-b[aria-expanded="true"] svg{transform:rotate(90deg);}
+.fold-c{padding:14px 2px 0;}
+.foot{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:40;background:rgba(244,234,221,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;}
+.foot .btn-main{min-height:50px;}
+.foot .btn-out{min-height:46px;width:100%;}
+#secNova.on{padding-bottom:128px;}
+@media (min-width:900px){.foot{left:232px;}.foot>*{max-width:724px;}.foot{align-items:flex-start;padding-left:48px;}}
+/* itens dos planos e editores (Padrões) */
+.plano-ck{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;margin-bottom:8px;min-height:48px;}
+.plano-ck.on{border-color:var(--br);background:var(--soft);}
+.plano-ck input{width:22px;height:22px;accent-color:var(--br);cursor:pointer;flex-shrink:0;}
+.plano-ck-label{font-size:14px;font-weight:500;}
+.items-toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;margin-bottom:8px;min-height:48px;}
+.items-toggle:hover{border-color:var(--br);}
+.items-toggle-label{font-size:14px;font-weight:600;color:var(--tx);min-width:0;overflow-wrap:anywhere;}
+.items-arrow{display:inline-flex;color:var(--tx2);transition:transform .2s;}
+.items-arrow.open{transform:rotate(90deg);}
+.items-body{display:none;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:rgba(255,253,249,.6);}
+.items-body.show{display:block;}
+.item-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line2);}
+.item-row:last-child{border-bottom:none;}
+.item-text{flex:1;font-size:14px;}
+.ibtn{min-width:44px;min-height:44px;border:none;background:none;color:var(--tx2);display:inline-flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0;}
+.ibtn:hover{color:var(--br);background:var(--soft);}
 .cd-row{flex-wrap:wrap;}
-.cd-name{flex:1 1 120px;min-width:0;font-size:13px;color:var(--gray);overflow-wrap:anywhere;}
-.cd-name.off{text-decoration:line-through;opacity:0.4;}
-.cd-meta{display:block;font-size:11px;color:var(--gray2);}
-.cd-flag{opacity:0.45;}
-.cd-flag.on{opacity:1;color:var(--br);font-weight:700;}
-.cd-ed{width:100%;padding:10px;margin:4px 0 6px;border:1.5px solid var(--brl);border-radius:10px;background:rgba(255,255,255,0.7);}
+.cd-name{flex:1 1 120px;min-width:0;font-size:14px;overflow-wrap:anywhere;}
+.cd-name.off{text-decoration:line-through;opacity:.5;}
+.cd-meta{display:block;font-size:12px;color:var(--tx2);}
+.cd-ed{width:100%;padding:10px;margin:4px 0 6px;border:1px solid var(--line);border-radius:12px;background:var(--card);}
 .cd-ed .field{margin-bottom:10px;}
-.cd-ed .inp{height:38px;font-size:13px;}
-.cd-ta{height:auto;min-height:74px;padding:10px 12px;resize:vertical;line-height:1.5;}
-.cd-hint{font-size:11px;color:var(--gray2);margin-top:4px;}
-.cd-count{font-size:11px;color:var(--gray2);margin:2px 0 10px;}
-@media (prefers-reduced-motion:reduce){.cd-seg,.items-arrow{transition:none;}}
-.at-row{display:flex;gap:8px;margin-bottom:14px;}
-.at-row .cd-seg{padding:13px 8px;font-size:14px;}
-.st-row{display:flex;gap:6px;margin-bottom:16px;border-bottom:1.5px solid var(--brl);}
-.st-b{flex:1;padding:10px 4px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-1.5px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;}
-.st-b.on{color:var(--br);border-bottom-color:var(--br);}
+.cd-ta{min-height:96px;resize:vertical;line-height:1.5;}
+textarea.inp{min-height:96px;}
+.cd-count{font-size:13px;color:var(--tx2);margin:2px 0 10px;}
+.cd-ckw{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px 0 -8px -12px;cursor:pointer;flex-shrink:0;}
 .tg-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.tg{display:inline-flex;align-items:center;border-radius:20px;border:1.5px solid var(--br);background:rgba(110,44,20,0.08);overflow:hidden;}
-.tg.no{border-style:dashed;background:rgba(0,0,0,0.04);}
-.tg.off{opacity:0.4;}
+.tg{display:inline-flex;align-items:stretch;border-radius:14px;border:1px solid var(--br);background:var(--soft);overflow:hidden;}
+.tg.no{border-style:dashed;background:#F2ECE4;}
+.tg.off{opacity:.45;}
 .tg.off .tg-t{text-decoration:line-through;}
-.tg button{border:none;background:none;font-family:'Outfit',sans-serif;cursor:pointer;color:var(--br);}
-.tg-t{padding:7px 8px 7px 12px;font-size:12px;font-weight:600;text-align:left;}
-.tg-x{padding:7px 8px;font-size:13px;line-height:1;border-left:1px solid var(--brl)!important;}
-.tg-x:disabled{opacity:0.3;cursor:default;}
-@media (max-width:600px){.ibtn{min-width:34px;min-height:34px;font-size:15px;padding:6px;}.btn-sair{padding:12px 10px;}.hist-del{min-width:36px;min-height:36px;font-size:20px;}.tg-t,.tg-x{padding-top:10px;padding-bottom:10px;}}
+.tg button{border:none;background:none;color:var(--br);}
+.tg-t{padding:8px 10px 8px 12px;font-size:13px;font-weight:500;text-align:left;min-height:44px;}
+.tg-x{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border-left:1px solid var(--line)!important;}
+.tg-x:disabled{opacity:.3;cursor:default;}
 .tg-add{display:flex;gap:6px;margin-bottom:6px;}
 .tg-add input{flex:1;}
-.pad-fold{border:1.5px solid var(--brl);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.pad-fold{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;background:var(--card);}
 .pad-fold>.items-toggle{margin:0;border:none;}
-.pad-ok{font-size:12px;color:#2e7d32;margin-top:8px;min-height:16px;}
-.pad-ok.pad-err{color:#b3261e;font-weight:600;}
-.pad-aviso{font-size:12px;line-height:1.4;color:#b3261e;font-weight:600;margin:0 0 12px;}
-.mi-src{text-transform:none;letter-spacing:0;display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#ece6dc;color:#5c4b3a;margin-left:8px;white-space:nowrap;vertical-align:middle;}
-.mi-src.alt{background:#f7d9c8;color:#6E2C14;}
-.imp-box{border:1px dashed var(--gray2,#b9a58f);border-radius:12px;padding:12px;margin:0 0 14px;background:rgba(110,44,20,.04);}
-.imp-t{font-size:13px;font-weight:600;color:#6E2C14;}
-.hist-tipo{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray2);}
-/* ===== Celular: sem zoom automatico do iOS (campos com 16 px), sem rolagem lateral, alvos de toque de 44 px; o zoom do usuario continua liberado ===== */
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
-body{padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));overflow-x:hidden;}
-.wrap,.card,.field,.cd-ed,.items-body,.result,.hist-item{min-width:0;}
-.de-para{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
-input,textarea,select{max-width:100%;}
-.hist-hdr>div:first-child{min-width:0;}
-.hist-nome{overflow-wrap:anywhere;}
-.lg-manter{display:flex;align-items:center;gap:10px;text-align:left;margin-top:12px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;}
-.lg-manter input{width:22px;height:22px;accent-color:var(--br);flex-shrink:0;}
-.lg-aviso{font-size:12px;color:var(--gray);margin-top:8px;display:none;}
-.cd-ckw{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-8px 0 -8px -12px;cursor:pointer;flex-shrink:0;}
-.msg-box{margin:0 0 12px;}
+.pad-ok{font-size:13px;color:var(--ok);margin-top:8px;min-height:18px;}
+.pad-ok.pad-err{color:var(--err);font-weight:600;}
+.pad-aviso{font-size:13px;line-height:1.4;color:var(--err);font-weight:600;margin:0 0 12px;}
+.imp-box{border:1px dashed #B9A58F;border-radius:12px;padding:12px;margin:0 0 14px;background:var(--card);}
+.imp-t{font-size:14px;font-weight:600;color:var(--br);}
+.mi-src{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:#ECE6DC;color:#5C4B3A;margin-left:8px;white-space:nowrap;vertical-align:middle;}
+.mi-src.alt{background:#F7D9C8;color:var(--br);}
 .mi-lh{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-bottom:6px;}
 .mi-lh .label{margin-bottom:0;}
-.mi-rs{background:none;border:none;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;text-decoration:underline;cursor:pointer;padding:6px 0 6px 8px;white-space:nowrap;min-height:44px;}
-.mi-sw{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(110,44,20,0.04);border:1.5px solid var(--brl);border-radius:10px;cursor:pointer;margin-bottom:8px;font-size:13px;font-weight:600;min-height:44px;}
-.mi-sw.on{background:rgba(110,44,20,0.08);border-color:var(--br);}
-.mi-sw input{width:20px;height:20px;accent-color:var(--br);flex-shrink:0;}
-.mi-auto{font-size:12px;color:var(--gray);background:rgba(110,44,20,0.05);border:1.5px dashed var(--brl);border-radius:10px;padding:10px 12px;margin:0 0 8px;overflow-wrap:anywhere;}
-.mi-prev{border:1.5px solid var(--brl);border-radius:14px;background:#F4EADD;padding:14px;margin-top:12px;}
-.mi-prev-k{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray2);margin-bottom:10px;}
-.mi-pv-t{font-family:'League Spartan',sans-serif;font-weight:900;font-size:26px;letter-spacing:-0.03em;line-height:1.05;margin-bottom:12px;overflow-wrap:anywhere;}
-.mi-pv-p{font-size:14px;line-height:1.6;font-weight:400;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:10px;}
-.mi-pv-dest{display:inline-block;max-width:100%;padding:10px 14px;border-radius:12px;background:var(--br);color:#F2E8D8;font-family:'League Spartan',sans-serif;font-weight:900;font-size:16px;line-height:1.2;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 12px;}
-.mi-pv-sec{border-top:1px solid var(--brl);padding-top:12px;margin-top:6px;}
-.mi-pv-st{font-family:'League Spartan',sans-serif;font-weight:900;font-size:18px;line-height:1.2;margin-bottom:8px;overflow-wrap:anywhere;}
+.mi-rs{background:none;border:none;color:var(--br);font-size:13px;font-weight:600;text-decoration:underline;padding:6px 0 6px 8px;white-space:nowrap;min-height:44px;}
+.mi-sw{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;margin-bottom:8px;font-size:14px;font-weight:500;min-height:48px;}
+.mi-sw.on{border-color:var(--br);background:var(--soft);}
+.mi-sw input{width:22px;height:22px;accent-color:var(--br);flex-shrink:0;}
+.mi-auto{font-size:13px;color:var(--tx2);background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px;overflow-wrap:anywhere;}
+.mi-prev{border:1px solid var(--line);border-radius:14px;background:#F4EADD;padding:14px;margin-top:12px;}
+.mi-prev-k{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);margin-bottom:10px;}
+.mi-pv-t{font-family:var(--ft);font-weight:300;font-size:26px;letter-spacing:-0.03em;line-height:1.1;margin-bottom:12px;overflow-wrap:anywhere;}
+.mi-pv-p{font-size:14px;line-height:1.6;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:10px;}
+.mi-pv-dest{display:inline-block;max-width:100%;padding:10px 14px;border-radius:12px;background:var(--br);color:#F2E8D8;font-family:var(--ft);font-weight:700;font-size:16px;line-height:1.2;white-space:pre-line;overflow-wrap:anywhere;margin:0 0 12px;}
+.mi-pv-sec{border-top:1px solid var(--line);padding-top:12px;margin-top:6px;}
+.mi-pv-st{font-family:var(--ft);font-weight:700;font-size:18px;line-height:1.2;margin-bottom:8px;overflow-wrap:anywhere;}
 .mi-pv-pgs{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;}
-.mi-pv-pg{border:1.5px solid var(--brl);border-radius:10px;padding:10px;background:rgba(255,255,255,0.6);min-width:0;}
-.mi-pv-pgt{font-family:'League Spartan',sans-serif;font-weight:900;font-size:14px;line-height:1.2;margin-bottom:6px;white-space:pre-line;overflow-wrap:anywhere;}
-.mi-pv-pgl{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.75;margin-bottom:6px;}
-.mi-pv-pgn{font-size:12px;line-height:1.5;opacity:0.85;margin:6px 0 0;white-space:pre-line;overflow-wrap:anywhere;}
-.mi-pv-note{font-size:11px;color:var(--gray2);margin-top:10px;}
-.msg-box textarea{min-height:104px;}
-.btn-share{width:100%;margin:0 0 8px;}
+.mi-pv-pg{border:1px solid var(--line);border-radius:10px;padding:10px;background:rgba(255,255,255,.6);min-width:0;}
+.mi-pv-pgt{font-family:var(--ft);font-weight:700;font-size:14px;line-height:1.2;margin-bottom:6px;white-space:pre-line;overflow-wrap:anywhere;}
+.mi-pv-pgl{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-bottom:6px;}
+.mi-pv-pgn{font-size:13px;line-height:1.5;opacity:.85;margin:6px 0 0;white-space:pre-line;overflow-wrap:anywhere;}
+.mi-pv-note{font-size:12px;color:var(--tx2);margin-top:10px;}
+/* resultado do link */
+.result{display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:6px;}
+.result.show{display:block;}
+.result-label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);margin-bottom:8px;}
+.result-url{font-size:13px;color:var(--br);word-break:break-all;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.6;margin-bottom:12px;}
+.res-ok{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ok);margin-bottom:10px;}
+.msg-box{margin:0 0 12px;}
+.btn-share{margin:0 0 8px;}
+/* Início */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 12px;display:flex;flex-direction:column;gap:4px;}
+.stat .num{font-size:30px;color:var(--br);}
+.stat span:last-child{font-size:13px;color:var(--tx2);}
+.lst{background:var(--card);border:1px solid var(--line);border-radius:var(--r);}
+.lst-i{display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:64px;}
+.lst-i+.lst-i{border-top:1px solid var(--line2);}
+.lst-ic{width:38px;height:38px;border-radius:19px;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--br);flex-shrink:0;}
+.lst-ic.ok{background:var(--okbg);color:var(--ok);}
+.lst-ic.al{background:var(--warnbg);color:var(--warn);}
+.lst-tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.lst-tx b{font-size:15px;font-weight:600;overflow-wrap:anywhere;}
+.lst-tx span{font-size:13px;color:var(--tx2);}
+.lst-a{border:none;background:none;color:var(--br);font-size:14px;font-weight:600;min-height:44px;min-width:44px;padding:0 6px;}
+.lst-a.ok{color:var(--ok);}
+.sec-hd{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px;}
+.sec-hd span{font-size:13px;color:var(--tx2);}
+.em-sem{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;}
+.em-sem>div{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.em-sem b{font-size:20px;font-weight:600;}
+.em-sem span{font-size:12px;color:var(--tx2);}
+.selo{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+.selo.sim{background:var(--warnbg);color:var(--warn);}
+.selo.at{background:var(--okbg);color:var(--ok);}
+.vazio{padding:20px 14px;text-align:center;font-size:14px;color:var(--tx2);}
+.loading{padding:20px 14px;text-align:center;font-size:14px;color:var(--tx2);}
+.empty{padding:24px 14px;text-align:center;font-size:14px;color:var(--tx2);}
+/* Propostas */
+.busca{position:relative;margin-bottom:12px;}
+.busca svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tx2);}
+.busca .inp{padding-left:44px;}
+.filtros{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.chips{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;}
+.chip.tst{border-style:dashed;}
+.pc{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px;color:var(--tx);}
+.pc:hover{border-color:#CDB8A5;}
+.pc-l1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.pc-n{font-size:16px;font-weight:600;overflow-wrap:anywhere;min-width:0;}
+.pc-m{display:block;font-size:13px;color:var(--tx2);margin-top:3px;}
+.pc-b{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;background:#F0E6DB;color:var(--tx2);}
+.pill.at{background:var(--soft);color:var(--br);}
+.pill.vc{background:var(--warnbg);color:var(--warn);}
+.pill.ok{background:var(--okbg);color:var(--ok);}
+.pill.ex{background:var(--errbg);color:var(--err);}
+.pill.cn{background:#E4E0DC;color:#4A4541;}
+.pill.al{background:var(--warnbg);color:var(--warn);}
+.pill.ts{background:transparent;border:1px dashed #B9A58F;color:var(--tx2);}
+.pill svg{width:14px;height:14px;}
+.mais{width:100%;}
+.lim-t{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--tx2);margin:-4px 0 12px;}
+.lim-t .btn-out{white-space:nowrap;flex-shrink:0;}
+/* Detalhe */
+.dt-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.dt-meta{font-size:14px;color:var(--tx2);margin-top:6px;}
+.vd{margin:16px 0;}
+.vd-l{display:flex;justify-content:space-between;gap:10px;font-size:14px;margin-bottom:8px;}
+.vd-l span:last-child{color:var(--tx2);white-space:nowrap;}
+.vd-b{height:8px;border-radius:4px;background:#EBDDCD;overflow:hidden;}
+.vd-b div{height:100%;background:var(--br);border-radius:4px;}
+.acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 6px;}
+.acts button{min-height:64px;flex-direction:column;gap:4px;font-size:13px;padding:8px 4px;}
+.acts-n{font-size:12px;color:var(--tx2);text-align:center;margin-bottom:6px;}
+.tl{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 14px;}
+.tl-i{display:flex;gap:12px;padding:10px 0;}
+.tl-i+.tl-i{border-top:1px solid var(--line2);}
+.tl-d{width:10px;height:10px;border-radius:5px;background:var(--br);margin-top:6px;flex-shrink:0;}
+.tl-d.ok{background:var(--ok);}
+.tl-d.al{background:#C98A1B;}
+.tl-d.mu{background:#C9B8A8;}
+.tl-i>div{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.tl-i b{font-size:14px;font-weight:600;}
+.tl-i span{font-size:13px;color:var(--tx2);overflow-wrap:anywhere;}
+.gr{display:flex;flex-direction:column;gap:8px;}
+.gr .btn-out{justify-content:flex-start;text-align:left;width:100%;min-height:50px;color:var(--tx);font-weight:500;}
+.gr .btn-out svg{color:var(--br);}
+.risco{display:flex;flex-direction:column;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+.risco .btn-enc{justify-content:flex-start;width:100%;min-height:50px;font-weight:500;}
+.info{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px 14px;}
+.info>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;font-size:14px;}
+.info>div+div{border-top:1px solid var(--line2);}
+.info>div span:first-child{color:var(--tx2);flex-shrink:0;}
+.info>div span:last-child{text-align:right;overflow-wrap:anywhere;min-width:0;}
+.info .err-t{color:var(--err);font-weight:600;}
+.info .ok-t{color:var(--ok);font-weight:600;}
+.info .al-t{color:var(--warn);font-weight:600;}
+/* Ajustes */
+.zona{border:1px solid #E7B4AE;border-radius:var(--r);padding:16px;background:#FFF9F7;}
+.zona h2{color:var(--err);margin-bottom:4px;}
+.zona p{font-size:13px;color:var(--tx2);margin-bottom:12px;}
+.zona .btn-enc{width:100%;justify-content:flex-start;margin-bottom:8px;background:var(--card);}
+/* mensagens e janelas */
+.hist-msg{position:fixed;left:16px;right:16px;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));z-index:9000;max-width:520px;margin:0 auto;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.4;background:#1F3B27;color:#F2FBF4;box-shadow:0 8px 28px rgba(0,0,0,.2);}
+.hist-msg.err{background:#7A1C15;color:#fff;font-weight:500;}
+body.tem-foot .hist-msg{bottom:calc(var(--nav-h) + 136px + env(safe-area-inset-bottom));}
+@media (min-width:900px){.hist-msg{left:248px;bottom:24px;}body.tem-foot .hist-msg{bottom:140px;}}
+.hmodal{position:fixed;inset:0;z-index:9999;background:rgba(42,14,5,.5);display:flex;align-items:flex-end;justify-content:center;padding:12px;}
+@media(min-width:601px){.hmodal{align-items:center;}}
+.hbox{background:var(--bg);border-radius:20px;width:100%;max-width:460px;max-height:88vh;overflow:auto;padding:20px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 10px 40px rgba(0,0,0,.3);}
+.hbox h3{margin:0 0 6px;font-family:var(--ft);font-weight:300;letter-spacing:-0.03em;line-height:1.15;font-size:24px;color:var(--tx);overflow-wrap:anywhere;}
+.hbox .hsub{font-size:14px;color:var(--tx2);margin-bottom:14px;line-height:1.45;}
+.hbox label.hck{display:flex;align-items:flex-start;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:15px;min-height:48px;cursor:pointer;}
+.hbox label.hck input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--br);}
+.hbox label.hck small{display:block;font-size:12px;color:var(--tx2);}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.hbtns button{flex:1 1 130px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--br);font-size:15px;font-weight:600;}
+.hbtns button.pri{background:var(--br);border-color:var(--br);color:#FFF8F1;}
+.hbtns button.perigo{background:var(--err);border-color:var(--err);color:#fff;}
+.hbtns button:disabled{opacity:.45;cursor:default;}
+.hist-info{font-size:14px;color:var(--tx2);margin-bottom:6px;display:flex;gap:8px;flex-wrap:wrap;}
+.hist-info strong{color:var(--tx);}
+.hist-tipo{font-size:12px;font-weight:600;color:var(--tx2);}
+input,textarea,select{max-width:100%;}
 @media (max-width:820px),(pointer:coarse){
   input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!important;}
-  .inp,.add-inp,.item-edit-inp{min-height:44px;height:auto;}
-  textarea.inp{min-height:88px;}
-  .cd-ed .inp{min-height:44px;height:auto;}
-  textarea.cd-ta{min-height:104px;}
-  .btn-main,.btn-out,.btn-enc,.btn-enc-all,.add-btn,.val-btn,.cd-seg,.st-b,.btn-sair,.items-toggle,.plano-ck,.hist-hdr{min-height:44px;}
-  .btn-out,.btn-enc,.add-btn{padding-top:10px;padding-bottom:10px;}
-  .btn-sair{min-width:44px;}
-  .ibtn,.hist-del{min-width:44px;min-height:44px;}
-  .tg{display:flex;flex-wrap:wrap;width:100%;border-radius:14px;}
-  .tg-t{flex:1 1 100%;min-width:0;min-height:44px;overflow-wrap:anywhere;}
-  .tg-x{flex:1 1 0;min-width:44px;min-height:44px;padding:0;border-top:1px solid var(--brl);}
-  .imp-box button,#btnAtivar,#btnTeste,#btnCancelaEnvio,#btnEmailEnviar{min-height:44px;height:auto!important;}
-  .plano-ck input,.item-row input[type=checkbox]{width:22px;height:22px;}
-  .login{margin-top:48px;padding:32px 20px;}
+  .tg{display:flex;flex-wrap:wrap;width:100%;}
+  .tg-t{flex:1 1 100%;min-width:0;overflow-wrap:anywhere;}
+  .tg-x{flex:1 1 0;border-top:1px solid var(--line)!important;}
+  .tg-x:nth-child(2){border-left:none!important;}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 </head>
-<body>
-<div class="wrap">
+<body class="lg">
 <div class="login" id="loginCard">
-  <div class="login-logo">STUDIO PULGA</div>
-  <div class="login-sub">Painel de propostas</div>
-  <input class="inp" type="password" id="loginSenha" placeholder="Senha" autocomplete="current-password">
+  <span class="mk">// studio pulga</span>
+  <h1 class="tt">painel de <strong>propostas</strong></h1>
+  <label class="label" for="loginSenha">Senha</label>
+  <input class="inp" type="password" id="loginSenha" placeholder="Digite a senha" autocomplete="current-password">
   <label class="lg-manter"><input type="checkbox" id="loginManter"><span>Manter conectado neste aparelho (30 dias)</span></label>
-  <button class="btn-main" id="btnLogin">Entrar</button>
-  <div class="err" id="loginErr">Senha incorreta.</div>
-  <div class="lg-aviso" id="loginAviso"></div>
+  <button class="btn-main" id="btnLogin" type="button">Entrar</button>
+  <div class="err" id="loginErr" role="alert">Senha incorreta.</div>
+  <div class="lg-aviso" id="loginAviso" role="status"></div>
 </div>
 <div class="admin" id="adminWrap">
-  <div class="hdr"><div class="hdr-logo">STUDIO PULGA</div><button class="btn-sair" id="btnSair">Sair</button></div>
-  <div class="at-row" role="tablist" aria-label="Área"><button type="button" class="cd-seg on" id="atPl" role="tab">Planos de gestão</button><button type="button" class="cd-seg" id="atCd" role="tab">Cardápio</button></div>
-  <div class="st-row" role="tablist" aria-label="Seção"><button type="button" class="st-b on" id="stNova" role="tab">Nova proposta</button><button type="button" class="st-b" id="stPad" role="tab">Padrões</button><button type="button" class="st-b" id="stHist" role="tab">Histórico</button></div>
-  <div class="card" id="secNova">
-    <div class="card-title" id="novaTit">Nova proposta</div>
-    <div class="card-sub">Preencha e gere o link exclusivo para o cliente.</div>
-    <div class="field" id="tipoField" style="display:none;"><label class="label">Tipo de proposta</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="tpPlanos">Planos (atual)</button><button type="button" class="cd-seg" id="tpCardapio">Cardápio</button></div></div>
-    <div class="field"><label class="label">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex: Ana Silva"></div>
-    <div class="field"><label class="label">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ex: ana@email.com"><label class="cd-hint" style="display:flex;gap:8px;align-items:center;margin-top:8px;cursor:pointer;"><input type="checkbox" id="fEnviarGerar" style="width:20px;height:20px;margin:0;accent-color:#6E2C14;"><span>Enviar por e-mail ao gerar (precisa do e-mail acima)</span></label><label class="cd-hint" style="display:flex;gap:8px;align-items:center;margin-top:8px;cursor:pointer;"><input type="checkbox" id="fMulher" style="width:20px;height:20px;margin:0;accent-color:#6E2C14;"><span>Cliente mulher (só para o e-mail do Dia da Mulher)</span></label><label class="label" for="fNicho" style="margin-top:12px;">Nicho (e-mails de datas especiais)</label><select class="inp" id="fNicho"><option value="arquiteto">Arquiteto/Designer</option><option value="loja">Loja</option><option value="outro">Outro</option></select></div>
-    <div class="field" id="fModelo"><label class="label">Modelo</label><div class="cd-seg-row"><button type="button" class="cd-seg on" id="mdArq">Arquiteto</button><button type="button" class="cd-seg" id="mdLoja">Loja</button></div><div class="cd-hint">Os valores e itens abaixo vêm dos Padrões do modelo. Você pode ajustar só para este cliente.</div></div>
-    <div class="field">
-      <label class="label">Planos a exibir</label>
-      <div class="plano-ck on" id="divCk1"><input type="checkbox" id="ck1" checked><span class="plano-ck-label">1º Pacote</span></div>
-      <div class="plano-ck on" id="divCk2"><input type="checkbox" id="ck2" checked><span class="plano-ck-label">2º Pacote</span></div>
-      <div class="plano-ck on" id="divCk3"><input type="checkbox" id="ck3" checked><span class="plano-ck-label">3º Pacote</span></div>
+<div class="app">
+  <nav class="nav" id="navApp" aria-label="Menu principal">
+    <div class="nav-logo">studio <strong>pulga</strong></div>
+    <button type="button" data-nav="inicio" aria-label="Início"><i data-i="home"></i><span>Início</span></button>
+    <button type="button" data-nav="propostas" aria-label="Propostas"><i data-i="list"></i><span>Propostas</span></button>
+    <button type="button" data-nav="nova" aria-label="Nova proposta"><i data-i="plus"></i><span>Nova</span></button>
+    <button type="button" data-nav="emails" id="atEm" aria-label="E-mails"><i data-i="mail"></i><span>E-mails</span></button>
+    <button type="button" data-nav="ajustes" aria-label="Ajustes"><i data-i="gear"></i><span>Ajustes</span></button>
+  </nav>
+  <main class="main" id="main">
+
+  <!-- ===== INÍCIO ===== -->
+  <section class="scr" id="scrInicio" aria-labelledby="inTit">
+    <div class="scr-hd"><div><span class="mk">// studio pulga · propostas</span><h1 class="tt" id="inTit">olá, <strong>Isaque</strong></h1></div></div>
+    <div class="stats">
+      <div class="stat"><span class="num" id="inAtivas">–</span><span>Ativas</span></div>
+      <div class="stat"><span class="num" id="inAbriram">–</span><span>Abriram</span></div>
+      <div class="stat"><span class="num" id="inEscolheram">–</span><span>Escolheram</span></div>
     </div>
-    <div class="field" id="fld1"><label class="label">1º Plano (R$)</label><div class="de-para"><div><div class="de-para-label">De (original)</div><input class="inp" type="text" id="fVO1" placeholder="Ex: 4.500"></div><div><div class="de-para-label">Para (novo valor)</div><input class="inp" type="text" id="fV1" placeholder="Ex: 2.690"></div></div></div>
-    <div class="field" id="fld2"><label class="label">2º Plano (R$)</label><div class="de-para"><div><div class="de-para-label">De (original)</div><input class="inp" type="text" id="fVO2" placeholder="Ex: 5.500"></div><div><div class="de-para-label">Para (novo valor)</div><input class="inp" type="text" id="fV2" placeholder="Ex: 3.290"></div></div></div>
-    <div class="field" id="fld3"><label class="label">3º Plano (R$)</label><div class="de-para"><div><div class="de-para-label">De (original)</div><input class="inp" type="text" id="fVO3" placeholder="Ex: 6.500"></div><div><div class="de-para-label">Para (novo valor)</div><input class="inp" type="text" id="fV3" placeholder="Ex: 3.990"></div></div></div>
-    <div class="field">
-      <label class="label">Personalizar itens</label>
-      <div class="items-toggle" id="itog1"><span class="items-toggle-label">1º Pacote — Itens</span><span class="items-arrow" id="ia1">›</span></div>
-      <div class="items-body" id="ib1"><div id="tb1"></div></div>
-      <div class="items-toggle" id="itog2"><span class="items-toggle-label">2º Pacote — Itens</span><span class="items-arrow" id="ia2">›</span></div>
-      <div class="items-body" id="ib2"><div id="tb2"></div></div>
-      <div class="items-toggle" id="itog3"><span class="items-toggle-label">3º Pacote — Itens</span><span class="items-arrow" id="ia3">›</span></div>
-      <div class="items-body" id="ib3"><div id="tb3"></div></div>
+    <button type="button" class="btn-main" id="inNova"><i data-i="plus"></i>Nova proposta</button>
+    <div class="sec-hd"><h2 class="sec">Precisam de atenção</h2><span id="inAtN"></span></div>
+    <div id="inAtencao"><div class="lst"><div class="loading">Carregando…</div></div></div>
+    <div class="sec-hd"><h2 class="sec">E-mails desta semana</h2><span></span></div>
+    <div id="inEmails"><div class="em-sem"><div><span>Carregando…</span></div></div></div>
+  </section>
+
+  <!-- ===== PROPOSTAS ===== -->
+  <section class="scr" id="secHist" aria-labelledby="histTit">
+    <div class="scr-hd"><div><span class="mk">// histórico</span><h1 class="tt" id="histTit">Propostas</h1></div><button type="button" class="ib" id="btnLixeira" aria-label="Lixeira" title="Lixeira"><i data-i="trash"></i></button></div>
+    <div class="busca"><label class="sr" for="pBusca">Buscar proposta por nome</label><i data-i="search"></i><input class="inp" id="pBusca" type="search" placeholder="Buscar cliente" autocomplete="off"></div>
+    <div class="filtros">
+      <div class="segm" role="group" aria-label="Tipo de proposta"><button type="button" data-ptipo="todas" class="on" aria-pressed="true">Todas</button><button type="button" data-ptipo="planos" aria-pressed="false">Planos</button><button type="button" data-ptipo="cardapio" aria-pressed="false">Cardápio</button></div>
+      <div class="chips" role="group" aria-label="Situação" id="pChips"></div>
     </div>
-    <div id="cdBlock" style="display:none;">
-      <div class="field"><label class="label">Abas que este cliente vê</label><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck" id="nvDivMi"><input type="checkbox" id="nvMi"><span class="plano-ck-label">Especial Milão</span></div><div class="cd-hint">Marque pelo menos uma. Com uma só aba, a barra de abas some e a página abre direto nela.</div></div>
-      <div class="field" id="miCliField" style="display:none;"><div class="items-toggle" id="miCliTog" role="button" tabindex="0" aria-expanded="false"><span class="items-toggle-label">Personalizar este cliente · Especial Milão <span class="mi-src" id="miCliSrc"></span></span><span class="items-arrow" id="miCliArr">›</span></div><div class="items-body" id="miCliBody"></div></div>
-      <div class="field"><label class="label">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
-      <div class="field"><label class="label">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
-      <div class="field"><label class="label">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" id="cdVEntrada" placeholder="Ex: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
+    <div id="pTestes" class="lim-t" style="display:none;"></div>
+    <div id="histLista"><div class="loading">Carregando…</div></div>
+  </section>
+
+  <!-- ===== DETALHE ===== -->
+  <section class="scr" id="scrDetalhe" aria-live="polite"></section>
+
+  <!-- ===== NOVA PROPOSTA ===== -->
+  <section class="scr" id="secNova" aria-labelledby="novaTit">
+    <div class="scr-hd"><div><span class="mk">// novo link exclusivo</span><h1 class="tt" id="novaTit">Nova <strong>proposta</strong></h1></div></div>
+    <div class="blk">
+      <span class="blk-t">1 · Cliente</span>
+      <div><label class="label" for="fNome">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex.: Ana Silva · Estúdio Ana" autocomplete="off"></div>
+      <div><label class="label" for="fEmail">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ativa os lembretes por e-mail" autocomplete="off"></div>
+      <label class="ck-l"><input type="checkbox" id="fMulher"><span>Cliente mulher (campanha do Dia da Mulher)</span></label>
+      <input type="checkbox" id="fEnviarGerar" hidden aria-hidden="true" tabindex="-1">
     </div>
-    <div class="field">
-      <label class="label">Validade do link</label>
-      <div class="val-row">
-        <button class="val-btn" id="v1d">1 dia</button>
-        <button class="val-btn on" id="v2d">2 dias</button>
-        <button class="val-btn" id="v3d">3 dias</button>
-        <button class="val-btn" id="v5d">5 dias</button>
-        <button class="val-btn" id="v7d">7 dias</button>
+    <div class="blk">
+      <span class="blk-t">2 · Modelo</span>
+      <div class="mdl" role="group" aria-label="Modelo da proposta">
+        <button type="button" data-mdl="arq" aria-pressed="true">Arquiteto<span>Planos P1 · P2 · P3</span></button>
+        <button type="button" data-mdl="loja" aria-pressed="false">Loja<span>Planos P1 · P2 · P3</span></button>
+        <button type="button" data-mdl="cd" aria-pressed="false">Cardápio<span id="mdlCdSub">Avulsos · Recorrente</span></button>
+        <button type="button" data-mdl="mi" aria-pressed="false">Especial Milão<span id="mdlMiSub">Viagem de abril</span></button>
+      </div>
+      <div class="nicho-l" id="nichoLinha"><span>Nicho: <b id="nichoTxt">Arquiteto/Designer</b></span><button type="button" class="lnk" id="nichoAlt" aria-controls="nichoBox" aria-expanded="false">Alterar</button></div>
+      <div id="nichoBox" style="display:none;"><label class="label" for="fNicho">Nicho (para os e-mails de datas especiais)</label><select class="inp" id="fNicho"><option value="arquiteto">Arquiteto/Designer</option><option value="loja">Loja</option><option value="outro">Outro</option></select></div>
+    </div>
+    <div class="blk">
+      <span class="blk-t">3 · Validade e valores</span>
+      <div class="val-row" role="group" aria-label="Validade do link">
+        <button type="button" class="val-btn" id="v1d">1 dia</button>
+        <button type="button" class="val-btn on" id="v2d">2 dias</button>
+        <button type="button" class="val-btn" id="v3d">3 dias</button>
+        <button type="button" class="val-btn" id="v5d">5 dias</button>
+        <button type="button" class="val-btn" id="v7d">7 dias</button>
+        <button type="button" class="val-btn" id="vOutra">Outra</button>
+      </div>
+      <div class="outra" id="vOutraBox" style="display:none;"><label for="vOutraN">Quantos dias?</label><input class="inp" id="vOutraN" type="number" inputmode="numeric" min="1" max="30" value="10"><span>de 1 a 30</span></div>
+      <div class="resumo" id="nvResumo" aria-live="polite"></div>
+      <button type="button" class="fold-b" id="ajTog" aria-expanded="false" aria-controls="ajBody"><span>Ajustar valores e itens deste cliente</span><i data-i="chev"></i></button>
+      <div class="fold-c" id="ajBody" style="display:none;">
+        <div id="plBlock">
+          <div class="field">
+            <span class="label">Planos a exibir</span>
+            <div class="plano-ck on" id="divCk1"><input type="checkbox" id="ck1" checked aria-label="Mostrar o 1º Pacote"><span class="plano-ck-label">1º Pacote</span></div>
+            <div class="plano-ck on" id="divCk2"><input type="checkbox" id="ck2" checked aria-label="Mostrar o 2º Pacote"><span class="plano-ck-label">2º Pacote</span></div>
+            <div class="plano-ck on" id="divCk3"><input type="checkbox" id="ck3" checked aria-label="Mostrar o 3º Pacote"><span class="plano-ck-label">3º Pacote</span></div>
+          </div>
+          <div class="field" id="fld1"><span class="label">1º Pacote (R$)</span><div class="de-para"><div><label class="de-para-label" for="fVO1">De (riscado)</label><input class="inp" type="text" inputmode="decimal" id="fVO1" placeholder="Ex.: 4.500"></div><div><label class="de-para-label" for="fV1">Por</label><input class="inp" type="text" inputmode="decimal" id="fV1" placeholder="Ex.: 2.690"></div></div></div>
+          <div class="field" id="fld2"><span class="label">2º Pacote (R$)</span><div class="de-para"><div><label class="de-para-label" for="fVO2">De (riscado)</label><input class="inp" type="text" inputmode="decimal" id="fVO2" placeholder="Ex.: 5.500"></div><div><label class="de-para-label" for="fV2">Por</label><input class="inp" type="text" inputmode="decimal" id="fV2" placeholder="Ex.: 3.290"></div></div></div>
+          <div class="field" id="fld3"><span class="label">3º Pacote (R$)</span><div class="de-para"><div><label class="de-para-label" for="fVO3">De (riscado)</label><input class="inp" type="text" inputmode="decimal" id="fVO3" placeholder="Ex.: 6.500"></div><div><label class="de-para-label" for="fV3">Por</label><input class="inp" type="text" inputmode="decimal" id="fV3" placeholder="Ex.: 3.990"></div></div></div>
+          <div class="field">
+            <span class="label">Itens de cada pacote</span>
+            <div class="items-toggle" id="itog1" role="button" tabindex="0"><span class="items-toggle-label">1º Pacote · itens</span><span class="items-arrow" id="ia1"><i data-i="chev"></i></span></div>
+            <div class="items-body" id="ib1"><div id="tb1"></div></div>
+            <div class="items-toggle" id="itog2" role="button" tabindex="0"><span class="items-toggle-label">2º Pacote · itens</span><span class="items-arrow" id="ia2"><i data-i="chev"></i></span></div>
+            <div class="items-body" id="ib2"><div id="tb2"></div></div>
+            <div class="items-toggle" id="itog3" role="button" tabindex="0"><span class="items-toggle-label">3º Pacote · itens</span><span class="items-arrow" id="ia3"><i data-i="chev"></i></span></div>
+            <div class="items-body" id="ib3"><div id="tb3"></div></div>
+          </div>
+        </div>
+        <div id="cdBlock" style="display:none;">
+          <div class="field"><span class="label">Abas que este cliente vê</span><div class="plano-ck on" id="nvDivAv"><input type="checkbox" id="nvAv" checked aria-label="Aba Avulsos"><span class="plano-ck-label">Avulsos</span></div><div class="plano-ck on" id="nvDivRc"><input type="checkbox" id="nvRc" checked aria-label="Aba Recorrente"><span class="plano-ck-label">Recorrente</span></div><div class="plano-ck" id="nvDivMi"><input type="checkbox" id="nvMi" aria-label="Aba Especial Milão"><span class="plano-ck-label">Especial Milão</span></div><div class="cd-hint">Marque pelo menos uma. Com uma só aba, a barra de abas some e a página abre direto nela.</div></div>
+          <div class="field" id="miCliField" style="display:none;"><div class="items-toggle" id="miCliTog" role="button" tabindex="0" aria-expanded="false"><span class="items-toggle-label">Personalizar este cliente · Especial Milão <span class="mi-src" id="miCliSrc"></span></span><span class="items-arrow" id="miCliArr"><i data-i="chev"></i></span></div><div class="items-body" id="miCliBody"></div></div>
+          <div class="field"><label class="label" for="cdVidAbertura">Vídeo de abertura (URL https, opcional)</label><input class="inp" type="text" id="cdVidAbertura" placeholder="https://..."><div class="cd-hint">Em branco: a abertura usa as fotos.</div></div>
+          <div class="field"><label class="label" for="cdObs">Observação para o cliente (opcional)</label><textarea class="inp cd-ta" id="cdObs" maxlength="400" placeholder="Aparece no topo do cardápio só se você preencher."></textarea></div>
+          <div class="field"><label class="label" for="cdVEntrada">Valor do plano de entrada para este cliente (opcional)</label><input class="inp" type="text" inputmode="decimal" id="cdVEntrada" placeholder="Ex.: 890"><div class="cd-hint">Vale só para este link. Em branco usa o valor do plano da aba Recorrente.</div></div>
+        </div>
       </div>
     </div>
-    <button class="btn-main" id="btnGerar">Gerar link →</button>
-    <div class="result" id="result">
-      <div class="result-label">Link gerado</div>
+    <div class="result" id="result" role="region" aria-label="Link gerado">
+      <div class="res-ok" id="resOk"><i data-i="check"></i><span id="resOkTxt">Link gerado</span></div>
+      <div class="result-label">Link do cliente</div>
       <div class="result-url" id="shortUrl"></div>
       <div class="msg-box field" id="msgBox" style="display:none;">
         <label class="label" for="msgTxt">Mensagem (pode editar antes de enviar)</label>
         <textarea class="inp cd-ta" id="msgTxt" maxlength="600"></textarea>
       </div>
-      <button class="btn-main btn-share" id="btnShare" style="display:none;">Compartilhar</button>
+      <button type="button" class="btn-main btn-share" id="btnShare" style="display:none;">Compartilhar</button>
       <div class="btn-row">
-        <button class="btn-out" id="btnCopy">Copiar link</button>
-        <button class="btn-out" id="btnCopyMsg" style="display:none;">Copiar mensagem</button>
-        <button class="btn-out" id="btnShort">Mostrar link completo</button>
+        <button type="button" class="btn-out" id="btnCopy">Copiar link</button>
+        <button type="button" class="btn-out" id="btnCopyMsg" style="display:none;">Copiar mensagem</button>
+        <button type="button" class="btn-out" id="btnShort">Mostrar link completo</button>
       </div>
-      <div id="envioGerado" style="margin-top:12px;"><button class="btn-out" id="btnEmailGerado" style="display:none;"></button><div id="emailGeradoMsg" style="font-size:12px;margin-top:8px;"></div></div>
+      <div id="envioGerado" style="margin-top:12px;"><button type="button" class="btn-out" id="btnEmailGerado" style="display:none;"></button><div id="emailGeradoMsg" style="font-size:13px;margin-top:8px;" role="status"></div></div>
       <div id="shortWrap" style="display:none;margin-top:12px;">
         <div class="result-label">Link completo</div>
         <div class="result-url" id="resultUrl"></div>
-        <button class="btn-out" id="btnCopyShort">Copiar link completo</button>
+        <button type="button" class="btn-out" id="btnCopyShort">Copiar link completo</button>
       </div>
     </div>
-  </div>
-  <div class="card" id="secPad" style="display:none;">
-    <div class="card-title" id="padTit">Padrões</div>
-    <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos no servidor e valem em qualquer aparelho.</div>
-    <div id="padAviso" class="pad-aviso" style="display:none;"></div>
-    <div id="impBox"></div>
-    <div id="padPl"></div>
-    <div id="padCd" style="display:none;">
-      <div class="field">
-        <label class="label">Abas do cardápio</label>
-        <div class="cd-count" id="cdCount"></div>
-        <div id="cdCaminhos"></div>
-      </div>
-      <div id="padCdBtns"></div>
+    <div class="foot" id="nvFoot">
+      <button type="button" class="btn-main" id="btnGerar">Gerar e copiar link</button>
+      <button type="button" class="btn-out" id="btnGerarEmail" disabled>Gerar e enviar por e-mail</button>
     </div>
-  </div>
-  <div class="card" id="secHist" style="display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title" id="histTit">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
-    <div class="hist-tools"><button type="button" id="btnApagarHist" class="perigo">🗑 Apagar histórico…</button><button type="button" id="btnLixeira">♻ Lixeira</button></div>
-    <div id="histMsg" class="hist-msg" role="status" style="display:none;"></div>
-    <div id="histLista"><div class="loading">Carregando…</div></div>
-  </div>
+  </section>
+
+  <!-- ===== E-MAILS ===== -->
+  <section class="scr" id="scrEmails" aria-labelledby="emTit">
+    <div class="scr-hd"><div><span class="mk">// envios automáticos</span><h1 class="tt" id="emTit">E-<strong>mails</strong></h1></div></div>
+    <div id="secEmails"><div id="emCorpo"><div class="loading">Carregando…</div></div></div>
+  </section>
+
+  <!-- ===== AJUSTES ===== -->
+  <section class="scr" id="scrAjustes" aria-labelledby="ajTit">
+    <div class="scr-hd"><div><span class="mk">// padrões e conta</span><h1 class="tt" id="ajTit">Ajus<strong>tes</strong></h1></div></div>
+    <div class="segm" role="group" aria-label="Qual padrão editar" style="margin-bottom:16px;"><button type="button" data-aj="pl" class="on" aria-pressed="true">Planos de gestão</button><button type="button" data-aj="cd" aria-pressed="false">Cardápio</button></div>
+    <div id="secPad">
+      <div class="card-title" id="padTit">Padrões · Planos de gestão</div>
+      <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos no servidor e valem em qualquer aparelho.</div>
+      <div id="padAviso" class="pad-aviso" style="display:none;" role="alert"></div>
+      <div id="impBox"></div>
+      <div id="padPl"></div>
+      <div id="padCd" style="display:none;">
+        <div class="field">
+          <span class="label">Abas do cardápio</span>
+          <div class="cd-count" id="cdCount"></div>
+          <div id="cdCaminhos"></div>
+        </div>
+        <div id="padCdBtns"></div>
+      </div>
+    </div>
+    <div class="sec-hd"><h2 class="sec">Zona de risco</h2><span id="zonaArea">Planos de gestão</span></div>
+    <div class="zona">
+      <p>Ações em lote. Valem para a área escolhida acima e sempre pedem confirmação.</p>
+      <button type="button" class="btn-enc" id="btnEncTodas"><i data-i="ban"></i>Encerrar propostas ativas…</button>
+      <button type="button" class="btn-enc" id="btnApagarHist"><i data-i="trash"></i>Apagar histórico…</button>
+    </div>
+    <div class="sec-hd"><h2 class="sec">Sessão</h2><span></span></div>
+    <button type="button" class="btn-out" id="btnSair" style="width:100%;"><i data-i="logout"></i>Sair deste aparelho</button>
+  </section>
+
+  </main>
 </div>
+<div id="histMsg" class="hist-msg" role="status" style="display:none;"></div>
 </div>
+<script>
+// ===== Ícones SVG de traço (mesma espessura em todo o admin). Só texto fixo: nada vindo de dados. =====
+var ICO_P = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3.6 14H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 7a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3.1V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.8 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 20.4 10H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  restore:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+  alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5h.01"/>',
+  check:'<path d="M5 12l4 4 10-10"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  phone:'<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  wa:'<path d="M21 12a8.5 8.5 0 0 1-12.4 7.6L3 21l1.5-5.3A8.5 8.5 0 1 1 21 12z"/>',
+  back:'<path d="M15 18l-6-6 6-6"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  chevup:'<path d="M6 15l6-6 6 6"/>',
+  up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+  down:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  left:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  swap:'<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
+  pause:'<path d="M9 5v14M15 5v14"/>',
+  dup:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  tag:'<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  logout:'<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/>',
+  send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',
+  play:'<path d="M8 5l11 7-11 7z"/>'
+};
+function ICO(n, sz) { sz = sz || 20; return '<svg class="ico" width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (ICO_P[n] || '') + '</svg>'; }
+function icoFill(raiz) { (raiz || document).querySelectorAll('i[data-i]').forEach(function(el) { var t = document.createElement('span'); t.innerHTML = ICO(el.getAttribute('data-i')); el.replaceWith(t.firstChild); }); }
+icoFill();
+// botão só com ícone (rótulo para leitor de tela)
+function icoBtn(cls, n, rot) { var b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = ICO(n, 18); b.setAttribute('aria-label', rot); b.title = rot; return b; }
+</script>
 <script>
 // Seguranca: a senha e conferida no servidor (/api/admin-login) e nunca fica guardada no navegador.
 // Sessao normal: 12h (token so nesta aba, em sessionStorage).
@@ -378,15 +623,15 @@ function renderI(p) {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' disabled>';
       h += '<input class="item-edit-inp" id="ied' + p + '_' + i + '" value="' + esc(item.t) + '">';
-      h += '<button class="ibtn" data-save-i="' + p + '" data-save-j="' + i + '" data-is-i="1">✔</button>';
+      h += '<button class="ibtn" data-save-i="' + p + '" data-save-j="' + i + '" data-is-i="1" aria-label="Salvar">' + ICO('check',18) + '</button>';
       h += '</div>';
     } else {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' data-ck-i="' + p + '" data-ck-j="' + i + '" data-is-i="1">';
       h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + esc(item.t) + '</span>';
-      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="1">↑</button>';
-      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="1">↓</button>';
-      h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="1">✏️</button>';
+      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="1" aria-label="Subir">' + ICO('up',18) + '</button>';
+      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="1" aria-label="Descer">' + ICO('down',18) + '</button>';
+      h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="1" aria-label="Editar">' + ICO('edit',18) + '</button>';
       h += '</div>';
     }
   });
@@ -400,15 +645,15 @@ function renderNI(p) {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' disabled>';
       h += '<input class="item-edit-inp" id="nied' + p + '_' + i + '" value="' + esc(item.t) + '">';
-      h += '<button class="ibtn" data-save-i="' + p + '" data-save-j="' + i + '" data-is-i="0">✔</button>';
+      h += '<button class="ibtn" data-save-i="' + p + '" data-save-j="' + i + '" data-is-i="0" aria-label="Salvar">' + ICO('check',18) + '</button>';
       h += '</div>';
     } else {
       h += '<div class="item-row">';
       h += '<input type="checkbox"' + (item.a ? ' checked' : '') + ' data-ck-i="' + p + '" data-ck-j="' + i + '" data-is-i="0">';
       h += '<span class="item-text' + (item.a ? '' : ' off') + '">' + esc(item.t) + '</span>';
-      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="0">↑</button>';
-      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="0">↓</button>';
-      h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="0">✏️</button>';
+      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="-1" data-is-i="0" aria-label="Subir">' + ICO('up',18) + '</button>';
+      h += '<button class="ibtn" data-mv-i="' + p + '" data-mv-j="' + i + '" data-mv-d="1" data-is-i="0" aria-label="Descer">' + ICO('down',18) + '</button>';
+      h += '<button class="ibtn" data-ed-i="' + p + '" data-ed-j="' + i + '" data-is-i="0" aria-label="Editar">' + ICO('edit',18) + '</button>';
       h += '</div>';
     }
   });
@@ -434,7 +679,15 @@ function encode(data) {
 var BRTZ = {timeZone:'America/Sao_Paulo'};
 function fmtDH(iso) { var d = new Date(iso); return d.toLocaleDateString('pt-BR', Object.assign({day:'2-digit', month:'2-digit'}, BRTZ)) + ' às ' + d.toLocaleTimeString('pt-BR', Object.assign({hour:'2-digit', minute:'2-digit'}, BRTZ)); }
 function propAtiva(p) { return p.status ? p.status === 'ativa' : Date.parse(p.expira_em) > Date.now(); }
-function histMsg(t, erro) { var e = document.getElementById('histMsg'); if (!e) return; e.textContent = t || ''; e.className = 'hist-msg' + (erro ? ' err' : ''); e.style.display = t ? 'block' : 'none'; }
+// aviso flutuante (some sozinho; erro fica até tocar)
+var _histMsgT = null;
+function histMsg(t, erro) {
+  var e = document.getElementById('histMsg'); if (!e) return;
+  clearTimeout(_histMsgT);
+  e.textContent = t || ''; e.className = 'hist-msg' + (erro ? ' err' : ''); e.style.display = t ? 'block' : 'none';
+  e.setAttribute('role', erro ? 'alert' : 'status');
+  if (t && !erro && !/…$/.test(t)) _histMsgT = setTimeout(function(){ e.style.display = 'none'; }, 6000);
+}
 function erroTxt(r, falhaRede) {
   if (falhaRede) return 'sem conexão com o servidor';
   var m = (r && r.erro) || 'erro desconhecido';
@@ -481,11 +734,11 @@ function encerrarProposta(id) {
 
 // "Encerrar todas": escolhe pelo nome quais expirar (propostas reais vêm desmarcadas)
 function encerrarTodas() {
-  var area = AREA === 'cd' ? 'cd' : 'pl';
+  var area = window.AJ_AREA === 'cd' ? 'cd' : 'pl';
   var at = _lista.filter(function(p){ return areaDe(p) === area && propAtiva(p); });
-  if (!at.length) { histMsg('Nenhuma proposta ativa nesta área.'); return; }
+  if (!at.length) { histMsg('Nenhuma proposta ativa em ' + (area === 'cd' ? 'Cardápio' : 'Planos de gestão') + '.'); return; }
   var cks = [];
-  var refs = hModal('Expirar propostas', 'Só as marcadas serão expiradas. Propostas de teste (nomes que começam com "ZZ" ou "Teste") vêm marcadas; as demais, não.',
+  var refs = hModal('Encerrar propostas · ' + (area === 'cd' ? 'Cardápio' : 'Planos de gestão'), 'Só as marcadas serão expiradas. Propostas de teste (nomes que começam com "ZZ" ou "Teste") vêm marcadas; as demais, não.',
     function(c){
       at.forEach(function(p){
         var l = document.createElement('label'); l.className = 'hck';
@@ -553,7 +806,7 @@ function acessosHtml(p) {
   h += 'Abriu ' + esc(A.aberturas) + 'x · 1º acesso ' + esc(BR(A.primeiro)) + ' · último ' + esc(BR(A.ultimo)) + '<br>';
   var ap = (A.aparelhos || []).map(function (d) { return esc((d.tipo || 'Aparelho') + (d.nav ? ' · ' + d.nav : '') + (d.vezes > 1 ? ' (' + d.vezes + 'x)' : '')); });
   if (ap.length) h += esc(A.dispositivos) + (Number(A.dispositivos) === 1 ? ' dispositivo: ' : ' dispositivos: ') + ap.join(', ') + '<br>';
-  if (Number(A.dispositivos) > 3) h += '<span style="color:#b36b00;font-weight:600;">⚠ Aberta em mais de 3 aparelhos: o link pode ter sido repassado.</span><br>';
+  if (Number(A.dispositivos) > 3) h += '<span style="color:#7A4A00;font-weight:600;">' + ICO('alert',14) + ' Aberta em mais de 3 aparelhos: o link pode ter sido repassado.</span><br>';
   var ab = (A.abas || []).map(function (a) { return esc(NOME_ABA[a] || a); }), pl = (A.planos || []).map(esc);
   if (ab.length) h += 'Abas vistas: ' + ab.join(', ') + '<br>';
   if (pl.length) h += 'Planos vistos: ' + pl.join(', ') + '<br>';
@@ -620,70 +873,21 @@ function gerarLink() {
     histLocal(r.id, snapPl);
     carregarHistorico();
   }).catch(function(e){ if(e.message!=='sessao') alert('Erro de conexão. A proposta não foi salva.'); })
-  .then(function(){ btn.disabled = false; btn.textContent = 'Gerar link →'; });
+  .then(function(){ btn.disabled = false; btn.textContent = 'Gerar e copiar link'; });
 }
 
 function carregarHistorico() {
-  document.getElementById('histLista').innerHTML = '<div class="loading">Atualizando…</div>';
+  if (!_lista.length) document.getElementById('histLista').innerHTML = '<div class="loading">Carregando…</div>';
   return adm('listar').then(function(r){
-    var lista = (r && r.ok && r.lista) || [];
-    if (!lista.length) { _lista = []; document.getElementById('histLista').innerHTML = '<div class="empty">Nenhuma proposta ainda.</div>'; return; }
-    _lista = lista;
-    renderHistorico(lista);
-    if (r && r.ok === false) document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar: ' + esc(erroTxt(r)) + '</div>';
-  }).catch(function(e){ if(e.message!=='sessao') document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar (sem conexão).</div>'; });
+    if (r && r.ok === false) { document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar: ' + esc(erroTxt(r)) + '</div>'; return; }
+    _lista = (r && r.ok && r.lista) || [];
+    renderHistorico(_lista);
+  }).catch(function(e){ if(e.message!=='sessao') { document.getElementById('histLista').innerHTML = '<div class="empty">Não foi possível carregar (sem conexão). Puxe para atualizar ou tente de novo.</div>'; histMsg('Sem conexão com o servidor.', true); } });
 }
 
 function renderHistorico(lista) {
-  var h = '', mostrados = 0, LH = histGet().m;
-  lista.forEach(function(p, i) {
-    var area = areaDe(p);
-    if (area !== (AREA === 'cd' ? 'cd' : 'pl')) return;
-    mostrados++;
-    var dt = new Date(p.criado_em);
-    var ds = dt.toLocaleDateString('pt-BR') + ' às ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    var pl = p.planos || [true,true,true];
-    var ativa = propAtiva(p);
-    var cancelada = p.status === 'cancelada';
-    var sel = cancelada ? '<span class="badge-cn">Cancelada</span>' : ativa ? '<span class="badge-at">Ativa</span>' : '<span class="badge-ex">Expirada</span>';
-    var A = p.acs || {}, nAb = Number(A.aberturas != null ? A.aberturas : p.ac) || 0, nDv = Number(A.dispositivos != null ? A.dispositivos : p.dv) || 0;
-    var badge = nAb > 0
-      ? '<span class="badge-ab">Abriu ' + nAb + 'x' + (nDv > 0 ? ' · ' + nDv + (nDv === 1 ? ' dispositivo' : ' dispositivos') : '') + '</span>'
-      : '<span class="badge-wt">Não abriu</span>';
-    var esc1 = A.escolheu || (Number(p.emails_cliente) > 0 ? 'plano' : '');
-    if (esc1) badge += '<span class="badge-ch">Escolheu ' + esc(esc1) + '</span>';
-    if (nDv > 3) badge += '<span class="badge-al" title="Aberta em mais de 3 aparelhos: o link pode ter sido repassado">⚠ ' + nDv + ' aparelhos</span>';
-    h += '<div class="hist-item">';
-    h += '<div class="hist-hdr" data-hist="' + i + '">';
-    h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome' + (ativa ? '' : ' exp') + '">' + esc(p.cliente) + '</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">' + sel + badge + '</div><div class="hist-data">' + ds + '</div></div>';
-    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Opções: cancelar ou excluir" aria-label="Opções: cancelar ou excluir">×</button></div>';
-    h += '</div>';
-    h += '<div class="hist-body" id="hb' + i + '">';
-    if (area === 'cd') {
-      if (p.v1) h += '<div class="hist-info"><strong>Plano de entrada</strong>R$ ' + esc(p.v1) + '</div>';
-    } else {
-      if (p.v1) h += '<div class="hist-info"><strong>1º Pacote</strong>R$ ' + esc(p.v1) + '</div>';
-      if (p.v2) h += '<div class="hist-info"><strong>2º Pacote</strong>R$ ' + esc(p.v2) + '</div>';
-      if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
-    }
-    h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
-    h += cancelada ? '<div class="hist-info"><strong>Cancelada em</strong>' + esc(fmtDH(p.cancelada_em)) + '</div>' : '<div class="hist-info"><strong>' + (ativa ? 'Ativa até' : 'Expirou em') + '</strong>' + esc(fmtDH(p.expira_em)) + '</div>';
-    h += acessosHtml(p);
-    if (p.email) {
-      h += '<div class="hist-info"><strong>E-mail</strong>' + esc(p.email) + '</div>';
-      h += '<div class="hist-info"><strong>Envio</strong>' + (p.envio_erro ? '<span style="color:#b3261e;font-weight:600;">Erro: ' + esc(p.envio_erro) + '</span>' : (p.enviado_em ? '<span style="color:#1a7a3c;font-weight:600;">Enviado em ' + esc(fmtDH(p.enviado_em)) + '</span>' : 'Ainda não enviado')) + (p.envio_erro && p.enviado_em ? ' <span style="color:var(--gray);">(último envio ok: ' + esc(fmtDH(p.enviado_em)) + ')</span>' : '') + '</div>';
-    }
-    if (p.email) {
-      var sq = p.suprimido ? '<span style="color:#b3261e;font-weight:600;">Bloqueado (e-mail rejeitado ou marcado como spam)</span>' : p.seq_status === 'fechada' ? '<span style="color:#b3261e;font-weight:600;">Parados (marcada como fechada)</span>' : p.seq_status === 'pausada' ? '<span style="color:#b36b00;font-weight:600;">Pausados</span>' : p.seq_status === 'descadastrada' ? '<span style="color:#b3261e;font-weight:600;">Parados (o cliente pediu para não receber)</span>' : 'Lembretes ligados (9h–11h, dia útil)';
-      h += '<div class="hist-info"><strong>Sequência</strong>' + sq + '</div>';
-      h += '<div class="hist-info"><strong>Cliente mulher</strong>' + (p.cliente_mulher ? 'Sim' : 'Não') + '</div>';
-      h += '<div class="hist-info"><strong>Nicho</strong>' + esc({arquiteto:'Arquiteto/Designer', loja:'Loja', outro:'Outro'}[p.nicho] || 'Arquiteto/Designer') + (p.nicho_auto ? ' <span style="color:var(--gray2);">(automático)</span>' : '') + '</div>';
-    }
-    if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (p.email && ativa ? '<button class="btn-out" data-mail="' + esc(p.id) + '">✉ ' + (p.enviado_em ? 'Reenviar por e-mail' : 'Enviar por e-mail') + '</button>' : '') + (p.email && p.seq_status !== 'descadastrada' ? '<button class="btn-out" data-fech="' + esc(p.id) + '">' + (p.seq_status === 'fechada' || p.seq_status === 'pausada' ? '↺ Reabrir lembretes' : '✓ Cliente fechou') + '</button>' : '') + (p.email ? '<button class="btn-out" data-tl="' + esc(p.id) + '">📬 E-mails desta proposta</button>' : '') + (p.email ? '<button class="btn-out" data-mul="' + esc(p.id) + '">♀ ' + (p.cliente_mulher ? 'Desmarcar cliente mulher' : 'Marcar cliente mulher') + '</button>' : '') + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Cancelar proposta</button>' : '') + '</div>';
-    h += '</div></div>';
-  });
-  document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
+  // a lista, o Início e o Detalhe são desenhados por /admin-app.js
+  if (window.appRender) appRender(lista);
 }
 
 // EVENT DELEGATION — zero onclick inline
@@ -694,6 +898,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if(TOKEN){
     document.getElementById('loginCard').style.display='none';
     document.getElementById('adminWrap').style.display='block';
+    if (window.appEntrou) appEntrou();
     carregarHistorico(); if (window.padCarregar) padCarregar();
   } else {
     // sem token nesta aba: pergunta ao servidor se ha sessao de 30 dias (cookie HttpOnly)
@@ -704,6 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
         COOKIE_SESSAO = true;
         document.getElementById('loginCard').style.display='none';
         document.getElementById('adminWrap').style.display='block';
+        if (window.appEntrou) appEntrou();
         carregarHistorico(); if (window.padCarregar) padCarregar();
       }
     }).catch(function(){});
@@ -718,6 +924,8 @@ document.addEventListener('DOMContentLoaded', function() {
   [1,2,3,5,7].forEach(function(d){
     document.getElementById('v'+d+'d').addEventListener('click', function(){ selDias(d, this); });
   });
+  document.getElementById('vOutra').addEventListener('click', function(){ selDias(parseInt(document.getElementById('vOutraN').value, 10) || 10, this, true); });
+  document.getElementById('vOutraN').addEventListener('input', function(){ var n = parseInt(this.value, 10); if (n >= 1 && n <= 30) { diasSel = n; if (window.nvAtualiza) nvAtualiza(); } });
 
   // Planos toggle
   [1,2,3].forEach(function(n){
@@ -728,6 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Itens toggle
   [1,2,3].forEach(function(n){
     document.getElementById('itog'+n).addEventListener('click', function(){ toggleItems(n); });
+    document.getElementById('itog'+n).addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleItems(n); } });
   });
 
   // Gerar link
@@ -765,15 +974,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var el=document.getElementById((isI?'ied':'nied')+p+'_'+j);
       if(el && el.value.trim()){ if(isI) iS[p][j].t=el.value.trim(); else niS[p][j].t=el.value.trim(); }
       if(isI){ iS[p][j].ed=false; renderI(p); } else { niS[p][j].ed=false; renderNI(p); }
-    }
-    // Histórico toggle
-    if (t.dataset.hist !== undefined || (t.closest && t.closest('[data-hist]'))) {
-      var hdr = t.dataset.hist !== undefined ? t : t.closest('[data-hist]');
-      if (hdr && !t.dataset.del && !t.dataset.dup) {
-        var i = +hdr.dataset.hist;
-        document.getElementById('hb'+i).classList.toggle('show');
-        document.getElementById('ha'+i).classList.toggle('open');
-      }
     }
     // Expirar proposta (a confirmação e o resultado ficam em encerrarProposta)
     if (t.dataset.enc) { e.stopPropagation(); histCancelar(t.dataset.enc); return; }
@@ -833,6 +1033,7 @@ function doLogin() {
       }
       document.getElementById('loginCard').style.display = 'none';
       document.getElementById('adminWrap').style.display = 'block';
+      if (window.appEntrou) appEntrou();
       carregarHistorico(); if (window.padCarregar) padCarregar();
     } else {
       err.textContent = r.erro || 'Senha incorreta.';
@@ -854,13 +1055,17 @@ function logout(semRede) {
     sessionStorage.removeItem('sp_logado');
     document.getElementById('adminWrap').style.display = 'none';
     document.getElementById('loginCard').style.display = 'block';
+    document.body.classList.add('lg');
     document.getElementById('loginSenha').value = '';
   });
 }
-function selDias(d, btn) {
-  diasSel = d;
-  document.querySelectorAll('.val-btn').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
+function selDias(d, btn, outra) {
+  diasSel = Math.min(Math.max(parseInt(d, 10) || 2, 1), 30);
+  document.querySelectorAll('.val-btn').forEach(function(b){ b.classList.remove('on'); b.setAttribute('aria-pressed', 'false'); });
+  btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true');
+  document.getElementById('vOutraBox').style.display = outra ? '' : 'none';
+  if (outra) setTimeout(function(){ document.getElementById('vOutraN').focus(); }, 30);
+  if (window.nvAtualiza) nvAtualiza();
 }
 function togglePlano(n, fromCk) {
   var ck = document.getElementById('ck'+n);
@@ -931,12 +1136,14 @@ function mostraResultado(link, info) {
     mt.value = montaMensagem(SHORT_ATUAL); mb.style.display = '';
     if (podeCompartilhar()) bs.style.display = ''; else bm.style.display = '';
     if (window.SP_AUTOENVIO_RODA) SP_AUTOENVIO_RODA();   // "enviar ao gerar": só depois que o link curto existe
+    if (window.nvLinkPronto) nvLinkPronto(SHORT_ATUAL, true);
   }).catch(function(e) {
     if (tk !== SHORT_TOKEN || (e && e.message === 'sessao')) return;
     sh.textContent = 'Não foi possível gerar o link curto agora. O link completo abaixo funciona do mesmo jeito.';
     document.getElementById('shortWrap').style.display = 'block';
     document.getElementById('btnShort').textContent = 'Ocultar link completo';
     cp.textContent = 'Copiar link completo'; cp.disabled = false;
+    if (window.nvLinkPronto) nvLinkPronto(link, false);
   });
 }
 function textoCopia() { return SHORT_ATUAL || document.getElementById('resultUrl').textContent; }
@@ -1095,6 +1302,17 @@ function cdNum(s) {
 function cdTipo(card) { areaSet(card ? 'cd' : 'pl'); }
 
 // ---- construtores de campo (DOM puro, sem innerHTML com dados) ----
+// liga cada rótulo .label ao seu campo (for/id) nos editores montados por código
+var _rotN = 0;
+function rotular(cont) {
+  if (!cont) return;
+  cont.querySelectorAll('.field, .mi-lh').forEach(function(f) {
+    var lb = f.querySelector('label.label'); if (!lb || lb.htmlFor) return;
+    var cs = f.querySelectorAll('input:not([type=checkbox]):not([type=radio]), select, textarea'); if (cs.length !== 1) return;
+    if (!cs[0].id) cs[0].id = 'rot' + (++_rotN);
+    lb.htmlFor = cs[0].id;
+  });
+}
 function c2e(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
 function c2Campo(label, obj, key, opt) {
   opt = opt || {};
@@ -1125,10 +1343,10 @@ function c2ItemEd(P, lista, i, pi) {
   var nm = c2e('span', 'cd-name', it.nome || '(sem nome)');
   var meta = c2e('span', 'cd-meta', (it.valor ? 'R$ ' + it.valor : 'sem valor') + ' · ' + CD_UN[it.unidade]);
   nm.appendChild(meta);
-  var bEd = c2e('button', 'ibtn', c2ItAberto[key] ? '▲' : '✏️'); bEd.type = 'button';
-  var bUp = c2e('button', 'ibtn', '↑'); bUp.type = 'button';
-  var bDn = c2e('button', 'ibtn', '↓'); bDn.type = 'button';
-  var bRm = c2e('button', 'ibtn', '🗑'); bRm.type = 'button';
+  var bEd = icoBtn('ibtn', c2ItAberto[key] ? 'chevup' : 'edit', c2ItAberto[key] ? 'Fechar edição' : 'Editar "' + (it.nome || 'item') + '"');
+  var bUp = icoBtn('ibtn', 'up', 'Subir "' + (it.nome || 'item') + '"');
+  var bDn = icoBtn('ibtn', 'down', 'Descer "' + (it.nome || 'item') + '"');
+  var bRm = icoBtn('ibtn', 'trash', 'Remover "' + (it.nome || 'item') + '"');
   head.appendChild(nm); head.appendChild(bUp); head.appendChild(bDn); head.appendChild(bEd); head.appendChild(bRm);
   box.appendChild(head);
   bEd.addEventListener('click', function() { c2ItAberto[key] = !c2ItAberto[key]; c3Render(); });
@@ -1193,7 +1411,9 @@ function c2Limpa(x) {
 function c3Fold(cont, key, texto, onObj, build) {
   var tg = c2e('div', 'items-toggle');
   var lab = c2e('span', 'items-toggle-label', texto + (onObj && !onObj.on ? ' (desligada por padrão)' : ''));
-  var ar = c2e('span', 'items-arrow' + (c2Aberto[key] ? ' open' : ''), '›');
+  var ar = c2e('span', 'items-arrow' + (c2Aberto[key] ? ' open' : '')); ar.innerHTML = ICO('chev', 18);
+  tg.setAttribute('role', 'button'); tg.tabIndex = 0; tg.setAttribute('aria-expanded', c2Aberto[key] ? 'true' : 'false');
+  tg.addEventListener('keydown', function(e) { if (e.target === tg && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tg.click(); } });
   var lw = c2e('span'); lw.style.cssText = 'display:flex;align-items:center;min-width:0;';
   if (onObj) {
     var ck = c2e('input'); ck.type = 'checkbox'; ck.checked = !!onObj.on; ck.title = 'Aba ligada por padrão nas novas propostas';
@@ -1218,10 +1438,10 @@ function c3Rows(parent, arr, campos, novo, addTxt) {
     var box = c2e('div', 'cd-ed');
     campos.forEach(function(c) { box.appendChild(c2Campo(c[1], o, c[0], {max:c[2] || 160, ta:!!c[3]})); });
     var bar = c2e('div'); bar.style.cssText = 'display:flex;gap:8px;';
-    [['↑', function() { if (i > 0) { arr.splice(i - 1, 0, arr.splice(i, 1)[0]); c3Render(); } }],
-     ['↓', function() { if (i < arr.length - 1) { arr.splice(i + 1, 0, arr.splice(i, 1)[0]); c3Render(); } }],
-     ['Remover', function() { arr.splice(i, 1); c3Render(); }]].forEach(function(b) {
-      var x = c2e('button', 'btn-out', b[0]); x.type = 'button'; x.addEventListener('click', b[1]); bar.appendChild(x);
+    [['up', 'Subir', function() { if (i > 0) { arr.splice(i - 1, 0, arr.splice(i, 1)[0]); c3Render(); } }],
+     ['down', 'Descer', function() { if (i < arr.length - 1) { arr.splice(i + 1, 0, arr.splice(i, 1)[0]); c3Render(); } }],
+     ['trash', 'Remover', function() { arr.splice(i, 1); c3Render(); }]].forEach(function(b) {
+      var x = c2e('button', 'btn-out'); x.type = 'button'; x.innerHTML = ICO(b[0], 18); x.appendChild(document.createTextNode(b[1])); x.addEventListener('click', b[2]); bar.appendChild(x);
     });
     box.appendChild(bar); parent.appendChild(box);
   });
@@ -1418,10 +1638,11 @@ function miDest(cont, F, prev) {
 function miCliRender() {
   var fld = $('miCliField'); if (!fld) return;
   miSrc();
+  if (window.nvAtualiza) nvAtualiza();
   var vis = AREA === 'cd' && $('nvMi').checked;
   fld.style.display = vis ? '' : 'none';
   var body = $('miCliBody'); body.textContent = '';
-  $('miCliArr').classList.toggle('open', MI_CLI_ABERTO); body.classList.toggle('show', MI_CLI_ABERTO && vis);
+  $('miCliArr').classList.toggle('open', MI_CLI_ABERTO); $('miCliTog').setAttribute('aria-expanded', MI_CLI_ABERTO ? 'true' : 'false'); body.classList.toggle('show', MI_CLI_ABERTO && vis);
   if (!vis || !MI_CLI_ABERTO) return;
   body.appendChild(c2e('div', 'cd-hint', 'Vale só para o link deste cliente e fica guardado na cópia da proposta. Os Padrões não mudam. "Restaurar texto padrão" volta ao texto salvo em Padrões.'));
   MI_HOOKS.cli.length = 0;
@@ -1429,6 +1650,7 @@ function miCliRender() {
   var rt = c2e('button', 'btn-out', 'Descartar tudo e usar os Padrões'); rt.type = 'button'; rt.style.cssText = 'margin-top:12px;width:100%;';
   rt.addEventListener('click', function() { NV_MI = {}; miCliRender(); });
   body.appendChild(rt);
+  rotular(body);
 }
 
 function c3Render() {
@@ -1517,6 +1739,7 @@ function c3Render() {
     b.appendChild(c2Campo('Frase abaixo do contador', c3S, 'fr', {max:160, hint:'Em branco: a frase não aparece.'}));
   });
   var n = [c3S.av.on, c3S.rc.on, c3S.mi.on].filter(Boolean).length;
+  rotular(cont);
   document.getElementById('cdCount').textContent = n + ' de 3 abas ligadas. Os textos e valores são de referência e podem ser editados.';
   window.scrollTo(0, rolagem);
 }
@@ -1664,7 +1887,7 @@ function gerarCardapio() {
   }).catch(function(e) {
     if (e.message === 'longo') alert('O cardápio ficou grande demais para um link. Desligue alguns itens ou encurte os textos.');
     else if (e.message !== 'sessao') alert('Erro de conexão. A proposta não foi salva.');
-  }).then(function() { btn.disabled = false; btn.textContent = 'Gerar link →'; });
+  }).then(function() { btn.disabled = false; btn.textContent = 'Gerar e copiar link'; });
 }
 </script>
 <script>
@@ -1687,21 +1910,21 @@ function tagBox(cont, st, onChange) {
       var tg = c2e('span', 'tg' + (L[0] === 'nao' ? ' no' : '') + (it.a ? '' : ' off'));
       var b = c2e('button', 'tg-t', it.t); b.type = 'button'; b.setAttribute('aria-pressed', it.a ? 'true' : 'false'); b.title = 'Toque para ligar ou desligar';
       b.addEventListener('click', function() { it.a = !it.a; ch(); });
-      var up = c2e('button', 'tg-x', '‹'); up.type = 'button'; up.title = 'Subir (mover para antes)'; up.setAttribute('aria-label', 'Subir "' + it.t + '"');
+      var up = c2e('button', 'tg-x'); up.innerHTML = ICO('left', 16); up.type = 'button'; up.title = 'Subir (mover para antes)'; up.setAttribute('aria-label', 'Subir "' + it.t + '"');
       up.disabled = i === 0;
       up.addEventListener('click', function() { if (i > 0) { arr.splice(i, 1); arr.splice(i - 1, 0, it); ch(); } });
-      var dn = c2e('button', 'tg-x', '›'); dn.type = 'button'; dn.title = 'Descer (mover para depois)'; dn.setAttribute('aria-label', 'Descer "' + it.t + '"');
+      var dn = c2e('button', 'tg-x'); dn.innerHTML = ICO('right', 16); dn.type = 'button'; dn.title = 'Descer (mover para depois)'; dn.setAttribute('aria-label', 'Descer "' + it.t + '"');
       dn.disabled = i === arr.length - 1;
       dn.addEventListener('click', function() { if (i < arr.length - 1) { arr.splice(i, 1); arr.splice(i + 1, 0, it); ch(); } });
-      var m = c2e('button', 'tg-x', '⇄'); m.type = 'button'; m.title = 'Mover para ' + L[3]; m.setAttribute('aria-label', 'Mover "' + it.t + '" para ' + L[3]);
+      var m = c2e('button', 'tg-x'); m.innerHTML = ICO('swap', 16); m.type = 'button'; m.title = 'Mover para ' + L[3]; m.setAttribute('aria-label', 'Mover "' + it.t + '" para ' + L[3]);
       m.addEventListener('click', function() { arr.splice(i, 1); outro.push(it); ch(); });
-      var x = c2e('button', 'tg-x', '×'); x.type = 'button'; x.title = 'Remover'; x.setAttribute('aria-label', 'Remover "' + it.t + '"');
+      var x = c2e('button', 'tg-x'); x.innerHTML = ICO('x', 16); x.type = 'button'; x.title = 'Remover'; x.setAttribute('aria-label', 'Remover "' + it.t + '"');
       x.addEventListener('click', function() { arr.splice(i, 1); ch(); });
       tg.appendChild(b); tg.appendChild(up); tg.appendChild(dn); tg.appendChild(m); tg.appendChild(x); w.appendChild(tg);
     });
     cont.appendChild(w);
-    var ad = c2e('div', 'tg-add'); var inp = c2e('input', 'inp'); inp.type = 'text'; inp.placeholder = 'Adicionar em "' + L[1].toLowerCase() + '"…'; inp.maxLength = 120;
-    var bt = c2e('button', 'btn-out', '+'); bt.type = 'button';
+    var ad = c2e('div', 'tg-add'); var inp = c2e('input', 'inp'); inp.type = 'text'; inp.placeholder = 'Adicionar em "' + L[1].toLowerCase() + '"…'; inp.maxLength = 120; inp.setAttribute('aria-label', 'Novo item em ' + L[1].toLowerCase());
+    var bt = icoBtn('btn-out', 'plus', 'Adicionar em ' + L[1].toLowerCase());
     var add = function() { var v = inp.value.trim(); if (!v) return; arr.push({t:v, a:true}); ch(); };
     bt.addEventListener('click', add); inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); add(); } });
     ad.appendChild(inp); ad.appendChild(bt); cont.appendChild(ad);
@@ -1718,16 +1941,18 @@ var PAD_PL = PL_FAB();   // fábrica primeiro; o Padrão do servidor entra em pa
 var PAD_FONTE = 'fabrica';   // de onde vieram os Padrões agora: 'servidor', 'fabrica' (nada salvo ainda) ou 'reserva' (cópia deste navegador, sem servidor)
 function modeloAplica(m) {
   PL_MODELO = m;
-  $('mdArq').classList.toggle('on', m === 'arq'); $('mdLoja').classList.toggle('on', m === 'loja');
   PAD_PL[m].forEach(function(p, i) {
     $('fV' + (i + 1)).value = p.por || ''; $('fVO' + (i + 1)).value = p.de || '';
     iS[i] = copia(p.inc); niS[i] = copia(p.nao);
     if ($('ib' + (i + 1)).classList.contains('show')) tagBox($('tb' + (i + 1)), {inc:iS[i], nao:niS[i]});
   });
+  if (window.nvAtualiza) nvAtualiza();
 }
 function padFold(cont, key, titulo, build) {
   var w = c2e('div', 'pad-fold');
-  var tg = c2e('div', 'items-toggle'); tg.appendChild(c2e('span', 'items-toggle-label', titulo)); tg.appendChild(c2e('span', 'items-arrow' + (PAD_ABERTO[key] ? ' open' : ''), '›'));
+  var tg = c2e('div', 'items-toggle'); tg.appendChild(c2e('span', 'items-toggle-label', titulo)); var ar = c2e('span', 'items-arrow' + (PAD_ABERTO[key] ? ' open' : '')); ar.innerHTML = ICO('chev', 18); tg.appendChild(ar);
+  tg.setAttribute('role', 'button'); tg.tabIndex = 0; tg.setAttribute('aria-expanded', PAD_ABERTO[key] ? 'true' : 'false');
+  tg.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tg.click(); } });
   tg.addEventListener('click', function() { PAD_ABERTO[key] = !PAD_ABERTO[key]; padPlRender(); });
   w.appendChild(tg);
   if (PAD_ABERTO[key]) { var b = c2e('div', 'items-body show'); b.style.margin = '0'; b.style.border = 'none'; build(b); w.appendChild(b); }
@@ -1735,9 +1960,9 @@ function padFold(cont, key, titulo, build) {
 }
 function padPlRender() {
   var c = $('padPl'); c.textContent = '';
-  var r = c2e('div', 'cd-seg-row'); r.style.marginBottom = '14px';
+  var r = c2e('div', 'segm'); r.style.marginBottom = '14px'; r.setAttribute('role', 'group'); r.setAttribute('aria-label', 'Modelo');
   [['arq', 'Arquiteto'], ['loja', 'Loja']].forEach(function(o) {
-    var b = c2e('button', 'cd-seg' + (PAD_M === o[0] ? ' on' : ''), o[1]); b.type = 'button';
+    var b = c2e('button', PAD_M === o[0] ? 'on' : '', o[1]); b.type = 'button'; b.setAttribute('aria-pressed', PAD_M === o[0] ? 'true' : 'false');
     b.addEventListener('click', function() { PAD_M = o[0]; padPlRender(); }); r.appendChild(b);
   });
   c.appendChild(r);
@@ -1768,6 +1993,7 @@ function padPlRender() {
   var rs = c2e('button', 'btn-out', 'Restaurar padrão de fábrica'); rs.type = 'button'; rs.style.cssText = 'margin-top:8px;width:100%;';
   rs.addEventListener('click', function() { if (confirm('Voltar os dois modelos aos valores de fábrica? (Só vale depois de salvar.)')) { PAD_PL = PL_FAB(); padPlRender(); } });
   c.appendChild(sv); c.appendChild(ok); c.appendChild(rs);
+  rotular(c);
 }
 function padCdBotoes() {
   var c = $('padCdBtns'); c.textContent = '';
@@ -1816,8 +2042,8 @@ function padReserva() {
 }
 function padAplica() {
   modeloAplica(PL_MODELO);
-  if (AREA === 'cd') nvSync();
-  subSet(SUB);
+  if (AREA === 'cd' && !window.NV_DUP) { nvSync(); if (window.nvAbasDoModelo) nvAbasDoModelo(); }
+  if (window.ajRender) ajRender();
   miSrc();
   impMostrar();
 }
@@ -1898,18 +2124,13 @@ function impEnviar(L, b, st, w) {
 
 // ---- areas e secoes
 function areaSet(a) {
+  // área da Nova proposta: 'pl' (Planos de gestão: Arquiteto/Loja) ou 'cd' (Cardápio/Especial Milão)
   window.NV_DUP = false; NV_SNAP = null; AREA = a; var card = a === 'cd'; window.CD_ATIVO = card;
-  $('atPl').classList.toggle('on', !card); $('atCd').classList.toggle('on', card);
-  [$('divCk1').parentNode, $('fld1'), $('fld2'), $('fld3'), $('itog1').parentNode, $('fModelo')].forEach(function(el) { el.style.display = card ? 'none' : ''; });
+  $('plBlock').style.display = card ? 'none' : '';
   $('cdBlock').style.display = card ? 'block' : 'none';
-  $('padPl').style.display = card ? 'none' : ''; $('padCd').style.display = card ? '' : 'none';
-  $('novaTit').textContent = 'Nova proposta · ' + (card ? 'Cardápio' : 'Planos de gestão');
-  $('padTit').textContent = 'Padrões · ' + (card ? 'Cardápio' : 'Planos de gestão');
-  $('histTit').textContent = 'Histórico · ' + (card ? 'Cardápio' : 'Planos de gestão');
   $('result').classList.remove('show');
-  subSet(SUB);
+  if (card) nvSync();
   miCliRender();
-  if (_lista.length) renderHistorico(_lista);
 }
 function nvSync() {
   [['nvAv', 'nvDivAv', 'av'], ['nvRc', 'nvDivRc', 'rc'], ['nvMi', 'nvDivMi', 'mi']].forEach(function(x) {
@@ -1917,14 +2138,10 @@ function nvSync() {
   });
   miCliRender();
 }
+// compatibilidade: as telas agora são Início, Propostas, Nova, E-mails e Ajustes
 function subSet(s) {
   SUB = s;
-  if (s === 'nova' && AREA === 'cd' && !window.NV_DUP) nvSync();
-  [['nova', 'secNova', 'stNova'], ['pad', 'secPad', 'stPad'], ['hist', 'secHist', 'stHist']].forEach(function(x) {
-    $(x[1]).style.display = s === x[0] ? '' : 'none'; $(x[2]).classList.toggle('on', s === x[0]);
-  });
-  if (s === 'pad') { if (AREA === 'cd') { c3Render(); padCdBotoes(); } else padPlRender(); }
-  if (s === 'hist') carregarHistorico();
+  if (window.irPara) irPara(s === 'pad' ? 'ajustes' : s === 'hist' ? 'propostas' : 'nova');
 }
 
 // ---- copia local dos dados de cada proposta (para Duplicar e Copiar link); o servidor guarda so o resumo
@@ -1956,7 +2173,8 @@ function duplicarCom(p, L) {
   var a = areaDe(p);
   window.NV_DUP = false;
   NV_MI = {}; NV_SNAP = null;
-  areaSet(a === 'cd' ? 'cd' : 'pl'); subSet('nova');
+  if (window.nvModelo) nvModelo(a === 'cd' ? 'cd' : ((L && L.form && L.form.modelo) === 'loja' ? 'loja' : 'arq'), true); else areaSet(a === 'cd' ? 'cd' : 'pl');
+  subSet('nova');
   $('fNome').value = p.cliente; $('fEmail').value = '';
   if (a === 'pl') {
     var f = L && L.form;
@@ -1979,30 +2197,24 @@ function duplicarCom(p, L) {
     NV_MI = (g.mc && typeof g.mc === 'object' && !Array.isArray(g.mc)) ? copia(g.mc) : {};
   }
   miCliRender();
+  if (window.nvDuplicada) nvDuplicada(p);
   window.scrollTo({top:0, behavior:'smooth'});
   setTimeout(function() { $('fNome').focus(); $('fNome').select(); }, 400);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  $('atPl').addEventListener('click', function() { areaSet('pl'); });
-  $('atCd').addEventListener('click', function() { areaSet('cd'); });
-  $('stNova').addEventListener('click', function() { subSet('nova'); });
-  $('stPad').addEventListener('click', function() { subSet('pad'); });
-  $('stHist').addEventListener('click', function() { subSet('hist'); });
-  $('mdArq').addEventListener('click', function() { modeloAplica('arq'); });
-  $('mdLoja').addEventListener('click', function() { modeloAplica('loja'); });
   [['nvDivAv', 'nvAv'], ['nvDivRc', 'nvRc'], ['nvDivMi', 'nvMi']].forEach(function(x) {
     var d = $(x[0]), k = $(x[1]);
     d.addEventListener('click', function() { k.checked = !k.checked; d.classList.toggle('on', k.checked); miCliRender(); });
     k.addEventListener('click', function(e) { e.stopPropagation(); d.classList.toggle('on', k.checked); miCliRender(); });
   });
-  $('miCliTog').addEventListener('click', function() { MI_CLI_ABERTO = !MI_CLI_ABERTO; this.setAttribute('aria-expanded', MI_CLI_ABERTO ? 'true' : 'false'); miCliRender(); });
+  $('miCliTog').addEventListener('click', function() { MI_CLI_ABERTO = !MI_CLI_ABERTO; miCliRender(); });
   $('miCliTog').addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); } });
   modeloAplica('arq'); nvSync();
   document.addEventListener('click', function(e) {
     var t = e.target; if (!t.dataset || t.dataset.cp === undefined) return;
     var p = _lista[+t.dataset.cp]; if (!p) return;
-    var ok = function() { t.textContent = 'Copiado ✓'; setTimeout(function() { t.textContent = 'Copiar link'; }, 1800); };
+    var ok = function() { t.textContent = 'Copiado'; setTimeout(function() { t.textContent = 'Copiar link'; }, 1800); };
     comSnap(p, function(L) { if (L && L.link && navigator.clipboard) navigator.clipboard.writeText(L.link).then(ok).catch(function() {}); });
   });
 });
@@ -2015,6 +2227,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/admin-envio.js"></script>
 <script src="/admin-emails.js"></script>
 <script src="/admin-historico.js"></script>
+<script src="/admin-app.js"></script>
 <script src="/admin-pwa.js"></script>
 </body>
 </html>

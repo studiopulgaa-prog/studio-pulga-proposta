@@ -45,12 +45,12 @@
     if (!rb) return;
     window.SP_ID_GERADO = id;
     rb.style.display = email ? '' : 'none'; rbMsg.textContent = '';
-    rb.textContent = '✉ Enviar por e-mail para ' + email; rb.disabled = false;
+    rb.textContent = 'Enviar por e-mail para ' + email; rb.disabled = false;
     rb.dataset.id = id; rb.dataset.email = email || '';
   };
   if (rb) rb.addEventListener('click', function () {
     var id = rb.dataset.id; if (!id) return;
-    envioEmail(id, {email: rb.dataset.email, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = '✉ Reenviar por e-mail'; }});
+    envioEmail(id, {email: rb.dataset.email, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = 'Reenviar por e-mail'; }});
   });
   // chamado por mostraResultado quando o link curto ficou pronto
   window.SP_AUTOENVIO_RODA = function () {
@@ -64,7 +64,7 @@
     var ni = document.getElementById('fNicho');   // nicho (escolhido ou automático pelo modelo)
     if (ni && typeof adm === 'function') adm('nicho', {id: id, valor: ni.value || 'arquiteto'}).catch(function () {});
     window.SP_AUTOENVIO = (cb && cb.checked && email) ? function () {
-      envioEmail(id, {email: email, semConfirmar: true, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = '✉ Reenviar por e-mail'; }});
+      envioEmail(id, {email: email, semConfirmar: true, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = 'Reenviar por e-mail'; }});
     } : null;
   };
 
