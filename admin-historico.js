@@ -4,8 +4,11 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var escH = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]; }); };
-  var tipoArea = function () { return (typeof AREA !== 'undefined' && AREA === 'cd') ? 'cardapio' : 'planos'; };
+  // "Apagar histórico" vale para a área escolhida em Ajustes; a Lixeira segue o filtro da lista de Propostas
+  var tipoArea = function () { return window.AJ_AREA === 'cd' ? 'cardapio' : 'planos'; };
   var nomeArea = function () { return tipoArea() === 'cardapio' ? 'Cardápio' : 'Planos de gestão'; };
+  var tipoLx = function () { return window.P_TIPO === 'planos' || window.P_TIPO === 'cardapio' ? window.P_TIPO : ''; };
+  var nomeLx = function () { return tipoLx() === 'cardapio' ? ' · Cardápio' : tipoLx() === 'planos' ? ' · Planos' : ''; };
 
   // ---------- Apagar histórico (lote) ----------
   function apagarHistorico() {
@@ -60,12 +63,12 @@
     adm('lixeira', {}).then(function (r) {
       histMsg('');
       if (!r || !r.ok) { histMsg('Não foi possível abrir a Lixeira: ' + erroTxt(r), true); return; }
-      var itens = (r.lista || []).filter(function (p) { return (p.tipo || 'planos') === tipoArea(); });
-      hModal('Lixeira · ' + nomeArea(), itens.length ? 'Ficam aqui por 30 dias e depois são apagadas de vez, sozinhas.' : 'A Lixeira está vazia.', function (c) {
+      var itens = (r.lista || []).filter(function (p) { return !tipoLx() || (p.tipo || 'planos') === tipoLx(); });
+      hModal('Lixeira' + nomeLx(), itens.length ? 'Ficam aqui por 30 dias e depois são apagadas de vez, sozinhas.' : 'A Lixeira está vazia.', function (c) {
         c.innerHTML = itens.map(function (p) {
           return '<div class="hist-info" style="display:block;border-bottom:1px solid var(--brl);padding:8px 0;"><strong>' + escH(p.cliente) + '</strong><br>' +
-            '<span>Excluída em ' + escH(fmtDH(p.excluida_em)) + ' · apaga de vez em ' + escH(p.dias_restantes) + (p.dias_restantes === 1 ? ' dia' : ' dias') + (p.cancelada ? ' · estava cancelada' : '') + '</span><br>' +
-            '<button class="btn-out" type="button" data-lx-res="' + escH(p.id) + '" style="margin-top:6px;">↺ Restaurar</button> ' +
+            '<span>' + ((p.tipo || 'planos') === 'cardapio' ? 'Cardápio' : 'Planos') + ' · excluída em ' + escH(fmtDH(p.excluida_em)) + ' · apaga de vez em ' + escH(p.dias_restantes) + (p.dias_restantes === 1 ? ' dia' : ' dias') + (p.cancelada ? ' · estava cancelada' : '') + '</span><br>' +
+            '<button class="btn-out" type="button" data-lx-res="' + escH(p.id) + '" style="margin-top:6px;">' + ICO('restore', 18) + 'Restaurar</button> ' +
             '<button class="btn-enc" type="button" data-lx-del="' + escH(p.id) + '" style="margin-top:6px;">Apagar de vez</button></div>';
         }).join('');
         c.addEventListener('click', function (e) {
