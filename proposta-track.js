@@ -27,18 +27,20 @@
   }
   function lh() { return window.PROPOSTA && typeof PROPOSTA.lh === 'string' ? PROPOSTA.lh : ''; }
   function disp() { try { return typeof deviceId === 'function' ? deviceId() : ''; } catch (e) { return ''; } }
-  function envia(evento, detalhe) {
+  function envia(evento, detalhe, valor) {
     try {
       if (ignorar()) return;
       var p = lh(), d = disp();
       if (!p || !d) return;
       detalhe = detalhe ? String(detalhe).slice(0, 60) : null;
+      valor = valor ? String(valor).slice(0, 40) : null;
       var k = 'ev_' + p + '_' + evento + '_' + (detalhe || '');
       try { if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) {}
       fetch(SUPA + '/rest/v1/acessos', {
         method: 'POST', keepalive: true,
         headers: {'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Prefer': 'return=minimal'},
-        body: JSON.stringify({proposta_id: p, dispositivo_hash: d, evento: evento, detalhe: detalhe, disp_tipo: aparelho(), navegador: navegador()})
+        body: JSON.stringify(valor ? {proposta_id: p, dispositivo_hash: d, evento: evento, detalhe: detalhe, valor: valor, disp_tipo: aparelho(), navegador: navegador()}
+                                   : {proposta_id: p, dispositivo_hash: d, evento: evento, detalhe: detalhe, disp_tipo: aparelho(), navegador: navegador()})
       }).catch(function () {});
     } catch (e) {}
   }
@@ -57,9 +59,36 @@
       observaPlanos();
     } catch (e) {}
   };
-  // Planos de gestão: "Escolher Plano X"
-  embrulha('fecharPlano', function (e, num) { envia('escolheu', 'P' + num); });
+  // ESCOLHA: registrada no clique final ("Enviar pedido" / "Quero este pacote"), ANTES de abrir o WhatsApp, com item e valor
+  function brl(n) { try { return typeof cdFmt === 'function' ? cdFmt(n) : String(n); } catch (e) { return String(n); } }
+  embrulha('enviarPedidoPlano', function (num) {
+    var nomes = window.PL_NOMES || {}, vals = {1: PROPOSTA.v1, 2: PROPOSTA.v2, 3: PROPOSTA.v3};
+    var item = String(nomes[num] || (num + 'º Pacote')).split(' — ')[0];
+    envia('escolheu', item, vals[num] ? 'R$ ' + vals[num] + '/mês' : null);
+    if (window.spPixelLead) spPixelLead(item, vals[num]);
+  });
+  embrulha('finalizarPedido', function (d, t) {
+    t = t || {};
+    var nomes = {avulsos: 'Avulsos', recorrente: 'Recorrente', milao: 'Especial Milão'};
+    var aba = window.C3 && C3.tab && C3.tabs && C3.tabs.length ? ((window.C3_NOMES || {})[C3.tab] || nomes[C3.tab] || C3.tab) : '';
+    var itens = [];
+    (t.g || []).forEach(function (g) { (g.l || []).forEach(function (l) { if (l && l.t && !/^Parcela:/.test(l.t)) itens.push(String(l.t).split(' (')[0]); }); });
+    var item = (aba ? aba + ': ' : '') + (itens.join(' + ') || 'Pacote');
+    var valor = (t.m ? 'R$ ' + brl(t.m) + '/mês' : '') + (t.m && t.u ? ' + ' : '') + (t.u ? 'R$ ' + brl(t.u) : '');
+    envia('escolheu', item, valor || null);
+    if (window.spPixelLead) spPixelLead(item, t.m || t.u || null);
+  });
   // Cardápio: troca de aba
+  // Cardápio antigo (v1): "Quero este pacote" com os totais
+  embrulha('cdQuero', function () {
+    try {
+      if (!(Date.now() <= PROPOSTA.expira) || typeof cdTotais !== 'function') return;
+      var t = cdTotais(); if (!t || !t.n) return;
+      var valor = (t.m ? 'R$ ' + brl(t.m) + '/mês' : '') + (t.m && t.u ? ' + ' : '') + (t.u ? 'R$ ' + brl(t.u) : '');
+      envia('escolheu', 'Pacote', valor || null);
+      if (window.spPixelLead) spPixelLead('Pacote', t.m || t.u || null);
+    } catch (e) {}
+  });
   embrulha('c3Tab', function (id) { envia('aba', id); });
   // WhatsApp (qualquer botão que abre o WhatsApp) e "Quero este pacote" do Cardápio
   var abre = window.open;
@@ -68,10 +97,11 @@
       var u = String(url || '');
       if (u.indexOf('wa.me/') >= 0) {
         var txt = ''; try { txt = decodeURIComponent((u.split('text=')[1] || '').replace(/\+/g, ' ')); } catch (e) {}
-        if (/Quero este pacote/.test(txt)) {
-          var aba = (txt.match(/\(aba ([^)]+)\)/) || [])[1];
-          envia('escolheu', 'Pacote' + (aba ? ' · ' + aba : ''));
-        } else if (/Especial Milão/.test(txt)) envia('escolheu', 'Especial Milão');
+        if (/interesse no Especial Milão/.test(txt)) {   // "Quero saber mais" do Especial Milão
+          var tot = window.C3 && C3.mi && C3.mi.cfg && C3.mi.cfg.total;
+          envia('escolheu', 'Especial Milão', tot ? 'R$ ' + brl(tot) : null);
+          if (window.spPixelLead) spPixelLead('Especial Milão', tot || null);
+        }
         envia('whatsapp', null);
       }
     } catch (e) {}

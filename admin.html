@@ -338,6 +338,21 @@ body.tem-foot .hist-msg{bottom:calc(var(--nav-h) + 136px + env(safe-area-inset-b
 .hist-info strong{color:var(--tx);}
 .hist-tipo{font-size:12px;font-weight:600;color:var(--tx2);}
 .pill.ni{background:#EEE3F7;color:#5B2C7A;}
+.dt-esc{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--okbg);color:var(--ok);font-weight:600;font-size:14px;}
+.fw-seg,.fw-dias{display:flex;flex-wrap:wrap;gap:6px;}
+.fw-dias{margin-bottom:10px;}
+.fw-o{border:1px solid var(--line);background:#fff;color:var(--tx);border-radius:999px;min-height:44px;padding:0 14px;font-size:14px;font-weight:500;}
+.fw-o.on{background:var(--br);border-color:var(--br);color:#fff;font-weight:600;}
+.fw-aj{font-size:13px;color:var(--tx2);margin-top:8px;}
+.fw-h{margin-top:10px;display:flex;flex-direction:column;gap:6px;font-size:13px;}
+.fw-h div{display:flex;flex-direction:column;}
+.fw-h span{color:var(--tx2);}
+.info .mu-t{color:var(--tx2);}
+.wa-ta{min-height:130px;resize:vertical;line-height:1.45;}
+.lst-as{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;}
+.lst-i.dupla{flex-wrap:wrap;}
+.lst-i.dupla .lst-tx{flex:1 1 calc(100% - 60px);}
+.lst-i.dupla .lst-as{width:100%;justify-content:flex-start;padding-left:44px;}
 .fab{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px;font-weight:500;}
 .fab .btn-out{min-width:110px;}
 details.imp-box>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--br);list-style:none;}
@@ -445,6 +460,7 @@ input,textarea,select{max-width:100%;}
       <span class="blk-t">1 · Cliente</span>
       <div><label class="label" for="fNome">Nome do cliente</label><input class="inp" type="text" id="fNome" placeholder="Ex.: Ana Silva · Estúdio Ana" autocomplete="off"></div>
       <div><label class="label" for="fEmail">E-mail do cliente (opcional)</label><input class="inp" type="email" id="fEmail" placeholder="Ativa os lembretes por e-mail" autocomplete="off"></div>
+      <div><label class="label" for="fWhats">WhatsApp do cliente (opcional)</label><input class="inp" type="tel" id="fWhats" inputmode="numeric" placeholder="(13) 9 0000-0000" autocomplete="off" maxlength="16"><div class="err" id="whatsErr" role="alert">Confira o número: DDD + 8 ou 9 dígitos.</div></div>
       <label class="ck-l"><input type="checkbox" id="fMulher"><span>Cliente mulher (campanha do Dia da Mulher)</span></label>
       <input type="checkbox" id="fEnviarGerar" hidden aria-hidden="true" tabindex="-1">
     </div>
@@ -870,6 +886,9 @@ function histReativar(id) {
   hModal('Reativar / estender: ' + p.cliente, (p.status === 'cancelada' ? 'Cancelada em ' + fmtDH(p.cancelada_em) : (propAtiva(p) ? 'Ativa até ' : 'Expirou em ') + fmtDH(p.expira_em)) + '. Escolha por quanto tempo o link volta a valer, contando a partir de agora.', null, bts);
 }
 
+// WhatsApp do cliente na Nova: vazio ou DDD + 8/9 dígitos
+function whatsOk() { var w = document.getElementById('fWhats'); if (!w) return true; var d = w.value.replace(/\D/g, ''); var ok = !d || d.length === 10 || d.length === 11; var e = document.getElementById('whatsErr'); if (e) e.style.display = ok ? '' : 'block'; return ok; }
+function mascaraWhats(v) { var d = String(v).replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '').slice(0, 11); if (d.length <= 2) return d ? '(' + d : ''; var r = '(' + d.slice(0, 2) + ') '; var x = d.slice(2); if (d.length === 11) return r + x.slice(0, 1) + ' ' + x.slice(1, 5) + (x.length > 5 ? '-' + x.slice(5) : ''); return r + x.slice(0, 4) + (x.length > 4 ? '-' + x.slice(4) : ''); }
 function gerarLink() {
   if (window.CD_ATIVO) { return gerarCardapio(); } // tipo Cardapio: ver bloco de script abaixo
   var nome = document.getElementById('fNome').value.trim();
@@ -889,6 +908,7 @@ function gerarLink() {
   var vo3 = document.getElementById('fVO3').value.trim();
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
+  if (!whatsOk()) { alert('WhatsApp do cliente inválido: use DDD + número (ex.: (13) 9 9999-0000) ou deixe em branco.'); return; }
   var expira = Date.now() + (diasSel * 24 * 60 * 60 * 1000);
   var itens = iS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
   var naoIncluso = niS.map(function(p){ return p.filter(function(x){ return x.a; }).map(function(x){ return x.t; }); });
@@ -1830,6 +1850,7 @@ function gerarCardapio() {
   if (!nome) { alert('Preencha o nome do cliente.'); return; }
   var em = (document.getElementById('fEmail').value || '').trim();
   if (em && !/^\S+@\S+\.\S+$/.test(em)) { alert('E-mail do cliente inválido.'); return; }
+  if (!whatsOk()) { alert('WhatsApp do cliente inválido: use DDD + número (ex.: (13) 9 9999-0000) ou deixe em branco.'); return; }
   var S3 = Object.assign({}, C, {av:Object.assign({}, C.av, {on:document.getElementById('nvAv').checked}), rc:Object.assign({}, C.rc, {on:document.getElementById('nvRc').checked}), mi:Object.assign({}, C.mi, NV_MI, {on:document.getElementById('nvMi').checked})}), abas = [];
   if (!S3.av.on && !S3.rc.on && !S3.mi.on) { alert('Marque pelo menos uma aba para este cliente.'); return; }
   if (S3.av.on) abas.push('avulsos'); if (S3.rc.on) abas.push('recorrente'); if (S3.mi.on) abas.push('milao');
@@ -2218,7 +2239,7 @@ function duplicarCom(p, L) {
   NV_MI = {}; NV_SNAP = null;
   if (window.nvModelo) nvModelo(a === 'cd' ? 'cd' : ((L && L.form && L.form.modelo) === 'loja' ? 'loja' : 'arq'), true); else areaSet(a === 'cd' ? 'cd' : 'pl');
   subSet('nova');
-  $('fNome').value = p.cliente; $('fEmail').value = '';
+  $('fNome').value = p.cliente; $('fEmail').value = ''; if ($('fWhats')) $('fWhats').value = '';
   if (a === 'pl') {
     var f = L && L.form;
     if (f) {

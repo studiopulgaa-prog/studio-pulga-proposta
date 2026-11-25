@@ -25,17 +25,23 @@ const util_antes = (d, minimo) => { while (d > minimo && !ehUtil(d)) d--; return
 const util_depois = (d) => { while (!ehUtil(d)) d++; return d; };
 const enviado = (en, ...chaves) => chaves.some((k) => en && en[k]);
 
+// situação de follow-up (vem do banco). Sem o campo (dados antigos): "escolheu" = já mandou o pedido por e-mail.
+const escolheu = (p) => (p.follow === undefined ? Number(p.emails_cliente) > 0 : p.follow === 'escolheu' || p.follow === 'fechou');
+const paraLembretes = (p) => escolheu(p) || p.follow === 'perdido';
+
 export function planoPropostas(dados, agora) {
   const hoje = diaBR(agora), out = [];
   for (const e of (dados && dados.propostas) || []) {
     const en = e.enviados || {};
     if (e.pe_status !== 'ativa' || !en.link) continue;                    // fechada, descadastrada, teste ou sem e-mail do link
     if (!emailValido(e.email) || !e.expira_em) continue;
-    if (Number(e.emails_cliente) > 0) continue;                           // o cliente já escolheu plano
+    if (paraLembretes(e)) continue;                                       // escolheu, fechou ou perdido: sem lembretes
     if (!LINK_OK.test(e.pe_link || '')) continue;
     const expMs = Date.parse(e.expira_em);
     if (!(agora < expMs)) continue;                                       // não há e-mail de "expirou"
-    const envDia = diaBR(Date.parse(en.link)), expDia = diaBR(expMs), gap = expDia - envDia;
+    // "Ainda não decidiu": a contagem recomeça na data da marcação (lembretes religados)
+    const inicio = e.follow === 'nao_decidiu' && e.follow_em ? Math.max(Date.parse(en.link), Date.parse(e.follow_em)) : Date.parse(en.link);
+    const envDia = diaBR(inicio), expDia = diaBR(expMs), gap = expDia - envDia;
     if (!(gap >= 1)) continue;
     // dia-alvo do último aviso: véspera do vencimento (ou o próprio dia, se a validade é de 1-2 dias e vence à tarde/noite)
     const venceDeManha = horaBR(expMs) < 12;
@@ -86,7 +92,7 @@ export function planoCampanhas(dados, agora, campanhas = CAMPANHAS) {
   const out = [];
   for (const [email, props] of porEmail) {
     if (!emailValido(email) || bloqueados.has(email)) continue;
-    if (props.some((p) => ['fechada', 'descadastrada', 'pausada'].includes(p.pe_status) || Number(p.emails_cliente) > 0)) continue;
+    if (props.some((p) => ['fechada', 'descadastrada', 'pausada'].includes(p.pe_status) || escolheu(p))) continue;   // escolheu/fechou: sem sazonais (perdido continua)
     if (props.some((p) => !p.expira_em || Date.parse(p.expira_em) > agora)) continue;       // ainda tem proposta válida: não é caso de sazonal
     const base = props.slice().sort((a, b) => Date.parse(b.expira_em) - Date.parse(a.expira_em))[0];
     if (!base.lh) continue;
@@ -101,6 +107,8 @@ export function planoCampanhas(dados, agora, campanhas = CAMPANHAS) {
       if (minhas.some((m) => m.campanha === c.id && Number(m.ano) === x.ano)) continue;     // nunca repetir
       if (c.publico === 'arquitetos' && nichoDe(base) !== 'arquiteto') continue;              // Milão e Dia do Arquiteto: só Arquiteto/Designer
       if (c.publico === 'mulheres' && !props.some((p) => p.mulher === true)) continue;       // sem marcação, não envia
+      if (c.publico === 'construtoras' && nichoDe(base) !== 'construtora') continue;
+      if (c.publico === 'lojas' && nichoDe(base) !== 'loja') continue;
       if (hoje - ultimo < MIN_DIAS_ENTRE) continue;                                          // mínimo de dias entre e-mails
       if (qtdAno >= MAX_POR_ANO) continue;                                                   // máximo por ano
       out.push({ parte: 'B', email, lh: base.lh, id: base.id, cliente: base.cliente, tipo: 'campanha', campanha: c.id, ano: x.ano });
