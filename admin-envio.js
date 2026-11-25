@@ -62,7 +62,7 @@
     var mu = document.getElementById('fMulher');
     if (mu && mu.checked && typeof adm === 'function') adm('mulher', {id: id, valor: true}).catch(function () {});  // marca "cliente mulher" (opcional)
     var ni = document.getElementById('fNicho');   // nicho (escolhido ou automático pelo modelo)
-    if (ni && typeof adm === 'function') adm('nicho', {id: id, valor: ni.value || 'arquiteto'}).catch(function () {});
+    if (ni && ni.value && typeof adm === 'function') adm('nicho_confirmar', {id: id, valor: ni.value}).catch(function () {});   // nicho escolhido na Nova = confirmado
     window.SP_AUTOENVIO = (cb && cb.checked && email) ? function () {
       envioEmail(id, {email: email, semConfirmar: true, depois: function (r, msg) { rbMsg.textContent = msg; rbMsg.style.color = r.ok ? '#1a7a3c' : '#b3261e'; if (r.ok) rb.textContent = 'Reenviar por e-mail'; }});
     } : null;

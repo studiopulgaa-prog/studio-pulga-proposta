@@ -140,8 +140,13 @@ select.inp{appearance:auto;}
 .foot{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));z-index:40;background:rgba(244,234,221,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;}
 .foot .btn-main{min-height:50px;}
 .foot .btn-out{min-height:46px;width:100%;}
-#secNova.on{padding-bottom:128px;}
-@media (min-width:900px){.foot{left:232px;}.foot>*{max-width:724px;}.foot{align-items:flex-start;padding-left:48px;}}
+#secNova.on{padding-bottom:calc(var(--nav-h) + 148px + env(safe-area-inset-bottom));}
+/* computador: a barra fica presa ao fim da coluna do formulário (não flutua no meio da tela) */
+@media (min-width:900px){
+  #secNova.on{padding-bottom:0;}
+  .foot{position:sticky;left:auto;right:auto;bottom:0;margin:24px -16px 0;padding:12px 16px 16px;border-top:1px solid var(--line);border-radius:16px 16px 0 0;flex-direction:row;align-items:stretch;z-index:5;}
+  .foot .btn-main,.foot .btn-out{flex:1;width:auto;min-height:50px;}
+}
 /* itens dos planos e editores (Padrões) */
 .plano-ck{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer;margin-bottom:8px;min-height:48px;}
 .plano-ck.on{border-color:var(--br);background:var(--soft);}
@@ -332,6 +337,36 @@ body.tem-foot .hist-msg{bottom:calc(var(--nav-h) + 136px + env(safe-area-inset-b
 .hist-info{font-size:14px;color:var(--tx2);margin-bottom:6px;display:flex;gap:8px;flex-wrap:wrap;}
 .hist-info strong{color:var(--tx);}
 .hist-tipo{font-size:12px;font-weight:600;color:var(--tx2);}
+.pill.ni{background:#EEE3F7;color:#5B2C7A;}
+.fab{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--warnbg);color:var(--warn);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px;font-weight:500;}
+.fab .btn-out{min-width:110px;}
+details.imp-box>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:14px;font-weight:600;color:var(--br);list-style:none;}
+details.imp-box>summary::-webkit-details-marker{display:none;}
+details.imp-box>summary::before{content:'';width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin-right:12px;transition:transform .2s;}
+details.imp-box[open]>summary::before{transform:rotate(45deg);}
+.tl-g{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);padding:12px 0 2px;}
+.tl-i .ap{font-weight:600;color:var(--tx);}
+.selo-ant{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:#ECE6DC;color:#5C4B3A;margin-left:6px;vertical-align:middle;}
+.so-largo{display:none;}
+.pw-r{display:none;}
+/* ===== computador largo (a partir de 1100 px): usa a largura ===== */
+@media (min-width:1100px){
+  .main{max-width:none;margin-right:0;padding:40px 40px 64px;}
+  #scrInicio .cols-in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start;}
+  #scrInicio .sec-hd-1{margin-top:0;}
+  .so-largo{display:block;}
+  #secHist.on .pw{display:grid;grid-template-columns:minmax(320px,380px) minmax(0,1fr);gap:28px;align-items:start;}
+  #secHist .pw-r{display:block;position:sticky;top:24px;max-height:calc(100vh - 48px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px;container-type:inline-size;}
+  #secHist .pw-r .dt-top{display:none;}
+  .pc.sel{border-color:var(--br);box-shadow:0 0 0 1px var(--br) inset;}
+  #scrDetalhe{max-width:1000px;container-type:inline-size;}
+  #secNova,#scrEmails,#scrAjustes{max-width:860px;}
+}
+.dt-cols{display:block;}
+@container (min-width:560px){
+  .dt-cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start;}
+  .dt-cols .sec-hd:first-child{margin-top:8px;}
+}
 input,textarea,select{max-width:100%;}
 @media (max-width:820px),(pointer:coarse){
   input:not([type=checkbox]):not([type=radio]),textarea,select{font-size:16px!important;}
@@ -369,6 +404,7 @@ input,textarea,select{max-width:100%;}
   <!-- ===== INÍCIO ===== -->
   <section class="scr" id="scrInicio" aria-labelledby="inTit">
     <div class="scr-hd"><div><span class="mk">// studio pulga · propostas</span><h1 class="tt" id="inTit">olá, <strong>Isaque</strong></h1></div></div>
+    <div class="cols-in"><div class="col-a">
     <div class="stats">
       <div class="stat"><span class="num" id="inAtivas">–</span><span>Ativas</span></div>
       <div class="stat"><span class="num" id="inAbriram">–</span><span>Abriram</span></div>
@@ -377,13 +413,18 @@ input,textarea,select{max-width:100%;}
     <button type="button" class="btn-main" id="inNova"><i data-i="plus"></i>Nova proposta</button>
     <div class="sec-hd"><h2 class="sec">Precisam de atenção</h2><span id="inAtN"></span></div>
     <div id="inAtencao"><div class="lst"><div class="loading">Carregando…</div></div></div>
-    <div class="sec-hd"><h2 class="sec">E-mails desta semana</h2><span></span></div>
+    </div><div class="col-b">
+    <div class="sec-hd sec-hd-1"><h2 class="sec">E-mails desta semana</h2><span></span></div>
     <div id="inEmails"><div class="em-sem"><div><span>Carregando…</span></div></div></div>
+    <div class="so-largo"><div class="sec-hd"><h2 class="sec">Últimas atividades</h2><span></span></div>
+    <div id="inAtiv"><div class="lst"><div class="loading">Carregando…</div></div></div></div>
+    </div></div>
   </section>
 
   <!-- ===== PROPOSTAS ===== -->
   <section class="scr" id="secHist" aria-labelledby="histTit">
-    <div class="scr-hd"><div><span class="mk">// histórico</span><h1 class="tt" id="histTit">Propostas</h1></div><button type="button" class="ib" id="btnLixeira" aria-label="Lixeira" title="Lixeira"><i data-i="trash"></i></button></div>
+    <div class="pw"><div class="pw-l">
+    <div class="scr-hd"><div><span class="mk">// histórico</span><h1 class="tt" id="histTit"><strong>Propostas</strong></h1></div><button type="button" class="ib" id="btnLixeira" aria-label="Lixeira" title="Lixeira"><i data-i="trash"></i></button></div>
     <div class="busca"><label class="sr" for="pBusca">Buscar proposta por nome</label><i data-i="search"></i><input class="inp" id="pBusca" type="search" placeholder="Buscar cliente" autocomplete="off"></div>
     <div class="filtros">
       <div class="segm" role="group" aria-label="Tipo de proposta"><button type="button" data-ptipo="todas" class="on" aria-pressed="true">Todas</button><button type="button" data-ptipo="planos" aria-pressed="false">Planos</button><button type="button" data-ptipo="cardapio" aria-pressed="false">Cardápio</button></div>
@@ -391,6 +432,7 @@ input,textarea,select{max-width:100%;}
     </div>
     <div id="pTestes" class="lim-t" style="display:none;"></div>
     <div id="histLista"><div class="loading">Carregando…</div></div>
+    </div><div class="pw-r" id="detPane" aria-live="polite"><div class="empty pw-vazio">Toque numa proposta para ver o detalhe aqui.</div></div></div>
   </section>
 
   <!-- ===== DETALHE ===== -->
@@ -415,7 +457,7 @@ input,textarea,select{max-width:100%;}
         <button type="button" data-mdl="mi" aria-pressed="false">Especial Milão<span id="mdlMiSub">Viagem de abril</span></button>
       </div>
       <div class="nicho-l" id="nichoLinha"><span>Nicho: <b id="nichoTxt">Arquiteto/Designer</b></span><button type="button" class="lnk" id="nichoAlt" aria-controls="nichoBox" aria-expanded="false">Alterar</button></div>
-      <div id="nichoBox" style="display:none;"><label class="label" for="fNicho">Nicho (para os e-mails de datas especiais)</label><select class="inp" id="fNicho"><option value="arquiteto">Arquiteto/Designer</option><option value="loja">Loja</option><option value="outro">Outro</option></select></div>
+      <div id="nichoBox" style="display:none;"><label class="label" for="fNicho">Nicho (para os e-mails de datas especiais)</label><select class="inp" id="fNicho"><option value="" disabled>Escolha o nicho</option><option value="arquiteto">Arquiteto/Designer</option><option value="loja">Loja</option><option value="construtora">Construtora</option><option value="outro">Outro</option></select><div class="err" id="nichoErr" role="alert">Escolha o nicho do cliente para gerar o cardápio.</div></div>
     </div>
     <div class="blk">
       <span class="blk-t">3 · Validade e valores</span>
@@ -489,17 +531,18 @@ input,textarea,select{max-width:100%;}
 
   <!-- ===== E-MAILS ===== -->
   <section class="scr" id="scrEmails" aria-labelledby="emTit">
-    <div class="scr-hd"><div><span class="mk">// envios automáticos</span><h1 class="tt" id="emTit">E-<strong>mails</strong></h1></div></div>
+    <div class="scr-hd"><div><span class="mk">// envios automáticos</span><h1 class="tt" id="emTit"><strong>E-mails</strong></h1></div></div>
     <div id="secEmails"><div id="emCorpo"><div class="loading">Carregando…</div></div></div>
   </section>
 
   <!-- ===== AJUSTES ===== -->
   <section class="scr" id="scrAjustes" aria-labelledby="ajTit">
-    <div class="scr-hd"><div><span class="mk">// padrões e conta</span><h1 class="tt" id="ajTit">Ajus<strong>tes</strong></h1></div></div>
+    <div class="scr-hd"><div><span class="mk">// padrões e conta</span><h1 class="tt" id="ajTit"><strong>Ajustes</strong></h1></div></div>
     <div class="segm" role="group" aria-label="Qual padrão editar" style="margin-bottom:16px;"><button type="button" data-aj="pl" class="on" aria-pressed="true">Planos de gestão</button><button type="button" data-aj="cd" aria-pressed="false">Cardápio</button></div>
     <div id="secPad">
       <div class="card-title" id="padTit">Padrões · Planos de gestão</div>
-      <div class="card-sub">Mudar um padrão vale só para as próximas propostas. Links já enviados guardam a própria cópia e não mudam. Os padrões ficam salvos no servidor e valem em qualquer aparelho.</div>
+      <div class="card-sub">Estes são os valores e itens que aparecem em cada nova proposta.</div>
+      <div id="padFab" class="fab" style="display:none;" role="status"><span>Os valores atuais são os de fábrica. Revise e toque em Salvar.</span><button type="button" class="btn-out ok" id="padFabSalvar">Salvar</button></div>
       <div id="padAviso" class="pad-aviso" style="display:none;" role="alert"></div>
       <div id="impBox"></div>
       <div id="padPl"></div>
@@ -877,12 +920,8 @@ function gerarLink() {
 }
 
 function carregarHistorico() {
-  if (!_lista.length) document.getElementById('histLista').innerHTML = '<div class="loading">Carregando…</div>';
-  return adm('listar').then(function(r){
-    if (r && r.ok === false) { document.getElementById('histLista').innerHTML = '<div class="empty">Erro ao carregar: ' + esc(erroTxt(r)) + '</div>'; return; }
-    _lista = (r && r.ok && r.lista) || [];
-    renderHistorico(_lista);
-  }).catch(function(e){ if(e.message!=='sessao') { document.getElementById('histLista').innerHTML = '<div class="empty">Não foi possível carregar (sem conexão). Puxe para atualizar ou tente de novo.</div>'; histMsg('Sem conexão com o servidor.', true); } });
+  // a lista vem do servidor em páginas (ver /admin-app.js: appCarregar). _lista guarda tudo que já foi carregado.
+  return window.appCarregar ? appCarregar() : Promise.resolve();
 }
 
 function renderHistorico(lista) {
@@ -2018,6 +2057,8 @@ function padSalvar(pares, chaveLocal, tudo, ok) {
       if (!pares.every(function(x) { return P[x[0]] && P[x[0]].dados; })) { var er = new Error('conferencia'); throw er; }
       try { localStorage.removeItem(chaveLocal); } catch (e) {}
       PAD_FONTE = 'servidor'; padAviso(''); miSrc();
+      if (window.PAD_SALVO) pares.forEach(function(x) { PAD_SALVO[x[0] === 'cardapio' ? 'cd' : 'pl'] = true; });
+      if (window.ajFab) ajFab();
       var h = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo'});
       ok.textContent = 'Padrão salvo às ' + h + ' (conferido no servidor). Vale em qualquer aparelho, para as próximas propostas.';
       impMostrar();
@@ -2059,10 +2100,12 @@ function padCarregar() {
     if (padValido(l)) PAD_PL.loja = l;
     if (c && c.av && c.rc && c.mi) c3S = c3Load(c);
     PAD_FONTE = (padValido(a) || padValido(l) || (c && c.av && c.rc && c.mi)) ? 'servidor' : 'fabrica';
-    padAviso(PAD_FONTE === 'fabrica' ? 'Nenhum Padrão foi salvo no servidor ainda: valem os textos e valores de fábrica. Edite em Padrões e clique em "Salvar como novo padrão".' : '');
+    window.PAD_SALVO = {pl: !!(padValido(a) || padValido(l)), cd: !!(c && c.av && c.rc && c.mi)};
+    padAviso('');
     padAplica();
   }, function(e) {
     if (e && e.message === 'sessao') return;
+    window.PAD_SALVO = null;
     var usou = padReserva();
     padAviso('Não foi possível ler os Padrões do servidor.' + (usou ? ' Usando a cópia de reserva deste navegador; ela pode estar desatualizada.' : ' Usando os valores de fábrica.') + ' Recarregue a página quando a conexão voltar.');
     padAplica();
@@ -2091,8 +2134,8 @@ function impMostrar() {
   var L = impLocal(), np = Object.keys(L.pad).length, nh = L.hist.length;
   box.textContent = '';
   if (!np && !nh) return;
-  var w = c2e('div', 'imp-box');
-  w.appendChild(c2e('div', 'imp-t', 'Dados salvos neste navegador'));
+  var w = c2e('details', 'imp-box');
+  w.appendChild(c2e('summary', null, 'Importar dados antigos deste aparelho'));
   w.appendChild(c2e('div', 'cd-hint', np + ' padrão(ões) e ' + nh + ' proposta(s) com cópia completa. Importe para o servidor para ver em qualquer aparelho. Padrões que já existem no servidor NÃO são substituídos, e os textos antigos do Milão nunca são importados. Nada é apagado daqui até você confirmar.'));
   var b = c2e('button', 'btn-out', 'Importar deste navegador'); b.type = 'button'; b.style.cssText = 'margin-top:8px;width:100%;';
   var st = c2e('div', 'pad-ok');
