@@ -84,6 +84,29 @@ export default async function handler(req, res) {
         if (!UUID.test(b.id || '')) return ruim();
         await rpc('adm_excluir', { p_id: b.id });
         return res.json({ ok: true });
+      case 'cancelar': // link para de abrir na hora ("não está mais disponível"); continua no Histórico como Cancelada
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json({ ok: true, ...(await rpc('adm_cancelar', { p_id: b.id })) });
+      case 'lixeira_mover': // "Excluir do histórico": vai para a Lixeira (30 dias) e o link para de abrir
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json({ ok: true, ...(await rpc('adm_lixeira_mover', { p_id: b.id })) });
+      case 'apagar_lote': { // "Apagar histórico": tudo vai para a Lixeira; ativas só com incluir_ativas
+        if (b.confirmacao !== 'APAGAR' || !['todas', 'expiradas', 'canceladas'].includes(b.filtro) || !['planos', 'cardapio'].includes(b.tipo)) return ruim();
+        const n = await rpc('adm_apagar_lote', { p_tipo: b.tipo, p_filtro: b.filtro, p_incluir_ativas: b.incluir_ativas === true });
+        return res.json({ ok: true, n });
+      }
+      case 'lixeira':
+        return res.json({ ok: true, lista: await rpc('adm_lixeira', {}) });
+      case 'restaurar':
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json({ ok: true, ...(await rpc('adm_restaurar', { p_id: b.id })) });
+      case 'apagar_definitivo': // só o que está na Lixeira
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json({ ok: true, n: await rpc('adm_apagar_definitivo', { p_id: b.id }) });
+      case 'ignorar_disp': // este aparelho é do admin: os acessos dele não contam
+        if (!/^d2_[a-z0-9]{4,40}$/.test(b.hash || '')) return ruim();
+        await rpc('adm_ignorar_disp', { p_hash: b.hash });
+        return res.json({ ok: true });
       case 'ocultar': // "Apagar do histórico": esconde e expira o link (a linha continua no banco)
         if (!UUID.test(b.id || '')) return ruim();
         await rpc('adm_ocultar', { p_id: b.id });
