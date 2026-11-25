@@ -679,6 +679,11 @@
         su.textContent='Peça um novo link ao Studio.';
         bt.textContent='Pedir novo link no WhatsApp →';
         bt.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent('Olá! O link da minha proposta abriu incompleto ou inválido. Pode me enviar um novo?');
+      }else if(t==='indisponivel'){
+        ti.textContent='Esta proposta não está mais disponível';
+        su.textContent='Fale com a gente que preparamos o que você precisa.';
+        bt.textContent='Falar com a gente no WhatsApp →';
+        bt.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent('Olá! Tentei abrir minha proposta e ela não está mais disponível. Podemos conversar?');
       }else if(t==='rede'){
         ti.textContent='Não foi possível verificar agora';
         su.textContent='Tente novamente.';
@@ -743,6 +748,7 @@
         // Servidor respondeu: a partir daqui a decisao e dele
         if(st.agora){var sv=new Date(st.agora).getTime();if(isFinite(sv))SKEW=sv-Date.now();}
         // O servidor decide: prazo vencido (expirada) vem antes; depois link inexistente/alterado.
+        if(st.indisponivel===true){mostraTela('indisponivel');return;}   // cancelada ou excluída pelo Studio
         if(st.expirada===true){mostraTela('expirada');return;}
         if(st.existe===false||!st.valida){mostraTela('invalido');return;}
         if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
@@ -2143,5 +2149,6 @@
 
     loadProposta();
   </script>
+  <script src="/proposta-track.js"></script>
 </body>
 </html>

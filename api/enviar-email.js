@@ -11,6 +11,7 @@ const MOTIVO = {
   expirada: [409, 'A proposta está expirada. Reative a validade antes de enviar.'],
   sem_email: [400, 'Esta proposta não tem e-mail do cliente.'],
   sem_link: [409, 'Esta proposta não tem link guardado; gere uma nova.'],
+  cancelada: [409, 'Esta proposta foi cancelada. Reative antes de enviar.'],
   suprimido: [409, 'Este contato está bloqueado: o e-mail foi rejeitado ou marcado como spam antes.'],
 };
 

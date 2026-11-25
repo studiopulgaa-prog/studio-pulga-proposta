@@ -35,7 +35,10 @@ export default async function handler(req, res) {
     if (!(t === t)) return res.status(400).json({ ok: false, erro: 'data invalida' });
     agora = t;
   }
-  if (q.turno === 'noite' && !simular) return res.json({ ok: true, turno: 'noite', enviados: [], aviso: 'sem envios fora das 9h-11h' });
+  // Lixeira do Histórico: apaga de vez o que está lá há mais de 30 dias (nas duas chamadas do dia; nunca na simulação)
+  let lixeira = null;
+  if (!simular) { try { lixeira = await rpc('adm_lixeira_purgar', {}); } catch (e) { console.error('lixeira', e && e.message); } }
+  if (q.turno === 'noite' && !simular) return res.json({ ok: true, turno: 'noite', enviados: [], lixeira_apagadas: lixeira, aviso: 'sem envios fora das 9h-11h' });
   const ativo = !simular && process.env.SEQUENCIA_ATIVA === '1';
   try {
     const r = await rodar({ agora, rpc, ativo, registrarSimulacao: !simular && !ativo });
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
     if (!simular && dentroDaJanela(agora) && new Date((diaBR(agora)) * 86400000).getUTCDay() === 1) {
       try { r.resumo = await resumoSemanal({ agora, ativo }); } catch (e) { console.error('resumo', e && e.message); r.resumo = { enviado: false, motivo: 'erro' }; }
     }
-    return res.json({ ok: true, modo: ativo ? 'envio' : 'simulacao', ...r });
+    return res.json({ ok: true, modo: ativo ? 'envio' : 'simulacao', lixeira_apagadas: lixeira, ...r });
   } catch (err) {
     console.error('lembretes', err && err.message);
     return res.status(500).json({ ok: false, erro: 'erro interno' });

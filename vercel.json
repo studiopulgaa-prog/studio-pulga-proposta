@@ -1,79 +1,213 @@
 {
   "version": 2,
   "functions": {
-    "api/lembretes.js": { "maxDuration": 60 }
+    "api/lembretes.js": {
+      "maxDuration": 60
+    }
   },
+  "redirects": [
+    {
+      "source": "/admin.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-git-master-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/admin",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-git-master-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/admin.html",
+      "permanent": false
+    }
+  ],
   "rewrites": [
-    { "source": "/p/:slug*", "destination": "/p.html" },
-    { "source": "/p", "destination": "/p.html" },
-    { "source": "/api/admin/email", "destination": "/api/email-admin" },
-    { "source": "/api/admin/enviar-email", "destination": "/api/enviar-email" },
-    { "source": "/api/admin/emails", "destination": "/api/emails-painel" }
+    {
+      "source": "/p/:slug*",
+      "destination": "/p.html"
+    },
+    {
+      "source": "/p",
+      "destination": "/p.html"
+    },
+    {
+      "source": "/api/admin/email",
+      "destination": "/api/email-admin"
+    },
+    {
+      "source": "/api/admin/enviar-email",
+      "destination": "/api/enviar-email"
+    },
+    {
+      "source": "/api/admin/emails",
+      "destination": "/api/emails-painel"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        }
       ]
     },
     {
       "source": "/",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/index.html",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/proposta.html",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/p",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/p/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/admin(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-        { "key": "Cache-Control", "value": "no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
       ]
     },
     {
       "source": "/manifest.json",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/sw-admin.js",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
       ]
     },
     {
       "source": "/icons/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     }
   ]

@@ -89,6 +89,14 @@ body{background:var(--bg);font-family:'Outfit',sans-serif;font-weight:500;color:
 .badge-at{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#1a7a3c;color:#fff;}
 .badge-ex{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#b3261e;color:#fff;}
 .hist-nome.exp{opacity:.65;}
+.badge-cn{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#5f5f5f;color:#fff;}
+.badge-ch{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#6E2C14;color:#F4EADD;}
+.badge-al{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FFF4E0;color:#7a4a00;border:1px solid #f0c37a;}
+.hist-tools{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}
+.hist-tools button{padding:7px 12px;border-radius:10px;border:1.5px solid var(--brl);background:#fff;color:var(--br);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.hist-tools button.perigo{border-color:#e7b4ae;color:#b3261e;}
+.hist-ac{margin:6px 0 2px;padding:10px 12px;border-radius:10px;background:rgba(110,44,20,.04);font-size:12px;line-height:1.55;color:var(--gray);}
+.hist-ac strong{color:var(--br);}
 .hist-msg{margin:6px 0 10px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.4;background:rgba(25,140,60,0.12);color:#1a7a3c;}
 .hist-msg.err{background:#fbe3e0;color:#b3261e;font-weight:600;}
 .hmodal{position:fixed;inset:0;z-index:9999;background:rgba(40,20,10,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px;}
@@ -311,6 +319,7 @@ input,textarea,select{max-width:100%;}
   </div>
   <div class="card" id="secHist" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;"><div class="card-title" id="histTit">Propostas enviadas</div><button class="btn-enc-all" onclick="encerrarTodas()">✕ Encerrar todas</button></div>
+    <div class="hist-tools"><button type="button" id="btnApagarHist" class="perigo">🗑 Apagar histórico…</button><button type="button" id="btnLixeira">♻ Lixeira</button></div>
     <div id="histMsg" class="hist-msg" role="status" style="display:none;"></div>
     <div id="histLista"><div class="loading">Carregando…</div></div>
   </div>
@@ -507,17 +516,49 @@ function encerrarTodas() {
 // "×": duas opções
 function histOpcoes(id) {
   var p = propPorId(id); if (!p) return;
-  var ativa = propAtiva(p);
+  var cancelada = p.status === 'cancelada';
   var bts = [];
-  if (ativa) bts.push({t:'Expirar agora', c:'pri', f:function(){ hFechar(); encerrarProposta(id); }});
-  bts.push({t:'Apagar do histórico', c:'perigo', f:function(){
-    hFechar(); histMsg('Apagando…');
-    hAcao('ocultar', {id:id}).then(function(r){
-      return hFinal(r.ok ? '"' + p.cliente + '" apagada do histórico (o link foi expirado).' : 'NÃO foi possível apagar "' + p.cliente + '": ' + r.erro, !r.ok);
-    }).catch(function(){});
+  if (!cancelada) bts.push({t:'Cancelar proposta', c:'pri', f:function(){ hFechar(); histCancelar(id); }});
+  bts.push({t:'Excluir do histórico', c:'perigo', f:function(){
+    hFechar();
+    hModal('Excluir "' + p.cliente + '" do histórico?', 'Some da lista e o link para de abrir. Fica 30 dias na Lixeira (dá para restaurar) e depois é apagada de vez.', null,
+      [{t:'Voltar', f:hFechar}, {t:'Excluir', c:'perigo', f:function(){
+        hFechar(); histMsg('Excluindo…');
+        hAcao('lixeira_mover', {id:id}).then(function(r){
+          return hFinal(r.ok ? '"' + p.cliente + '" foi para a Lixeira (o link não abre mais).' : 'NÃO foi possível excluir "' + p.cliente + '": ' + r.erro, !r.ok);
+        }).catch(function(){});
+      }}]);
   }});
-  bts.push({t:'Cancelar', f:hFechar});
-  hModal(p.cliente, '"Expirar agora" bloqueia o link, mas a proposta continua no histórico. "Apagar do histórico" tira da lista e também expira o link.', null, bts);
+  bts.push({t:'Fechar', f:hFechar});
+  hModal(p.cliente, (cancelada ? 'Cancelada. Para voltar a valer, use "Reativar / estender". ' : '') + '"Cancelar" bloqueia o link e mantém a proposta no histórico. "Excluir" tira da lista e manda para a Lixeira.', null, bts);
+}
+function histCancelar(id) {
+  var p = propPorId(id); if (!p) return;
+    hModal('Cancelar "' + p.cliente + '"?', 'O link para de abrir na hora: o cliente verá "Esta proposta não está mais disponível. Fale com a gente". A proposta fica no Histórico como Cancelada, os e-mails dela param e você pode reativar depois.', null,
+      [{t:'Voltar', f:hFechar}, {t:'Cancelar proposta', c:'perigo', f:function(){
+        hFechar(); histMsg('Cancelando…');
+        hAcao('cancelar', {id:id}).then(function(r){
+          return hFinal(r.ok ? '"' + p.cliente + '" cancelada. O link não abre mais.' : 'NÃO foi possível cancelar "' + p.cliente + '": ' + r.erro, !r.ok);
+        }).catch(function(){});
+      }}]);
+}
+
+// acessos do cliente (sem os aparelhos do admin)
+function acessosHtml(p) {
+  var A = p.acs; if (!A) return '';
+  var BR = function (iso) { return iso ? fmtDH(iso) : '—'; };
+  var NOME_ABA = {avulsos:'Avulsos', recorrente:'Recorrente', milao:'Especial Milão'};
+  var h = '<div class="hist-ac"><strong>Acessos do cliente</strong><br>';
+  if (!Number(A.aberturas)) return h + 'Ainda não abriu.</div>';
+  h += 'Abriu ' + esc(A.aberturas) + 'x · 1º acesso ' + esc(BR(A.primeiro)) + ' · último ' + esc(BR(A.ultimo)) + '<br>';
+  var ap = (A.aparelhos || []).map(function (d) { return esc((d.tipo || 'Aparelho') + (d.nav ? ' · ' + d.nav : '') + (d.vezes > 1 ? ' (' + d.vezes + 'x)' : '')); });
+  if (ap.length) h += esc(A.dispositivos) + (Number(A.dispositivos) === 1 ? ' dispositivo: ' : ' dispositivos: ') + ap.join(', ') + '<br>';
+  if (Number(A.dispositivos) > 3) h += '<span style="color:#b36b00;font-weight:600;">⚠ Aberta em mais de 3 aparelhos: o link pode ter sido repassado.</span><br>';
+  var ab = (A.abas || []).map(function (a) { return esc(NOME_ABA[a] || a); }), pl = (A.planos || []).map(esc);
+  if (ab.length) h += 'Abas vistas: ' + ab.join(', ') + '<br>';
+  if (pl.length) h += 'Planos vistos: ' + pl.join(', ') + '<br>';
+  h += 'Escolheu: ' + (A.escolheu ? '<strong>' + esc(A.escolheu) + '</strong>' : (Number(p.emails_cliente) > 0 ? '<strong>sim</strong>' : 'não')) + ' · WhatsApp: ' + (A.whatsapp ? '<strong>clicou</strong>' : 'não clicou');
+  return h + '</div>';
 }
 
 // reativar / estender validade, a partir de agora
@@ -530,7 +571,7 @@ function histReativar(id) {
     }).catch(function(){});
   }}; });
   bts.push({t:'Cancelar', f:hFechar});
-  hModal('Reativar / estender: ' + p.cliente, (propAtiva(p) ? 'Ativa até ' : 'Expirou em ') + fmtDH(p.expira_em) + '. Escolha por quanto tempo o link volta a valer, contando a partir de agora.', null, bts);
+  hModal('Reativar / estender: ' + p.cliente, (p.status === 'cancelada' ? 'Cancelada em ' + fmtDH(p.cancelada_em) : (propAtiva(p) ? 'Ativa até ' : 'Expirou em ') + fmtDH(p.expira_em)) + '. Escolha por quanto tempo o link volta a valer, contando a partir de agora.', null, bts);
 }
 
 function gerarLink() {
@@ -603,14 +644,19 @@ function renderHistorico(lista) {
     var ds = dt.toLocaleDateString('pt-BR') + ' às ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     var pl = p.planos || [true,true,true];
     var ativa = propAtiva(p);
-    var sel = ativa ? '<span class="badge-at">Ativa</span>' : '<span class="badge-ex">Expirada</span>';
-    var badge = p.ac > 0
-      ? '<span class="badge-ab">Aberto • ' + (p.dv > 0 ? p.dv + (p.dv===1?' disp. • ':' disp. • ') : '') + p.ac + (p.ac===1?' abertura':' aberturas') + '</span>'
-      : '<span class="badge-wt">Aguardando</span>';
+    var cancelada = p.status === 'cancelada';
+    var sel = cancelada ? '<span class="badge-cn">Cancelada</span>' : ativa ? '<span class="badge-at">Ativa</span>' : '<span class="badge-ex">Expirada</span>';
+    var A = p.acs || {}, nAb = Number(A.aberturas != null ? A.aberturas : p.ac) || 0, nDv = Number(A.dispositivos != null ? A.dispositivos : p.dv) || 0;
+    var badge = nAb > 0
+      ? '<span class="badge-ab">Abriu ' + nAb + 'x' + (nDv > 0 ? ' · ' + nDv + (nDv === 1 ? ' dispositivo' : ' dispositivos') : '') + '</span>'
+      : '<span class="badge-wt">Não abriu</span>';
+    var esc1 = A.escolheu || (Number(p.emails_cliente) > 0 ? 'plano' : '');
+    if (esc1) badge += '<span class="badge-ch">Escolheu ' + esc(esc1) + '</span>';
+    if (nDv > 3) badge += '<span class="badge-al" title="Aberta em mais de 3 aparelhos: o link pode ter sido repassado">⚠ ' + nDv + ' aparelhos</span>';
     h += '<div class="hist-item">';
     h += '<div class="hist-hdr" data-hist="' + i + '">';
     h += '<div><div style="display:flex;align-items:center;gap:8px;"><span class="hist-nome' + (ativa ? '' : ' exp') + '">' + esc(p.cliente) + '</span></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">' + sel + badge + '</div><div class="hist-data">' + ds + '</div></div>';
-    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Opções: expirar ou apagar" aria-label="Opções: expirar ou apagar">×</button></div>';
+    h += '<div class="hist-right"><span class="hist-arrow" id="ha' + i + '">›</span><button class="hist-del" data-del="' + esc(p.id) + '" title="Opções: cancelar ou excluir" aria-label="Opções: cancelar ou excluir">×</button></div>';
     h += '</div>';
     h += '<div class="hist-body" id="hb' + i + '">';
     if (area === 'cd') {
@@ -621,7 +667,8 @@ function renderHistorico(lista) {
       if (p.v3) h += '<div class="hist-info"><strong>3º Pacote</strong>R$ ' + esc(p.v3) + '</div>';
     }
     h += '<div class="hist-info"><strong>Validade</strong>' + (parseInt(p.validade,10)||2) + ' dias</div>';
-    h += '<div class="hist-info"><strong>' + (ativa ? 'Ativa até' : 'Expirou em') + '</strong>' + esc(fmtDH(p.expira_em)) + '</div>';
+    h += cancelada ? '<div class="hist-info"><strong>Cancelada em</strong>' + esc(fmtDH(p.cancelada_em)) + '</div>' : '<div class="hist-info"><strong>' + (ativa ? 'Ativa até' : 'Expirou em') + '</strong>' + esc(fmtDH(p.expira_em)) + '</div>';
+    h += acessosHtml(p);
     if (p.email) {
       h += '<div class="hist-info"><strong>E-mail</strong>' + esc(p.email) + '</div>';
       h += '<div class="hist-info"><strong>Envio</strong>' + (p.envio_erro ? '<span style="color:#b3261e;font-weight:600;">Erro: ' + esc(p.envio_erro) + '</span>' : (p.enviado_em ? '<span style="color:#1a7a3c;font-weight:600;">Enviado em ' + esc(fmtDH(p.enviado_em)) + '</span>' : 'Ainda não enviado')) + (p.envio_erro && p.enviado_em ? ' <span style="color:var(--gray);">(último envio ok: ' + esc(fmtDH(p.enviado_em)) + ')</span>' : '') + '</div>';
@@ -633,7 +680,7 @@ function renderHistorico(lista) {
       h += '<div class="hist-info"><strong>Nicho</strong>' + esc({arquiteto:'Arquiteto/Designer', loja:'Loja', outro:'Outro'}[p.nicho] || 'Arquiteto/Designer') + (p.nicho_auto ? ' <span style="color:var(--gray2);">(automático)</span>' : '') + '</div>';
     }
     if (area !== 'cd') h += '<div><span class="hist-tag' + (pl[0]?'':' off') + '">Plano 1</span><span class="hist-tag' + (pl[1]?'':' off') + '">Plano 2</span><span class="hist-tag' + (pl[2]?'':' off') + '">Plano 3</span></div>';
-    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (p.email && ativa ? '<button class="btn-out" data-mail="' + esc(p.id) + '">✉ ' + (p.enviado_em ? 'Reenviar por e-mail' : 'Enviar por e-mail') + '</button>' : '') + (p.email && p.seq_status !== 'descadastrada' ? '<button class="btn-out" data-fech="' + esc(p.id) + '">' + (p.seq_status === 'fechada' || p.seq_status === 'pausada' ? '↺ Reabrir lembretes' : '✓ Cliente fechou') + '</button>' : '') + (p.email ? '<button class="btn-out" data-tl="' + esc(p.id) + '">📬 E-mails desta proposta</button>' : '') + (p.email ? '<button class="btn-out" data-mul="' + esc(p.id) + '">♀ ' + (p.cliente_mulher ? 'Desmarcar cliente mulher' : 'Marcar cliente mulher') + '</button>' : '') + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Expirar agora</button>' : '') + '</div>';
+    h += '<div class="hist-actions">' + ((LH[p.id] && LH[p.id].link) || SNAP[p.id] || p.tem_snapshot ? '<button class="btn-out" data-cp="' + i + '">Copiar link</button>' : '') + '<button class="btn-out" data-dup="' + i + '">⊞ Duplicar</button><button class="btn-out" data-rea="' + esc(p.id) + '">↻ Reativar / estender</button>' + (p.email && ativa ? '<button class="btn-out" data-mail="' + esc(p.id) + '">✉ ' + (p.enviado_em ? 'Reenviar por e-mail' : 'Enviar por e-mail') + '</button>' : '') + (p.email && p.seq_status !== 'descadastrada' ? '<button class="btn-out" data-fech="' + esc(p.id) + '">' + (p.seq_status === 'fechada' || p.seq_status === 'pausada' ? '↺ Reabrir lembretes' : '✓ Cliente fechou') + '</button>' : '') + (p.email ? '<button class="btn-out" data-tl="' + esc(p.id) + '">📬 E-mails desta proposta</button>' : '') + (p.email ? '<button class="btn-out" data-mul="' + esc(p.id) + '">♀ ' + (p.cliente_mulher ? 'Desmarcar cliente mulher' : 'Marcar cliente mulher') + '</button>' : '') + (ativa ? '<button class="btn-enc" data-enc="' + esc(p.id) + '">✕ Cancelar proposta</button>' : '') + '</div>';
     h += '</div></div>';
   });
   document.getElementById('histLista').innerHTML = mostrados ? h : '<div class="empty">Nenhuma proposta nesta área ainda.</div>';
@@ -729,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     // Expirar proposta (a confirmação e o resultado ficam em encerrarProposta)
-    if (t.dataset.enc) { e.stopPropagation(); encerrarProposta(t.dataset.enc); return; }
+    if (t.dataset.enc) { e.stopPropagation(); histCancelar(t.dataset.enc); return; }
     // "×": abre as opções (Expirar agora / Apagar do histórico)
     if (t.dataset.del) { e.stopPropagation(); histOpcoes(t.dataset.del); return; }
     // Enviar a proposta por e-mail (Resend)
@@ -1962,10 +2009,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 // admin instalavel (PWA): service worker minimo, so para a pagina do admin; nao guarda nada em cache
-if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw-admin.js', {scope:'/admin.html'}).catch(function() {}); }); }
+// service worker e aviso de versão nova: ver /admin-pwa.js
 </script>
 <script src="/admin-email.js"></script>
 <script src="/admin-envio.js"></script>
 <script src="/admin-emails.js"></script>
+<script src="/admin-historico.js"></script>
+<script src="/admin-pwa.js"></script>
 </body>
 </html>
