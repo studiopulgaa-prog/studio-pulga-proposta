@@ -631,6 +631,7 @@
     <div class="c3-conf" id="c3Fin" role="dialog" aria-modal="true" aria-labelledby="c3FinT" hidden><div class="c3-conf-b c3-fin-b" id="c3FinB"></div></div>
     <div class="c3-conf" id="c3Conf" role="alertdialog" aria-modal="true" aria-labelledby="c3ConfT" hidden><div class="c3-conf-b"><p id="c3ConfT"></p><div class="c3-conf-bt"><button type="button" id="c3ConfOk">Confirmar</button><button type="button" id="c3ConfNo">Cancelar</button></div></div></div>
   </div></template>
+  <script src="/conteudo-campos.js"></script><script src="/proposta-conteudo.js"></script>
   <footer class="footer-proposta"><div class="footer-logo">STUDIO PULGA</div><div class="footer-sub">@studio.pulga · Esta proposta é personalizada e confidencial.</div></footer>
   <script>
     var PROPOSTA=null;
@@ -747,6 +748,7 @@
       }).then(function(st){
         // Servidor respondeu: a partir daqui a decisao e dele
         if(st.agora){var sv=new Date(st.agora).getTime();if(isFinite(sv))SKEW=sv-Date.now();}
+        if(window.spConteudo)spConteudo(st,'antes');   // textos publicados na aba Conteúdo do admin (proposta-conteudo.js)
         // O servidor decide: prazo vencido (expirada) vem antes; depois link inexistente/alterado.
         if(st.indisponivel===true){mostraTela('indisponivel');return;}   // cancelada ou excluída pelo Studio
         if(st.expirada===true){mostraTela('expirada');return;}
@@ -754,7 +756,9 @@
         if(st.expira_em)PROPOSTA.expira=new Date(st.expira_em).getTime();
         if(agora()>PROPOSTA.expira){mostraTela('expirada');return;}
         document.documentElement.classList.add('sp-ok');   // so agora o conteudo aparece
+        if(window.spConteudoAntes)spConteudoAntes();
         renderProposta();
+        if(window.spConteudo)spConteudo(st,'depois');
       },function(){
         // Sem resposta do servidor (rede, bloqueio, erro): nao abre a proposta e nao diz "expirada"
         mostraTela('rede');

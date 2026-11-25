@@ -3,7 +3,7 @@
 // Navegador marcado pelo admin (localStorage "sp_nao_contar") não é contado.
 (function () {
   'use strict';
-  function ignorar() { try { return localStorage.getItem('sp_nao_contar') === '1'; } catch (e) { return false; } }
+  function ignorar() { if (window.SP_EM_PREVIA) return true; try { return localStorage.getItem('sp_nao_contar') === '1'; } catch (e) { return false; } }
   function aparelho() {
     var ua = navigator.userAgent || '';
     if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'iPad';

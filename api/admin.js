@@ -1,5 +1,6 @@
 // api/admin.js — todas as acoes do painel passam por aqui (exige sessao valida)
 import { rpc } from './_email.js';
+import { padrao as conteudoPadrao } from './_conteudo.js';
 import { sessaoValida, revogarSessao, cookieLimpo, lerCookie, origemOk, LINK_OK } from './_seg.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -215,7 +216,7 @@ export default async function handler(req, res) {
         return res.json(await rpc('adm_follow', { p_id: b.id, p_status: b.status, p_dias: dias }));
       }
       case 'conteudo_get':
-        return res.json(await rpc('adm_conteudo_get', {}));
+        return res.json({ ...(await rpc('adm_conteudo_get', {})), padrao: conteudoPadrao() });   // + textos de fábrica (e-mails, campanhas, dados gerais)
       case 'conteudo_versao':
         if (!Number.isInteger(b.versao) || b.versao < 1) return ruim();
         return res.json((await rpc('adm_conteudo_versao', { p_id: b.versao })) || { ok: false });
