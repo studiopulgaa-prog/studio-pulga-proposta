@@ -82,12 +82,16 @@
   function escolhaTxt(p) { var e = escolha(p); return e === 'plano' ? 'Escolheu um plano' : 'Escolheu: ' + e + (valorEsc(p) ? ' (' + valorEsc(p) + ')' : ''); }
 
   // ---------- navegação ----------
-  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes', atend: 'scrAtend'};
+  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes', atend: 'scrAtend', clientes: 'scrClientes', ficha: 'scrFicha', fin: 'scrFin'};
+  // Studio OS: telas que a Ju não acessa (o servidor também recusa)
+  var SO_ISAQUE = {fin: 1, conteudo: 1, emails: 1, ajustes: 1};
   function irPara(t, semRolar) {
+    if (t === 'mais') { if (window.osMais) osMais(); return; }
+    if (window.SP_USUARIO === 'ju' && SO_ISAQUE[t]) t = 'inicio';
     if (!SEC[t]) t = 'inicio';
     var antes = TELA; TELA = t;
     Object.keys(SEC).forEach(function (k) { var s = $(SEC[k]); if (s) s.classList.toggle('on', k === t); });
-    var navK = t === 'detalhe' ? 'propostas' : t;
+    var navK = t === 'detalhe' ? 'propostas' : t === 'ficha' ? 'clientes' : t === 'nova' ? 'propostas' : t;
     document.querySelectorAll('#navApp [data-nav]').forEach(function (b) {
       var on = b.getAttribute('data-nav') === navK; b.classList.toggle('on', on);
       if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
@@ -99,7 +103,9 @@
     if (t === 'conteudo' && window.ctCarregar) ctCarregar();
     if (t !== 'conteudo') document.body.classList.remove('ct-pv-on');
     if (t === 'emails' && window.carregarPainelEmails) carregarPainelEmails();
-    if (t === 'atend' && window.atCarregar) atCarregar();
+    if (t === 'atend') { if (window.atApp) atApp.montar($('scrAtend'), {admin: true}); else if (window.atCarregar) atCarregar(); }
+    else if (window.atApp) atApp.parar();
+    if (window.osTela) osTela(t);
     if (t === 'inicio') { renderInicio(); emailsSemana(false); atividades(false); }
     if (t === 'propostas') { renderLista(); if (largo()) renderDetalhe(); }
     if (!semRolar) window.scrollTo(0, 0);
@@ -461,6 +467,7 @@
     var rz = E('div', 'risco'); c2.appendChild(rz);
     if (s !== 'cancelada') { var bx = B('btn-enc', 'ban', 'Cancelar proposta'); bx.setAttribute('data-enc', p.id); rz.appendChild(bx); }
     rz.appendChild(B('btn-enc', 'trash', 'Mover para a lixeira', function () { paraLixeira(p); }));
+    if (window.osDetalheExtra) osDetalheExtra(p, w);   // Studio OS: "Em conversa" (funil)
   }
   // ---- follow-up ----
   var FOLLOW_ORD = ['aguardando', 'nao_decidiu', 'escolheu', 'fechou', 'perdido'];

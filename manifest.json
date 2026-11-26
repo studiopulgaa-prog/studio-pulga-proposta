@@ -1,8 +1,8 @@
 {
   "id": "/admin.html",
-  "name": "Propostas Studio Pulga",
-  "short_name": "Propostas",
-  "description": "Painel de propostas da Studio Pulga",
+  "name": "Studio OS · Studio Pulga",
+  "short_name": "Studio OS",
+  "description": "Painel do Studio Pulga: comercial, clientes, financeiro e atendimento",
   "lang": "pt-BR",
   "start_url": "/admin.html",
   "scope": "/",

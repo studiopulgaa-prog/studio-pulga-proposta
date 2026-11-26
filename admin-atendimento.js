@@ -208,9 +208,11 @@
       });
     });
   }
+  var FORM_FIM = null;   // Studio OS: quando o formulário abre num painel, "voltar"/salvar fecham o painel
+  function fimForm() { if (FORM_FIM) { var f = FORM_FIM; FORM_FIM = null; f(); } else clientes(); }
   function formCliente(k) {
     var c = limpa($('atCorpo'));
-    c.appendChild(btn('at-mini', '← voltar', clientes));
+    c.appendChild(btn('at-mini', '← voltar', fimForm));
     var card = E('div', 'card'); card.style.marginTop = '12px'; c.appendChild(card);
     card.appendChild(E('h2', 'sec', k.id ? k.nome : 'Novo cliente'));
     var g = E('div', 'at-grid'); g.style.marginTop = '12px'; card.appendChild(g);
@@ -240,7 +242,7 @@
     card.appendChild(btn('btn-main', 'Salvar cliente', function () {
       var d = {id: k.id, vencimento_dia: venc.value || null, status: st.value, pausa_automatica: pa.value === '1', onboarding_senha_id: se.value || null};
       Object.keys(F).forEach(function (n) { d[n] = F[n].value.trim(); });
-      api('cliente_salvar', {cliente: d}).then(function (r) { if (!r.ok) return msg(r.erro, true); msg('Cliente salvo.'); CLI.lista = []; if (!k.id) formCliente(r.cliente); else clientes(); });
+      api('cliente_salvar', {cliente: d}).then(function (r) { if (!r.ok) return msg(r.erro, true); msg('Cliente salvo.'); CLI.lista = []; if (!k.id) formCliente(r.cliente); else fimForm(); });
     }));
     if (!k.id) return;
     // números
@@ -402,4 +404,13 @@
     }, 20000);
   };
   window.atPainel = painel;
+  // Studio OS: abre uma parte desta tela dentro de outro lugar (Ajustes, Clientes). sub: ajustes | senhas | clientes | cobranca | form
+  window.atAbrir = function (sub, root, extra, fim) {
+    FORM_FIM = sub === 'form' && typeof fim === 'function' ? fim : null;
+    var velho = document.getElementById('atCorpo'); if (velho && !root.contains(velho)) velho.removeAttribute('id');
+    limpa(root); var c = E('div'); c.id = 'atCorpo'; root.appendChild(c);
+    CONV = null; SUB = sub === 'form' ? 'clientes' : sub;
+    if (sub === 'form') { var go = function () { formCliente(extra || {}); }; if (SENHAS.length) go(); else api('senhas').then(function (r) { if (r.ok) SENHAS = r.lista; go(); }); return; }
+    ({conversas: conversas, clientes: clientes, cobranca: cobranca, senhas: senhas, ajustes: ajustes})[SUB]();
+  };
 })();
