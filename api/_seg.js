@@ -6,8 +6,11 @@ const TTL = 12 * 3600 * 1000; // sessao normal: 12 horas
 export const TTL_LONGO = 30 * 24 * 3600 * 1000; // "manter conectado": 30 dias, revogavel (fica registrada no banco)
 const assinar = (dados) => crypto.createHmac('sha256', process.env.ADMIN_TOKEN_SECRET || '').update(dados).digest('base64url');
 
-export function criarToken() {
-  const dados = Buffer.from(JSON.stringify({ exp: Date.now() + TTL })).toString('base64url');
+// usuários do Studio OS: isaque (tudo) e ju (Início, Atendimento, Clientes e Comercial). Token sem usuário (antigo) = isaque.
+export const USUARIOS = ['isaque', 'ju'];
+const usuarioOk = (u) => (USUARIOS.includes(u) ? u : 'isaque');
+export function criarToken(u = 'isaque') {
+  const dados = Buffer.from(JSON.stringify({ exp: Date.now() + TTL, u: usuarioOk(u) })).toString('base64url');
   return `${dados}.${assinar(dados)}`;
 }
 
@@ -50,23 +53,28 @@ function lerToken(req) {
 
 // sessao normal (12h): vale pela assinatura e pelo prazo. Sessao longa (30 dias): alem disso precisa estar registrada e nao revogada no banco.
 // Se o banco nao responder, a sessao longa e recusada (nunca aceita "no escuro").
-export async function sessaoValida(req) {
+// devolve { u: 'isaque'|'ju' } quando a sessão vale; senão null
+export async function sessao(req) {
   const t = lerToken(req);
-  if (!t) return false;
-  if (t.via === 'cookie' && !origemOk(req)) return false; // cookie vai sozinho no pedido: so vale se o pedido partiu do admin
+  if (!t) return null;
+  if (t.via === 'cookie' && !origemOk(req)) return null; // cookie vai sozinho no pedido: so vale se o pedido partiu do admin
   const d = t.d;
-  if (!(d.exp > Date.now())) return false;
-  if (d.k !== 'l') return true;
-  if (typeof d.j !== 'string' || !/^[0-9a-f]{32}$/.test(d.j)) return false;
-  try { return (await rpc('adm_sessao_ok', { p_jti: d.j })) === true; } catch (e) { console.error('adm_sessao_ok', e); return false; }
+  if (!(d.exp > Date.now())) return null;
+  const s = { u: usuarioOk(d.u) };
+  if (d.k !== 'l') return s;
+  if (typeof d.j !== 'string' || !/^[0-9a-f]{32}$/.test(d.j)) return null;
+  try { return (await rpc('adm_sessao_ok', { p_jti: d.j })) === true ? s : null; } catch (e) { console.error('adm_sessao_ok', e); return null; }
 }
+export async function sessaoValida(req) { return !!(await sessao(req)); }
+// sessão do Isaque (áreas que a Ju não acessa: Ajustes, Financeiro detalhado, E-mails, Conteúdo)
+export async function sessaoIsaque(req) { const s = await sessao(req); return !!(s && s.u === 'isaque'); }
 
 // cria uma sessao longa registrada no banco; se nao der, devolve null (o login cai para a sessao normal de 12h)
-export async function criarTokenLongo() {
+export async function criarTokenLongo(u = 'isaque') {
   const j = crypto.randomBytes(16).toString('hex');
   const exp = Date.now() + TTL_LONGO;
   try { await rpc('adm_sessao_nova', { p_jti: j, p_exp: new Date(exp).toISOString() }); } catch (e) { console.error('adm_sessao_nova', e); return null; }
-  const dados = Buffer.from(JSON.stringify({ exp, k: 'l', j })).toString('base64url');
+  const dados = Buffer.from(JSON.stringify({ exp, k: 'l', j, u: usuarioOk(u) })).toString('base64url');
   return { token: `${dados}.${assinar(dados)}`, exp };
 }
 
@@ -79,13 +87,19 @@ export async function revogarSessao(req) {
   return true;
 }
 
-// compara a senha digitada com a do Vercel (ADMIN_PASSWORD), sem diferenciar maiusculas
-export function senhaConfere(senha) {
-  const certa = String(process.env.ADMIN_PASSWORD || '').trim().toUpperCase();
+// compara a senha digitada com uma do Vercel, sem diferenciar maiusculas
+function confere(senha, certaEnv) {
+  const certa = String(certaEnv || '').trim().toUpperCase();
   if (!certa) return false;
   const a = crypto.createHash('sha256').update(String(senha || '').trim().toUpperCase()).digest();
   const b = crypto.createHash('sha256').update(certa).digest();
   return crypto.timingSafeEqual(a, b);
+}
+export function senhaConfere(senha) { return confere(senha, process.env.ADMIN_PASSWORD); }
+// qual usuário é dono da senha: ADMIN_PASSWORD = isaque; ATENDIMENTO_SENHA_JU = ju (as duas sempre conferidas, mesmo tempo)
+export function usuarioDaSenha(senha) {
+  const i = confere(senha, process.env.ADMIN_PASSWORD), j = confere(senha, process.env.ATENDIMENTO_SENHA_JU);
+  return i ? 'isaque' : j ? 'ju' : null;
 }
 
 export const ipDe = (req) => String((req.headers && req.headers['x-forwarded-for']) || '').split(',')[0].trim() || 'desconhecido';

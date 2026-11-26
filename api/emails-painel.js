@@ -1,7 +1,7 @@
 // api/emails-painel.js — aba "E-mails" do admin (via /api/admin/emails, rewrite no vercel.json para o cookie de 30 dias chegar).
 // Ações: painel | timeline {id} | teste {modelo}. Sessão do admin obrigatória. O teste vai SÓ para EMAIL_TESTE.
 import { rpc } from './_email.js';
-import { sessaoValida } from './_seg.js';
+import { sessao } from './_seg.js';
 import { emailValido } from './_resend.js';
 import { previsao, modelosTeste, LIMITE_DIA } from './_sequencia.js';
 import { validarConteudo } from './admin.js';
@@ -13,7 +13,9 @@ const mascarar = (e) => { const [u, d] = String(e).split('@'); return u && d ? u
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false, erro: 'Método não permitido' });
-  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  const S = await sessao(req);
+  if (!S) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  if (S.u !== 'isaque') return res.status(403).json({ ok: false, erro: 'sem permissão' });   // E-mails: só o Isaque
   const b = req.body || {};
   const teste = String(process.env.EMAIL_TESTE || '').trim();
   try {

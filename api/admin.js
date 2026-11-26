@@ -1,7 +1,7 @@
 // api/admin.js — todas as acoes do painel passam por aqui (exige sessao valida)
 import { rpc } from './_email.js';
 import { padrao as conteudoPadrao } from './_conteudo.js';
-import { sessaoValida, revogarSessao, cookieLimpo, lerCookie, origemOk, LINK_OK } from './_seg.js';
+import { sessao, sessaoValida, revogarSessao, cookieLimpo, lerCookie, origemOk, LINK_OK } from './_seg.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const txt = (v, n) => String(v == null ? '' : v).slice(0, n);
@@ -70,12 +70,14 @@ export function validarConteudo(d) {
   return { dados: out };
 }
 
+const SO_ISAQUE = new Set(['padrao_set', 'importar', 'encerrar_todas', 'apagar_lote', 'apagar_definitivo', 'conteudo_versao', 'conteudo_rascunho', 'conteudo_publicar', 'site_get', 'site_set']);
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
   const b = req.body || {};
   // a pagina pergunta se ja ha sessao (o cookie HttpOnly nao e legivel por script)
-  if (b.acao === 'ping') return res.json({ ok: true, logado: await sessaoValida(req) });
+  if (b.acao === 'ping') { const s0 = await sessao(req); return res.json({ ok: true, logado: !!s0, usuario: s0 ? s0.u : null }); }
   // "Sair": revoga a sessao no banco e apaga o cookie
   if (b.acao === 'sair') {
     if (lerCookie(req) && !origemOk(req)) return res.status(403).json({ ok: false });
@@ -83,7 +85,10 @@ export default async function handler(req, res) {
     res.setHeader('Set-Cookie', cookieLimpo());
     return res.json({ ok: true });
   }
-  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  const S = await sessao(req);
+  if (!S) return res.status(401).json({ ok: false, erro: 'sessao expirada' });
+  // a Ju não acessa Ajustes, Conteúdo nem as ações em lote (o servidor recusa, mesmo chamando a API direto)
+  if (S.u !== 'isaque' && SO_ISAQUE.has(b.acao)) return res.status(403).json({ ok: false, erro: 'sem permissão' });
   const ruim = () => res.status(400).json({ ok: false, erro: 'dados invalidos' });
   try {
     switch (b.acao) {
@@ -232,6 +237,12 @@ export default async function handler(req, res) {
       case 'site_set': // ID do Pixel da Meta (só números; não é segredo). Vazio = sem Pixel.
         if (b.chave !== 'pixel_id' || (b.valor && !/^\d{5,20}$/.test(String(b.valor)))) return ruim();
         return res.json(await rpc('adm_site_set', { p_chave: 'pixel_id', p_valor: String(b.valor || '') }));
+      case 'em_conversa': // funil: marca/desmarca "Em conversa" (precisa do SQL do Studio OS)
+        if (!UUID.test(b.id || '')) return ruim();
+        return res.json(await rpc('adm_em_conversa', { p_id: b.id, p_on: b.on === true }));
+      case 'funil': { // quais propostas estão "em conversa" (sem o SQL do Studio OS: nenhuma)
+        try { return res.json({ ok: true, lista: await rpc('adm_funil', {}) }); } catch (e) { return res.json({ ok: true, lista: [], sem_sql: true }); }
+      }
       case 'nicho_confirmar': // grava o nicho e marca como confirmado pelo Isaque (some o selo "Nicho?")
         if (!UUID.test(b.id || '') || !['arquiteto', 'loja', 'construtora', 'outro'].includes(b.valor)) return ruim();
         await rpc('adm_nicho_confirmar', { p_id: b.id, p_nicho: b.valor });
