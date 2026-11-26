@@ -18,6 +18,7 @@
   - `db/2026-11-26_whatsapp.sql`: só adições, com tabelas `wa_*` e `onboarding_senhas`, e funções `wa_*` protegidas pelo `EMAIL_SECRET`.
   - Reversão em `db/2026-11-26_whatsapp_REVERSAO.sql`.
 - **Admin**: aba nova "WhatsApp", com Conversas e alertas, Clientes e números, Cobrança, Senhas do onboarding e Ajustes (variáveis, modelos da Meta, manual da IA, feriados, números de alerta). Nada das abas antigas mudou além do botão no menu.
+- **Atualização (26/11, Studio OS)**: a aba "WhatsApp" virou **Atendimento** (lista + conversa, assumir/devolver/resolver, comentário interno, respostas rápidas, janela de 24h) e existe também como app instalável em `/atendimento.html`. "Clientes e números" virou a tela **Clientes** (com ficha); "Cobrança" virou **Financeiro**; "Senhas do onboarding" e os Ajustes do WhatsApp ficam em **Ajustes**. Notificações no celular (Web Push) e o usuário **ju**. Detalhes em `RELATORIO-studio-os.md`.
 
 ## Segurança
 - Financeiro só para número **verificado** com perfil **responsável** (checado no código, não só no prompt).
@@ -49,6 +50,7 @@
 | IA_ATIVA=true | ligar depois de colocar créditos na Anthropic |
 | IA_LIMITE_MENSAL_USD | opcional (padrão 15) |
 | WHATSAPP_ATIVO=true | só quando tudo estiver testado (libera o envio real) |
+| ATENDIMENTO_SENHA_JU, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT | criar (Studio OS: senha da Ju e notificações — ver `RELATORIO-studio-os.md`) |
 
 ## Para ligar
 1. Rodar `db/2026-11-26_whatsapp.sql` no Supabase (SQL editor).
