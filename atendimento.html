@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#6E2C14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Atendimento">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Atendimento Studio Pulga</title>
+<link rel="manifest" href="/manifest-atendimento.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/atendimento.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  body{background:#F4EADD;color:#22140D;font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:15px;line-height:1.45;min-height:100vh;}
+  button,input,textarea{font-family:inherit;color:inherit;}
+  #app{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));max-width:1280px;margin:0 auto;}
+  @media (min-width:900px){#app{padding:20px;}}
+  .ax-aberta{padding:0;}
+  @media (max-width:899px){
+    #app.ax-aberta{padding:0;}
+    .ax-aberta .ax-r{min-height:100vh;}
+    .ax-aberta .ax-thd{padding-top:max(10px,env(safe-area-inset-top));}
+  }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<script src="/atendimento.js"></script>
+<script>
+(function () {
+  var root = document.getElementById('app');
+  atApp.montar(root, {});
+  // app no celular: guarda a casca para abrir rápido e receber notificações (a API nunca passa pelo cache)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      fetch('/api/versao', {cache: 'no-store'}).then(function (r) { return r.json(); }).catch(function () { return {}; }).then(function (j) {
+        return navigator.serviceWorker.register('/sw-atendimento.js' + (j && j.v ? '?v=' + encodeURIComponent(j.v) : ''), {scope: '/atendimento.html'});
+      }).catch(function () {});
+      // tocar na notificação com o app aberto: abre a conversa
+      navigator.serviceWorker.addEventListener('message', function (e) { var d = e.data || {}; var m = /c=([0-9a-f-]{36})/.exec(d.url || ''); if (d.tipo === 'abrir' && m) atApp.abrir(m[1]); });
+    });
+  }
+})();
+</script>
+</body>
+</html>

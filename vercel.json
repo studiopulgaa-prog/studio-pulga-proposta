@@ -74,6 +74,44 @@
       ],
       "destination": "https://proposta.studiopulga.com.br/admin.html",
       "permanent": false
+    },
+    {
+      "source": "/atendimento.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/atendimento.html",
+      "permanent": false
+    },
+    {
+      "source": "/atendimento.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/atendimento.html",
+      "permanent": false
+    },
+    {
+      "source": "/atendimento.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "studio-pulga-proposta-git-master-isaque-s-projects3.vercel.app"
+        }
+      ],
+      "destination": "https://proposta.studiopulga.com.br/atendimento.html",
+      "permanent": false
+    },
+    {
+      "source": "/atendimento",
+      "destination": "/atendimento.html",
+      "permanent": false
     }
   ],
   "rewrites": [
@@ -251,6 +289,37 @@
     },
     {
       "source": "/icons/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/sw-atendimento.js",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/manifest-atendimento.json",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/atendimento.html",
       "headers": [
         {
           "key": "X-Robots-Tag",

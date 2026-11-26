@@ -1,0 +1,18 @@
+{
+  "id": "/atendimento.html",
+  "name": "Atendimento Studio Pulga",
+  "short_name": "Atendimento",
+  "description": "Conversas do WhatsApp de suporte do Studio Pulga",
+  "lang": "pt-BR",
+  "start_url": "/atendimento.html",
+  "scope": "/atendimento.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4EADD",
+  "theme_color": "#6E2C14",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
