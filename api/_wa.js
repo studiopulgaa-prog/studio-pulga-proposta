@@ -54,18 +54,24 @@ export { graph };
 
 // envia e registra em wa_mensagens. payload = parte específica do tipo (text / interactive / template)
 // opções: origem, conversa_id, forcarSimulacao
-export async function enviar(para, tipo, payload, { origem = 'sistema', conversa_id = null, forcarSimulacao = false } = {}) {
+// grava a mensagem; se o banco ainda não tem a coluna "autor" (SQL do Studio OS), grava sem ela
+async function registrar(reg) {
+  try { return await ins('wa_mensagens', reg); }
+  catch (e) { if (reg.autor !== undefined) { const { autor, ...r2 } = reg; return ins('wa_mensagens', r2); } throw e; }
+}
+export async function enviar(para, tipo, payload, { origem = 'sistema', conversa_id = null, forcarSimulacao = false, autor } = {}) {
   const tel = normTel(para);
   if (!tel) return { ok: false, erro: 'telefone inválido' };
   const real = configurado() && !forcarSimulacao && (ativo() || ehTeste(tel));
   const reg = { conversa_id, telefone: tel, direcao: 'out', origem, tipo, conteudo: payload, simulado: !real, status: real ? 'enviando' : 'simulado' };
+  if (autor === 'isaque' || autor === 'ju') reg.autor = autor;
   if (!real) {
-    try { await ins('wa_mensagens', reg); } catch (e) { console.error('wa reg', e && e.message); }
+    try { await registrar(reg); } catch (e) { console.error('wa reg', e && e.message); }
     return { ok: true, simulado: true, motivo: !configurado() ? 'whatsapp_nao_configurado' : 'modo_simulacao' };
   }
   const r = await graph(`${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, { messaging_product: 'whatsapp', recipient_type: 'individual', to: tel, type: tipo, [tipo]: payload });
   const id = r.ok && r.dados && r.dados.messages && r.dados.messages[0] && r.dados.messages[0].id;
-  try { await ins('wa_mensagens', { ...reg, wa_message_id: id || null, status: r.ok ? 'sent' : 'failed', erro: r.ok ? null : String(r.erro).slice(0, 300) }); } catch (e) { console.error('wa reg', e && e.message); }
+  try { await registrar({ ...reg, wa_message_id: id || null, status: r.ok ? 'sent' : 'failed', erro: r.ok ? null : String(r.erro).slice(0, 300) }); } catch (e) { console.error('wa reg', e && e.message); }
   if (!r.ok) console.error('wa envio', mascTel(tel), r.status, r.codigo, String(r.erro).slice(0, 160));
   return r.ok ? { ok: true, id } : { ok: false, erro: r.erro, codigo: r.codigo };
 }

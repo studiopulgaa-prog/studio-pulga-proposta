@@ -7,6 +7,7 @@ import { texto, lista, template, marcarLida, normTel, variantesTel } from './_wa
 import { enviarEmail, emailValido, esc } from './_resend.js';
 import { responderIA, iaLigada, limparSaida, pedeHumano } from './_waia.js';
 import { abertosDoCliente, pixCopiaCola, notaFiscal, ultimosPagos, brl, dataBR, asaasConfigurado } from './_asaas.js';
+import { pushMensagem, notificar, previaSegura } from './_push.js';
 import { MENU_PADRAO, MENU_CLIENTE, MENU_VISITANTE, HORARIO_PADRAO, WHATSAPP_COMERCIAL_PADRAO, SITE_STUDIO } from './_watextos.js';
 
 const H = 3600 * 1000;
@@ -93,7 +94,10 @@ export async function handoff(conv, { motivo, cliente, silencioso = false } = {}
   }
   const resumo = motivo || 'cliente pediu para falar com a equipe';
   await alerta('handoff', { cliente_id: cliente ? cliente.id : null, conversa_id: conv.id, resumo });
-  await avisarEquipe(resumo, cliente ? cliente.nome : (conv.nome_wa || 'visitante ' + mascTel(conv.telefone)));
+  const quem = cliente ? cliente.nome : (conv.nome_wa || 'visitante ' + mascTel(conv.telefone));
+  // app de atendimento: pedido de humano sempre notifica (Isaque e Ju)
+  await notificar({ titulo: 'Pediu atendimento · ' + String(quem).slice(0, 40), corpo: previaSegura(resumo), url: '/atendimento.html#c=' + conv.id, tag: 'c' + conv.id });
+  await avisarEquipe(resumo, quem);
 }
 
 // ---------- identificação (CNPJ + código por e-mail) ----------
@@ -271,7 +275,13 @@ function extrair(msg) {
   return { tipo: tipo || 'desconhecido', texto: '' };
 }
 
+// envolve o fluxo: a notificação do app sai junto, sem atrasar a resposta ao cliente (o webhook espera as duas)
 export async function processarMensagem(msg, nomeWa) {
+  const ctx = {};
+  try { return await fluxoMensagem(msg, nomeWa, ctx); }
+  finally { if (ctx.push) await ctx.push.catch(() => {}); }
+}
+async function fluxoMensagem(msg, nomeWa, ctx) {
   if (!msg || !msg.id || !msg.from) return;
   if (!(await primeiraVez('m:' + msg.id, 'meta'))) return;
   const tel = normTel(msg.from);
@@ -284,6 +294,9 @@ export async function processarMensagem(msg, nomeWa) {
   marcarLida(msg.id).catch(() => {});
 
   const contato = await contatoDoTelefone(tel);
+  // conversa resolvida que volta a receber mensagem reabre (coluna do Studio OS; sem o SQL, ignora)
+  if (conv.resolvida_em) { try { await upd('wa_conversas', { id: conv.id }, { resolvida_em: null }); } catch (err) { /* sem SQL */ } }
+  ctx.push = pushMensagem({ conv, contato, texto: e.texto || (e.audio ? 'áudio' : e.midia ? 'arquivo' : ''), nomeExibido: (contato && contato.nome) || conv.nome_wa || nomeWa || mascTel(tel), novo: !conv.ultima_msg_em });
   const estado = conv.estado_fluxo || {};
   if (bloqueado(conv, contato)) {
     if (!estado.avisou_bloqueio) { await salvarEstado(conv, { ...estado, avisou_bloqueio: true }); await diz(conv, await txt('bloqueado')); }

@@ -7,5 +7,7 @@
   },
   "keywords": ["propostas", "studio", "pulga"],
   "author": "Studio Pulga",
-  "dependencies": {}
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
 }

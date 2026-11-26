@@ -5,7 +5,8 @@
 //   /api/admin/wa          -> ?r=admin    (painel; exige sessão do admin)
 import crypto from 'crypto';
 import { corpoCru } from './resend-webhook.js';
-import { sessaoValida } from './_seg.js';
+import { sessao } from './_seg.js';
+import * as OS from './_os.js';
 import { get, um, ins, upd, del, contar, agoraIso, config as cfg, salvarConfig, primeiraVez, alerta, mascTel } from './_wadb.js';
 import { assinaturaOk, atualizarStatus, texto, template, listarTemplates, criarTemplate, normTel, ativo as waAtivo, configurado as waConfigurado } from './_wa.js';
 import { processarMensagem, processarEco, cnpjValido, handoff } from './_atendimento.js';
@@ -77,7 +78,7 @@ async function cronRegua(req, res) {
 }
 
 // ---------------- admin ----------------
-const CONFIG_CHAVES = ['manual_ia', 'textos_menu', 'horario', 'avisos', 'whatsapp_comercial', 'numeros_alerta', 'ia_pausa_quando_equipe_responde_horas', 'proposta_whatsapp_auto'];
+const CONFIG_CHAVES = ['manual_ia', 'textos_menu', 'horario', 'avisos', 'whatsapp_comercial', 'numeros_alerta', 'ia_pausa_quando_equipe_responde_horas', 'proposta_whatsapp_auto', 'push_tudo'];
 function validarConfig(chave, v) {
   switch (chave) {
     case 'manual_ia': return typeof v === 'string' && v.length >= 200 && v.length <= 20000 ? v : null;
@@ -88,10 +89,11 @@ function validarConfig(chave, v) {
     case 'numeros_alerta': return Array.isArray(v) && v.length <= 5 ? v.map((n) => ({ nome: txt(n && n.nome, 40), telefone: normTel(n && n.telefone) })).filter((n) => n.telefone) : null;
     case 'ia_pausa_quando_equipe_responde_horas': { const n = Number(v); return n >= 1 && n <= 72 ? n : null; }
     case 'proposta_whatsapp_auto': return v === true || v === false ? v : null;
+    case 'push_tudo': return v === true || v === false ? v : null;
     default: return null;
   }
 }
-const CAMPOS_CLIENTE = ['nome', 'nome_contato', 'cnpj', 'email_responsavel', 'asaas_customer_id', 'vencimento_dia', 'clausula_atraso', 'pausa_automatica', 'status', 'manual_gravacao_url', 'drive_url', 'onboarding_url', 'onboarding_senha_id', 'observacoes'];
+const CAMPOS_CLIENTE = ['plano', 'nome', 'nome_contato', 'cnpj', 'email_responsavel', 'asaas_customer_id', 'vencimento_dia', 'clausula_atraso', 'pausa_automatica', 'status', 'manual_gravacao_url', 'drive_url', 'onboarding_url', 'onboarding_senha_id', 'observacoes'];
 function validarCliente(c) {
   const o = {};
   o.nome = txt(c.nome, 120); if (!o.nome) return { erro: 'nome obrigatório' };
@@ -106,14 +108,44 @@ function validarCliente(c) {
   for (const k of ['manual_gravacao_url', 'drive_url', 'onboarding_url']) { o[k] = txt(c[k], 500) || null; if (!urlOk(o[k])) return { erro: k + ': use um link https' }; }
   o.onboarding_senha_id = UUID.test(String(c.onboarding_senha_id || '')) ? c.onboarding_senha_id : null;
   o.observacoes = txt(c.observacoes, 1000) || null;
+  const plano = txt(c.plano, 80); if (plano) o.plano = plano;   // coluna do SQL do Studio OS
   return { dados: o };
 }
 
+// a Ju (perfil atendimento) não acessa Ajustes, Financeiro detalhado nem o cadastro (CNPJ/e-mail definem quem vê o financeiro)
+const SO_ISAQUE = new Set(['config', 'config_salvar', 'templates', 'templates_criar', 'teste_envio', 'senhas', 'senha_salvar', 'senha_remover', 'cobranca', 'regua_pular', 'regua_simular',
+  'cliente_status', 'cliente_salvar', 'contato_salvar', 'contato_acao', 'asaas_buscar', 'clientes', 'financeiro', 'metas_get', 'metas_salvar']);
+
 async function admin(req, res, b) {
-  if (!(await sessaoValida(req))) return res.status(401).json({ ok: false, erro: 'sessão' });
-  const a = b.acao;
+  const S = await sessao(req);
+  if (!S) return res.status(401).json({ ok: false, erro: 'sessão' });
+  const a = b.acao, u = S.u;
+  if (u !== 'isaque' && SO_ISAQUE.has(a)) return res.status(403).json({ ok: false, erro: 'sem permissão' });
   try {
     switch (a) {
+      // ----- Studio OS
+      case 'eu': return res.json({ ok: true, usuario: u, sql: await OS.sqlPronto() });
+      case 'inicio': return res.json(await OS.inicio(u));
+      case 'clientes_os': return res.json(await OS.clientesOS(u));
+      case 'ficha': return res.json(await OS.ficha(u, b.id));
+      case 'nota_add': return res.json(await OS.notaAdd(u, b.cliente_id, b.texto));
+      case 'senha_cliente': return res.json(await OS.senhaDoCliente(b.id));
+      case 'financeiro': return res.json(await OS.financeiro());
+      case 'busca': return res.json(await OS.busca(u, b.q));
+      case 'metas_get': return res.json(await OS.metasGet());
+      case 'metas_salvar': return res.json(await OS.metasSalvar(b.metas));
+      // ----- app de atendimento
+      case 'inbox': return res.json(await OS.inbox(u, b.desde));
+      case 'conversa': return res.json(await OS.conversa(u, b.id, b.desde));
+      case 'enviar': return res.json(await OS.enviarEquipe(u, b.id, b.texto));
+      case 'comentario': return res.json(await OS.comentario(u, b.id, b.texto));
+      case 'assumir': case 'devolver': case 'resolver': return res.json(await OS.acaoConversa(u, b.id, a));
+      case 'respostas': return res.json(await OS.respostas());
+      case 'respostas_salvar': return res.json(await OS.respostasSalvar(b.lista));
+      case 'push_chave': return res.json(await OS.pushChave());
+      case 'push_inscrever': return res.json(await OS.pushInscrever(u, b.inscricao, b.aparelho));
+      case 'push_sair': return res.json(await OS.pushSair(b.endpoint));
+      case 'push_teste': return res.json(await OS.pushTeste(u));
       case 'painel': {
         const uso = await usoDoMes();
         const env = { WHATSAPP_TOKEN: !!process.env.WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID: !!process.env.WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_WABA_ID: !!process.env.WHATSAPP_WABA_ID, WHATSAPP_APP_SECRET: !!process.env.WHATSAPP_APP_SECRET, WHATSAPP_VERIFY_TOKEN: !!process.env.WHATSAPP_VERIFY_TOKEN, WHATSAPP_ATIVO: waAtivo(), TESTE_WHATSAPP: !!normTel(process.env.TESTE_WHATSAPP), ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY, IA_ATIVA: process.env.IA_ATIVA === 'true', ASAAS_API_KEY: asaasConfigurado(), ASAAS_WEBHOOK_TOKEN: !!process.env.ASAAS_WEBHOOK_TOKEN, CRON_SECRET: !!process.env.CRON_SECRET };
@@ -138,7 +170,7 @@ async function admin(req, res, b) {
         const conv = await um('wa_conversas', { id: b.id }); if (!conv) return res.json({ ok: false, erro: 'não encontrada' });
         const t = txt(b.texto, 4000); if (!t) return res.json({ ok: false, erro: 'mensagem vazia' });
         if (!(conv.ultima_msg_cliente_em && Date.parse(conv.ultima_msg_cliente_em) > Date.now() - 24 * H)) return res.json({ ok: false, erro: 'fora da janela de 24h: use "retomar conversa"' });
-        const r = await texto(conv.telefone, t, { origem: 'equipe_admin', conversa_id: conv.id });
+        const r = await texto(conv.telefone, t, { origem: 'equipe_admin', conversa_id: conv.id, autor: u });
         await upd('wa_conversas', { id: conv.id }, { modo: 'humano', humano_desde: agoraIso(), humano_ate: new Date(Date.now() + 24 * H).toISOString(), ultima_msg_em: agoraIso() });
         return res.json(r.ok ? { ok: true, simulado: !!r.simulado } : { ok: false, erro: r.erro });
       }
@@ -146,7 +178,7 @@ async function admin(req, res, b) {
         if (!UUID.test(b.id || '')) return res.json({ ok: false, erro: 'id' });
         const conv = await um('wa_conversas', { id: b.id }); if (!conv) return res.json({ ok: false, erro: 'não encontrada' });
         const nome = txt(b.nome, 40) || 'tudo bem', assunto = txt(b.assunto, 80) || 'o seu atendimento';
-        const r = await template(conv.telefone, 'retomar_conversa', [nome, assunto], { origem: 'equipe_admin', conversa_id: conv.id });
+        const r = await template(conv.telefone, 'retomar_conversa', [nome, assunto], { origem: 'equipe_admin', conversa_id: conv.id, autor: u });
         return res.json(r.ok ? { ok: true, simulado: !!r.simulado } : { ok: false, erro: r.erro });
       }
       case 'modo': {
@@ -170,6 +202,7 @@ async function admin(req, res, b) {
       }
       case 'cliente_salvar': {
         const v = validarCliente(b.cliente || {}); if (v.erro) return res.json({ ok: false, erro: v.erro });
+        if (v.dados.plano && !(await OS.sqlPronto())) delete v.dados.plano;   // sem o SQL do Studio OS não há coluna "plano"
         const id = b.cliente && b.cliente.id;
         if (id) {
           if (!UUID.test(id)) return res.json({ ok: false, erro: 'id' });
@@ -276,6 +309,7 @@ async function admin(req, res, b) {
     }
   } catch (e) {
     console.error('wa admin', a, e && e.message);
+    if (e && e.semSql) return res.json({ ok: false, erro: 'falta rodar o SQL db/2026-11-26_studio_os.sql no Supabase', sem_sql: true });
     const m = String(e && e.message || '');
     return res.json({ ok: false, erro: /does not exist|wa_get|function/i.test(m) ? 'banco ainda não preparado (rode o SQL db/2026-11-26_whatsapp.sql)' : 'erro no servidor' });
   }

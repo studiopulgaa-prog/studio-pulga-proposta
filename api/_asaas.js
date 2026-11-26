@@ -77,3 +77,20 @@ export async function ultimosPagos(customerId, n = 3) {
 
 export const brl = (v) => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export const dataBR = (ymd) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(ymd || '')); return m ? `${m[3]}/${m[2]}` : String(ymd || ''); };
+
+// recebidos (RECEIVED/CONFIRMED) com data de pagamento entre duas datas (YYYY-MM-DD). Confere a data no código também.
+export async function recebidosEntre(de, ate) {
+  const out = [];
+  for (const st of ['RECEIVED', 'CONFIRMED']) {
+    for (let off = 0; off < 2000; off += 100) {
+      const r = await api(`/payments?status=${st}&paymentDate%5Bge%5D=${de}&paymentDate%5Ble%5D=${ate}&limit=100&offset=${off}`);
+      if (!r.ok) return r;
+      (r.dados.data || []).filter((p) => !p.deleted).forEach((p) => {
+        const d = String(p.paymentDate || p.confirmedDate || p.clientPaymentDate || '').slice(0, 10);
+        if (d && d >= de && d <= ate) out.push({ ...resumo(p), pago_em: d });
+      });
+      if (!r.dados.hasMore) break;
+    }
+  }
+  return { ok: true, lista: out };
+}

@@ -35,7 +35,13 @@ export async function salvarConfig(chave, valor) {
 }
 
 export async function alerta(tipo, { cliente_id = null, conversa_id = null, resumo = '' } = {}) {
-  try { return await ins('wa_alertas', { tipo, cliente_id, conversa_id, resumo: String(resumo || '').slice(0, 300) }); } catch (e) { console.error('alerta', e && e.message); return null; }
+  let r = null;
+  try { r = await ins('wa_alertas', { tipo, cliente_id, conversa_id, resumo: String(resumo || '').slice(0, 300) }); } catch (e) { console.error('alerta', e && e.message); }
+  // alertas importantes de cobrança notificam o celular do Isaque (sem valores na prévia)
+  if (['pausa', 'd10', 'd60', 'bloqueio'].includes(tipo)) {
+    try { const P = await import('./_push.js'); await P.notificar({ titulo: tipo === 'bloqueio' ? 'Número bloqueado no atendimento' : 'Alerta de cobrança', corpo: P.previaSegura(resumo), url: '/admin.html#financeiro', tag: 'al-' + tipo, para: ['isaque'] }); } catch (e) { /* push é opcional */ }
+  }
+  return r;
 }
 
 // ---- máscaras para log
