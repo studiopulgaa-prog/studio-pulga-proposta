@@ -498,6 +498,7 @@ input,textarea,select{max-width:100%;}
     <button type="button" data-nav="conteudo" class="so-desk" data-perfil="isaque" aria-label="Conteúdo"><i data-i="edit"></i><span>Conteúdo</span></button>
     <button type="button" data-nav="emails" id="atEm" class="so-desk" data-perfil="isaque" aria-label="E-mails"><i data-i="mail"></i><span>E-mails</span></button>
     <button type="button" data-nav="ajustes" class="so-desk" data-perfil="isaque" aria-label="Ajustes"><i data-i="gear"></i><span>Ajustes</span></button>
+    <button type="button" data-nav="ajuda" class="so-desk" aria-label="Ajuda"><i data-i="help"></i><span>Ajuda</span></button>
     <button type="button" data-nav="mais" aria-label="Mais opções"><i data-i="more"></i><span>Mais</span></button>
     <div class="os-eu" id="osEu"></div>
   </nav>
@@ -653,6 +654,8 @@ input,textarea,select{max-width:100%;}
   <section class="scr" id="scrClientes" aria-label="Clientes"></section>
   <section class="scr" id="scrFicha" aria-label="Ficha do cliente"></section>
   <section class="scr" id="scrFin" aria-label="Financeiro"></section>
+  <!-- ===== AJUDA (tutorial; conteúdo em /admin-ajuda.js) ===== -->
+  <section class="scr" id="scrAjuda" aria-label="Ajuda"></section>
 
   <section class="scr" id="scrAjustes" aria-labelledby="ajTit">
     <div class="scr-hd"><div><span class="mk">// padrões e conta</span><h1 class="tt" id="ajTit"><strong>Ajustes</strong></h1></div></div>
@@ -742,7 +745,8 @@ var ICO_P = {
   bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',
   link:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
   folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
-  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2M16 7l3 3"/>'
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2M16 7l3 3"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.3-2.5 3.9M12 17h.01"/>'
 };
 function ICO(n, sz) { sz = sz || 20; return '<svg class="ico" width="' + sz + '" height="' + sz + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (ICO_P[n] || '') + '</svg>'; }
 function icoFill(raiz) { (raiz || document).querySelectorAll('i[data-i]').forEach(function(el) { var t = document.createElement('span'); t.innerHTML = ICO(el.getAttribute('data-i')); el.replaceWith(t.firstChild); }); }
@@ -2422,6 +2426,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/atendimento.js"></script>
 <script src="/admin-app.js"></script>
 <script src="/admin-os.js"></script>
+<script src="/admin-ajuda.js"></script>
 <script src="/admin-pwa.js"></script>
 </body>
 </html>

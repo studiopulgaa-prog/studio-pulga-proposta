@@ -65,6 +65,7 @@
     it('search', 'Buscar', abreBusca);
     it('plus', 'Nova proposta', function () { irPara('nova'); });
     if (EU() === 'isaque') { it('money', 'Financeiro', function () { irPara('fin'); }); it('edit', 'Conteúdo', function () { irPara('conteudo'); }); it('mail', 'E-mails', function () { irPara('emails'); }); it('gear', 'Ajustes', function () { irPara('ajustes'); }); }
+    it('help', 'Ajuda', function () { irPara('ajuda'); });
     it('chat', 'Abrir o app de atendimento', function () { location.href = '/atendimento.html'; });
     it('logout', 'Sair (' + NOMES[EU()] + ')', function () { if (window.logout) logout(); });
     document.body.appendChild(f); document.body.appendChild(sh);
@@ -105,6 +106,7 @@
       item('Nova proposta', 'Comercial', function () { irPara('nova'); });
       item('Atendimento', 'conversas do WhatsApp', function () { irPara('atend'); });
       item('Clientes', '', function () { irPara('clientes'); });
+      item('Ajuda', 'como usar cada tela', function () { irPara('ajuda'); });
       if (EU() === 'isaque') item('Financeiro', 'cobranças e régua', function () { irPara('fin'); });
       marca(); return;
     }
@@ -680,6 +682,7 @@
     else if (t === 'clientes') osClientes();
     else if (t === 'fin') osFin();
     else if (t === 'ajustes') osAjustes();
+    else if (t === 'ajuda' && window.osAjudaTela) osAjudaTela();
   };
   var entrou = window.appEntrou;
   window.appEntrou = function () {

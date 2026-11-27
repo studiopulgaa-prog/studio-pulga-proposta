@@ -92,6 +92,13 @@ Continuam **11 funções** no Vercel: as rotas novas entraram em `api/admin.js` 
 - Conversa que a IA está resolvendo não notifica, a menos que "notificar tudo" esteja ligado.
 - A prévia nunca mostra valores, números longos ou links.
 
+**Ajuda** (26/11).
+- Aba de tutorial em `admin-ajuda.js`, no menu lateral e no "Mais" do celular. A tecla ? abre a Ajuda.
+- Tem busca sem acento, índice por tela e um tópico em acordeão para cada tela, com "Para que serve", "Passo a passo", "Dicas", "Cuidado" e "Ir para esta tela".
+- Cada perfil só vê os tópicos e as linhas das telas que acessa.
+- O botão "?" no cabeçalho de cada tela abre a Ajuda no tópico dela.
+- **REGRA: toda mudança futura em uma tela deve atualizar o tópico correspondente da Ajuda** (em `admin-ajuda.js`), usando o nome exato dos botões.
+
 ## Para ligar
 1. Rodar `db/2026-11-26_studio_os.sql` no Supabase (SQL editor). A reversão está em `db/2026-11-26_studio_os_REVERSAO.sql`.
    - Antes do SQL tudo funciona, menos anotações, comentário interno, "Resolver", "Em conversa" e notificações. Nesses casos o painel avisa que falta o SQL.

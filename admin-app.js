@@ -82,7 +82,7 @@
   function escolhaTxt(p) { var e = escolha(p); return e === 'plano' ? 'Escolheu um plano' : 'Escolheu: ' + e + (valorEsc(p) ? ' (' + valorEsc(p) + ')' : ''); }
 
   // ---------- navegação ----------
-  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes', atend: 'scrAtend', clientes: 'scrClientes', ficha: 'scrFicha', fin: 'scrFin'};
+  var SEC = {inicio: 'scrInicio', propostas: 'secHist', detalhe: 'scrDetalhe', nova: 'secNova', conteudo: 'scrConteudo', emails: 'scrEmails', ajustes: 'scrAjustes', atend: 'scrAtend', clientes: 'scrClientes', ficha: 'scrFicha', fin: 'scrFin', ajuda: 'scrAjuda'};
   // Studio OS: telas que a Ju não acessa (o servidor também recusa)
   var SO_ISAQUE = {fin: 1, conteudo: 1, emails: 1, ajustes: 1};
   function irPara(t, semRolar) {
