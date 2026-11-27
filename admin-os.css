@@ -286,3 +286,9 @@ a.os-btn,a.os-li{text-decoration:none;}
 .aj-pe .os-btn{min-height:44px;}
 a.os-btn.pri{color:#FFF8F1;}
 @media (max-width:600px){.aj-idx{grid-template-columns:1fr 1fr;}.aj-card{min-height:64px;padding:10px 12px;}.aj-c{font-size:15px;}}
+
+/* "Sair" da Ju no rodapé do menu lateral (computador) e Lixeira no Comercial */
+.nav .os-eu .os-sair{margin-left:auto;min-height:36px;padding:0 10px;font-size:12.5px;}
+.nav .os-eu .os-sair svg{width:14px;height:14px;}
+body.os-ju [data-lx-del]{display:none;}   /* "Apagar de vez" é só do Isaque (o servidor também bloqueia) */
+.nav .os-eu .os-eu-t{display:flex;flex-direction:column;line-height:1.3;min-width:0;}

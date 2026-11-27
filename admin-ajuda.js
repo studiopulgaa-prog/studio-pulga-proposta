@@ -127,7 +127,7 @@
       cuidado: ['Se o celular for trocado ou perdido, entre no app em outro aparelho e mude a senha no Vercel (peça ajuda ao Claude).']},
 
     {id: 'propostas', titulo: 'Propostas (Comercial)', tela: 'propostas',
-      resumo: 'Funil, situação de cada proposta, link, validade e envio.',
+      resumo: 'Funil, situação de cada proposta, link, validade, envio e Lixeira.',
       serve: 'O Comercial mostra todas as propostas em funil, tabela ou histórico, e o detalhe de cada uma: quem abriu, o que escolheu, o link e os envios.',
       blocos: [
         {t: 'Ver o funil', passos: [
@@ -145,12 +145,18 @@
         {t: 'Mudar a situação', passos: [
           'Em **Situação**, escolha **Aguardando**, **Ainda não decidiu**, **Escolheu**, **Fechou** ou **Perdido**. Embaixo aparece o que isso faz com os lembretes por e-mail.',
           '**Marcar "Em conversa"** coloca a proposta na coluna Em conversa do funil (**Tirar de "Em conversa"** desfaz).',
-          'Em **Gerenciar**: **Renovar validade** (ou **Reativar validade**/**Reativar proposta**) pede quantos dias; **Duplicar** cria uma nova a partir desta; **Pausar e-mails desta proposta**/**Retomar e-mails desta proposta**; **Nicho e cliente mulher** (ou **Confirmar nicho**) decide os e-mails de datas especiais.']}
+          'Em **Gerenciar**: **Renovar validade** (ou **Reativar validade**/**Reativar proposta**) pede quantos dias; **Duplicar** cria uma nova a partir desta; **Pausar e-mails desta proposta**/**Retomar e-mails desta proposta**; **Nicho e cliente mulher** (ou **Confirmar nicho**) decide os e-mails de datas especiais.']},
+        {t: 'Lixeira: ver e restaurar', passos: [
+          'No Comercial, toque em **Lixeira** (no topo, ao lado de **Nova proposta**).',
+          'A lista mostra cada proposta excluída, a data em que foi excluída e quantos dias faltam para ser apagada de vez.',
+          'Toque em **Restaurar** para a proposta voltar para o Comercial. O link só volta a abrir se ainda estiver dentro da validade e não estiver cancelada; se precisar, use **Renovar validade** no detalhe.',
+          I('**Apagar de vez** remove a proposta, o link e os acessos dela. Não dá para desfazer.'),
+          'Toque em **Fechar** para sair da Lixeira.']}
       ],
       dicas: ['O status da proposta: **Ativa** (link abre), **Expirada** (passou da validade, link bloqueado) e **Cancelada**. Uma proposta expirada pode ser reativada.',
         '"Aberta em mais de 3 aparelhos" avisa que o link pode ter sido repassado.',
         'Propostas com nome começando com "Teste" contam como teste.'],
-      cuidado: ['**Cancelar proposta** e **Mover para a lixeira** bloqueiam o link na hora. A lixeira guarda por 30 dias e depois apaga de vez.']},
+      cuidado: ['**Cancelar proposta** e **Mover para a lixeira** bloqueiam o link na hora. A Lixeira guarda por 30 dias (dá para restaurar) e depois apaga de vez, sozinha.']},
 
     {id: 'nova', titulo: 'Nova proposta', tela: 'nova',
       resumo: 'Criar o link exclusivo, escolher modelo, validade e valores.',
@@ -300,6 +306,7 @@
           'A sessão dura até 30 dias com "Manter conectado"; sem marcar, acaba ao fechar o navegador.']},
         {t: 'Sair da sessão', passos: [
           I('No computador: **Ajustes** › **Sair deste aparelho**.'),
+          {t: 'No computador: botão **Sair** embaixo do menu lateral, ao lado de "Conectado como Ju".', p: 'ju'},
           'No celular: **Mais** › **Sair**.',
           'No app de atendimento: menu **⋯** › **Sair deste aparelho**.',
           'Ou use o botão **Sair deste aparelho** abaixo.']}

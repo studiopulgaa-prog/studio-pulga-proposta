@@ -56,7 +56,11 @@
   function perfil() {
     var ju = EU() === 'ju';
     document.querySelectorAll('[data-perfil="isaque"]').forEach(function (el) { el.style.display = ju ? 'none' : ''; });
-    var eu = $('osEu'); if (eu) { limpa(eu); eu.appendChild(E('span', null, 'Conectado como')); eu.appendChild(E('b', null, NOMES[EU()])); }
+    var eu = $('osEu'); if (eu) {
+      limpa(eu); var et = E('div', 'os-eu-t'); et.appendChild(E('span', null, 'Conectado como ')); et.appendChild(E('b', null, NOMES[EU()])); eu.appendChild(et);
+      // a Ju não tem Ajustes: no computador, o "Sair" fica aqui embaixo do menu
+      if (ju) { var s = BI('os-btn sm os-sair', 'logout', 'Sair', function () { if (window.logout) logout(); }, 'Sair deste aparelho'); s.id = 'osSair'; eu.appendChild(s); }
+    }
     document.body.classList.toggle('os-ju', ju);
   }
   window.osMais = function () {
@@ -292,8 +296,20 @@
     limpa(w);
     var vw = E('div', 'segm'); vw.setAttribute('role', 'group'); vw.setAttribute('aria-label', 'Visão'); vw.style.minWidth = '240px';
     [['kanban', 'Funil'], ['tabela', 'Tabela'], ['lista', 'Histórico']].forEach(function (x) { var b = B(KB.view === x[0] ? 'on' : '', x[1], function () { KB.view = x[0]; fechaDrawer(); osComercial(); if (x[0] === 'lista' && window.irPara) { /* lista antiga já está na tela */ } }); b.setAttribute('aria-pressed', KB.view === x[0] ? 'true' : 'false'); vw.appendChild(b); });
-    cab(w, 'Comercial', 'Propostas em funil', [vw, BI('os-btn pri', 'plus', 'Nova proposta', function () { irPara('nova'); })]);
+    // Lixeira: reaproveita a do Histórico (ver e restaurar; "Apagar de vez" é só do Isaque)
+    var lx = BI('os-btn', 'trash', 'Lixeira', function () { var b = $('btnLixeira'); if (b) b.click(); }, 'Lixeira (ver e restaurar propostas)'); lx.id = 'osLixeira';
+    cab(w, 'Comercial', 'Propostas em funil', [vw, lx, BI('os-btn pri', 'plus', 'Nova proposta', function () { irPara('nova'); })]);
     if (KB.view === 'lista') { var old = $('secHist').querySelector('.os-velho-hd'); if (old) old.style.display = 'none'; }
+  }
+  // quando o Histórico recarrega (restaurar da Lixeira, cancelar, mover etc.), o funil recarrega junto
+  if (typeof window.carregarHistorico === 'function') {
+    var cHist = window.carregarHistorico;
+    window.carregarHistorico = function () {
+      return Promise.resolve(cHist.apply(this, arguments)).then(function (r) {
+        if ($('osComCorpo') && $('secHist').classList.contains('on')) { KB.t = 0; carregaPropostas(true).then(desenhaFunil); } else KB.t = 0;
+        return r;
+      });
+    };
   }
   function filtrados() {
     var f = KB.filtros, lim = {d30: 30, d90: 90}[f.periodo];

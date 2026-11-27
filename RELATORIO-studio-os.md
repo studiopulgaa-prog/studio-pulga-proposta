@@ -97,6 +97,9 @@ Continuam **11 funções** no Vercel: as rotas novas entraram em `api/admin.js` 
 - Tem busca sem acento, índice por tela e um tópico em acordeão para cada tela, com "Para que serve", "Passo a passo", "Dicas", "Cuidado" e "Ir para esta tela".
 - Cada perfil só vê os tópicos e as linhas das telas que acessa.
 - O botão "?" no cabeçalho de cada tela abre a Ajuda no tópico dela.
+**Lixeira e Sair** (27/11).
+- **Lixeira:** botão no topo do Comercial para ver e restaurar propostas excluídas. "Apagar de vez" aparece só para o Isaque. Restaurar devolve a proposta ao funil na hora.
+- **Sair:** botão **Sair** da Ju no rodapé do menu lateral do computador.
 - **REGRA: toda mudança futura em uma tela deve atualizar o tópico correspondente da Ajuda** (em `admin-ajuda.js`), usando o nome exato dos botões.
 
 ## Para ligar
